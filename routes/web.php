@@ -14,21 +14,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/cache-clear', function () {
-    Artisan::call('cache:clear');
-});
-
 Auth::routes(['verify' => true]);
 
 Route::get('/register/add/list','Auth\RegisterController@list');
 Route::post('/register/stepOne','Auth\RegisterController@stepOne');
 Route::post('/register/stepTwo','Auth\RegisterController@stepTwo');
 Route::post('/register','Auth\RegisterController@store');
-
-Route::get('/createaudio','TestController@createaudio');
-Route::post('/audioupload','TestController@storeAudio');
-
-Route::get('/insertverse','TestController@verses');
 
 //Impersonate as preacher
 Route::get('/preacher/{id}/impersonate', 'Auth\ImpersonateController@impersonate')->middleware('auth', 'churchadmin');
@@ -43,9 +34,6 @@ Route::get('botman/chat', function () {
 Auth::routes();
 
 //Route::get('/checksms', 'ContactController@checksms');
-
-Route::post('/testwebhook','TestController@index');
-Route::get('/download','TestController@download');
 
 /*video-chat room*/
 Route::view('/video-chat-grid', 'pages.video.grid');

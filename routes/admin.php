@@ -16,7 +16,7 @@
         Route::get('/dashboard/anniversary', 'BirthdayController@anniversary');
         Route::post('/dashboard/anniversary', 'BirthdayController@anniversaryMessage');
 
-        //notification 
+        //notification
 
         Route::get('/notification/list', 'NotificationController@indexList');
         Route::get('/notifications', 'NotificationController@index');
@@ -57,7 +57,7 @@
         Route::get('/campaign/{id}', 'CampaignController@show');
 
         //delete
-        Route::get('/campaign/delete/{id}', 'CampaignController@destroy');
+        Route::delete('/campaign/delete/{id}', 'CampaignController@destroy');
 
     //Campaign Email
         //add
@@ -73,7 +73,7 @@
         Route::post('/campaign/attachemail/edit/{id}', 'CampaignEmailController@update');
 
         //delete
-        Route::get('/campaign/attachemail/delete/{id}', 'CampaignEmailController@destroy');
+        Route::delete('/campaign/attachemail/delete/{id}', 'CampaignEmailController@destroy');
 
     //Emails
         //index
@@ -95,7 +95,7 @@
         Route::get('/email/{id}', 'EmailController@show');
 
         //delete
-        Route::get('/email/delete/{id}', 'EmailController@destroy');
+        Route::delete('/email/delete/{id}', 'EmailController@destroy');
 
         //Send test Mail
          Route::post('/sendtestmail', 'MailController@store');
@@ -126,10 +126,10 @@
         Route::get('/mailinglist/{id}', 'MailinglistController@show');
 
         //delete
-        Route::get('/mailinglist/delete/{id}', 'MailinglistController@destroy');
+        Route::delete('/mailinglist/delete/{id}', 'MailinglistController@destroy');
 
         //detach subscriber
-        Route::get('/mailinglist/detachsubscriber/{subscriber_id}/{mailinglist_id}', 'MailinglistController@detachsubscriber');
+        Route::delete('/mailinglist/detachsubscriber/{subscriber_id}/{mailinglist_id}', 'MailinglistController@detachsubscriber');
 
         //attach subscriber
         Route::get('/mailinglist/attachsubscriber/{id}', 'AttachSubscriberController@create');
@@ -141,7 +141,7 @@
         //import subscriber
         Route::post('/mailinglist/importsubscriber', 'AttachSubscriberController@importsubscriber');
         Route::get('/mailinglist/view/{id}', 'AttachSubscriberController@show');
-        
+
     //Subscriber
         //index
         Route::get('/subscribers', 'SubscribersController@index');
@@ -163,7 +163,7 @@
         //Route::get('/subscriber/{id}', 'SubscriberController@show');
 
         //delete
-        Route::get('/subscriber/delete/{id}', 'SubscribersController@destroy');
+        Route::delete('/subscriber/delete/{id}', 'SubscribersController@destroy');
 
         //import
         Route::get('/subscriber', 'SubscribersController@import');
@@ -176,7 +176,7 @@
 
         //maillist subscriber
         Route::get('/subscriber/attach/mailinglist/{id}', 'MaillistSubscriberController@create');
-        Route::post('/subscriber/attach/mailinglist/{id}', 'MaillistSubscriberController@store'); 
+        Route::post('/subscriber/attach/mailinglist/{id}', 'MaillistSubscriberController@store');
 
     //Subscriber Widget
         Route::get('/subscribe/{mailinglist_slug}', 'SubscribeController@create');
@@ -202,7 +202,7 @@
         Route::post('/smtp/edit/{id}', 'SmtpController@update');
 
         //delete
-        Route::get('/smtp/delete/{id}', 'SmtpController@destroy');
+        Route::delete('/smtp/delete/{id}', 'SmtpController@destroy');
 
     //Mail Queue
         //index
@@ -217,7 +217,7 @@
         Route::post('/mailqueue/edit/{id}', 'MailQueueController@update');
 
         //delete
-        Route::get('/mailqueue/delete/{id}', 'MailQueueController@destroy');
+        Route::delete('/mailqueue/delete/{id}', 'MailQueueController@destroy');
 
     //News Letter
         //show
@@ -245,7 +245,7 @@
         Route::get('/rule/show/{id}', 'EmailBlaster\RulesController@show');
 
         //delete
-        Route::get('/rule/delete/{id}', 'EmailBlaster\RulesController@destroy');
+        Route::delete('/rule/delete/{id}', 'EmailBlaster\RulesController@destroy');
 
     //Mails Delivered
         //index
@@ -274,7 +274,7 @@
         Route::get('/webhook/show/{id}', 'EmailBlaster\WebhooksController@show');
 
         //delete
-        Route::get('/webhook/delete/{id}', 'EmailBlaster\WebhooksController@destroy');
+        Route::delete('/webhook/delete/{id}', 'EmailBlaster\WebhooksController@destroy');
 
     //church details
         //index
@@ -306,7 +306,7 @@
         Route::post('/video-conference/edit/{id}', 'VideoConferencesController@update');
 
         //delete
-        Route::get('/video-conference/remove/{id}', 'VideoConferencesController@remove');
+        Route::delete('/video-conference/remove/{id}', 'VideoConferencesController@remove');
 
         //widgets
         //index
@@ -317,8 +317,8 @@
         Route::post('/widgets/create', 'WidgetController@store');
         //invites
         Route::get('/video-conference/manage-invites/{id}', 'VideoConferencesController@invites');
-        Route::get('/video-conference/remove-users/{id}', 'VideoConferencesController@removeUsers');
-        Route::get('/video-conference/status/{id}', 'VideoConferencesController@statusUpdate');
+        Route::delete('/video-conference/remove-users/{id}', 'VideoConferencesController@removeUsers');
+        Route::post('/video-conference/status/{id}', 'VideoConferencesController@statusUpdate');
         Route::get('/video-conference/recordings/{id}', 'VideoConferencesController@recordings');
         Route::get('/video-conference/add-invites/{id}', 'VideoConferencesController@addinvites');
         Route::post('/video-conference/save-invites/{id}', 'VideoConferencesController@saveinvites');
@@ -326,7 +326,7 @@
     //notes
 
     Route::post('/getnotes', 'NotesController@index');
-    Route::get('/notes/delete/{id}', 'NotesController@delete');
+    Route::delete('/notes/delete/{id}', 'NotesController@delete');
     Route::get('/notes/edit/{id}', 'NotesController@edit');
 
     Route::get('/notes', 'NotesController@create');
@@ -358,7 +358,7 @@
         Route::post('/faq/edit/{id}','FaqController@update');
 
         //delete
-        Route::get('/faq/delete/{id}','FaqController@destroy');
+        Route::delete('/faq/delete/{id}','FaqController@destroy');
 
     //members
         //index
@@ -394,7 +394,7 @@
         Route::post('/member/updateStatus/{name}','UserController@updateStatus');
 
         //reset password
-        Route::get('/member/resetPassword/{id}','UserController@resetPassword');
+        Route::post('/member/resetPassword/{id}','UserController@resetPassword');
 
         //email verification
         Route::get('/member/{id}/verificationcode', 'UserController@emailVerification');
@@ -443,7 +443,7 @@
         Route::post('/guest/updateStatus/{name}','GuestsController@updateStatus');
 
         //reset password
-        Route::get('/guest/resetPassword/{id}','GuestsController@resetPassword');
+        Route::post('/guest/resetPassword/{id}','GuestsController@resetPassword');
 
         //email verification
         Route::get('/guest/{id}/verificationcode', 'GuestsController@emailVerification');
@@ -505,7 +505,7 @@
     Route::get('/events/show/details/{id}', 'EventsController@show');
     Route::get('/events/showdetails/{id}', 'EventsController@showdetails');
     Route::get('/events/details/{id}','EventsController@details');
-    Route::get('/events/delete/{id}','EventsController@destroy');
+    Route::delete('/events/delete/{id}','EventsController@destroy');
     Route::get('/event/showAttendees/{id}/{status}','EventsController@showAttendees');
 
     //Settings
@@ -515,7 +515,7 @@
     Route::post('/settings/generalsettings','Setting\GeneralController@store');
     Route::get('/settings/maintenancesettings','Setting\MaintenanceController@create');
     Route::post('/settings/maintenancesettings','Setting\MaintenanceController@store');
-    
+
     Route::get('/settings/seodetail','Setting\SeoDetailController@create');
     Route::get('/settings/seo/list','Setting\SeoDetailController@list');
     Route::post('/settings/basicseo','Setting\SeoDetailController@store');
@@ -540,7 +540,7 @@
     Route::get('/export', 'ExportMemberController@index');
     Route::get('/exportUsers', 'ExportMemberController@exportUsers');
 
-    
+
 
     //import
 
@@ -565,7 +565,7 @@
         Route::get('/gallery/details/{id}', 'GalleryController@showdetails');
 
         //delete
-        Route::get('/gallery/delete/{id}', 'GalleryController@destroy');
+        Route::delete('/gallery/delete/{id}', 'GalleryController@destroy');
 
     //Gallery-photos
 
@@ -573,7 +573,7 @@
     Route::get('gallery/view/photos/{gallery_id}', 'PhotosController@show');
     Route::get('gallery/display/photos/{gallery_id}', 'PhotosController@showdetails');
     Route::get('gallery/getphoto/{gallery_id}', 'PhotosController@getPhoto');
-    Route::get('/gallery/photo/delete/{id}', 'PhotosController@destroy');
+    Route::delete('/gallery/photo/delete/{id}', 'PhotosController@destroy');
 
     //media file
         //index
@@ -596,7 +596,7 @@
         Route::get('/mediafile/show/{id}','MediaFilesController@show');
 
         //delete
-        Route::get('/mediafile/delete/{id}','MediaFilesController@destroy');
+        Route::delete('/mediafile/delete/{id}','MediaFilesController@destroy');
 
 
     //sermon
@@ -609,7 +609,7 @@
     Route::post('/upload/photos/{event_id}','EventGalleryController@store');
     Route::get('/display/photos/{event_id}', 'EventsController@showimage');
     Route::get('/getphoto/{event_id}', 'EventGalleryController@getPhoto');
-    Route::get('/event/photo/delete/{id}', 'EventGalleryController@destroy');
+    Route::delete('/event/photo/delete/{id}', 'EventGalleryController@destroy');
 
 
     //Bulletins
@@ -623,7 +623,7 @@
         Route::post('/bulletin/create','BulletinsController@store');
 
         //delete
-        Route::get('/bulletin/delete/{id}','BulletinsController@destroy');
+        Route::delete('/bulletin/delete/{id}','BulletinsController@destroy');
 
         //download
         Route::get('/bulletin/download/{id}','BulletinsController@downloadattachments');
@@ -646,7 +646,7 @@
         Route::post('/group/update/{id}','GroupsController@update');
 
         //delete
-        Route::get('/group/delete/{id}','GroupsController@destroy');
+        Route::delete('/group/delete/{id}','GroupsController@destroy');
 
         //message
         Route::post('/group/sendMessage/{id}','GroupsController@message');
@@ -665,7 +665,7 @@
         Route::post('/group/editMember/{id}','GroupLinksController@update');
 
         //delete
-        Route::get('/group/removeMember/{id}','GroupLinksController@destroy');
+        Route::delete('/group/removeMember/{id}','GroupLinksController@destroy');
 
 
     //reminder
@@ -696,7 +696,7 @@
         Route::post('/quote/reschedule/{id}', 'QuotesController@reschedule');
 
         //delete
-        Route::get('/quote/delete/{id}', 'QuotesController@destroy');
+        Route::delete('/quote/delete/{id}', 'QuotesController@destroy');
 
 
     //Funds
@@ -718,7 +718,7 @@
         Route::post('/fund/edit/{id}','FundController@update');
 
         //delete
-        Route::get('/fund/delete/{id}','FundController@destroy');
+        Route::delete('/fund/delete/{id}','FundController@destroy');
 
 
     //reports
@@ -790,7 +790,7 @@
     Route::post('/botman/create', 'BotmanMasterController@store');
     Route::get('/botman/{id}/edit', 'BotmanMasterController@edit');
     Route::post('/botman/{id}/update', 'BotmanMasterController@update');
-    Route::get('/botman/remove/{id}', 'BotmanMasterController@remove');
+    Route::delete('/botman/remove/{id}', 'BotmanMasterController@remove');
     Route::get('/botman/messages', 'BotmanMasterController@getMessages');
     Route::get('/botman/details/{id}/{type}', 'BotmanMasterController@getDetails');
 
@@ -814,7 +814,7 @@
     Route::get( '/page/edit/{id}', 'PagesController@edit' );
     Route::post( '/page/edit/{id}', 'PagesController@update' );
 
-    Route::get( '/page/delete/{id}', 'PagesController@destroy' );
+    Route::delete( '/page/delete/{id}', 'PagesController@destroy' );
 
     Route::post( '/page/follow/{id}', 'PageDetailsController@follow' );
     Route::post( '/page/like/{id}', 'PageDetailsController@like' );
@@ -828,7 +828,7 @@
     Route::get( '/post/showImage/{id}', 'PostsController@imageList' );
     Route::get( '/post/show/{id}', 'PostsController@show' );
 
-    Route::get( '/post/delete/{id}', 'PostsController@destroy' );
+    Route::delete( '/post/delete/{id}', 'PostsController@destroy' );
 
     Route::get( '/post/add/list', 'PostAddController@createList' );
     Route::get( '/post/add', 'PostAddController@create' );
@@ -848,12 +848,12 @@
     Route::post( '/post/add/comment/{post_id}', 'PostCommentsController@addComment' );
     Route::get( '/post/edit/commentList/{comment_id}', 'PostCommentsController@editCommentList' );
     Route::post( '/post/edit/comment/{comment_id}', 'PostCommentsController@editComment' );
-    Route::get( '/post/delete/comment/{comment_id}', 'PostCommentsController@destroy' );
+    Route::delete( '/post/delete/comment/{comment_id}', 'PostCommentsController@destroy' );
 
     Route::get( '/post/replyComment/{post_comment_id}', 'PostReplyCommentsController@list' );
     Route::post( '/post/reply/add/comment/{post_comment_id}', 'PostReplyCommentsController@addComment' );
     Route::post( '/post/reply/edit/comment/{post_comment_id}', 'PostReplyCommentsController@editComment' );
-    Route::get( '/post/reply/delete/comment/{post_comment_id}', 'PostReplyCommentsController@destroy' );
+    Route::delete( '/post/reply/delete/comment/{post_comment_id}', 'PostReplyCommentsController@destroy' );
 
     Route::post( '/post/comment/like/{comment_id}', 'PostCommentDetailsController@like' );
     Route::post( '/post/comment/dislike/{comment_id}', 'PostCommentDetailsController@dislike' );
@@ -890,9 +890,9 @@
         Route::get('/payaccount/editList/{id}','Payment\PayaccountContorller@editList');
         Route::get('/payaccount/edit/{id}','Payment\PayaccountContorller@edit');
         Route::post('/payaccount/update/{id}','Payment\PayaccountContorller@update');
-        Route::get('/payaccount/status/{id}/update','Payment\PayaccountContorller@statusUpdate');
+        Route::post('/payaccount/status/{id}/update','Payment\PayaccountContorller@statusUpdate');
 
         //delete
-        Route::get('/payaccount/delete/{id}','Payment\PayaccountContorller@destroy');  
-          
+        Route::delete('/payaccount/delete/{id}','Payment\PayaccountContorller@destroy');
+
 
