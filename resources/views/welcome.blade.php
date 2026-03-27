@@ -15,19 +15,9 @@
 @section('content')
     @include('welcome.homebanner')
     <div class="bg-white">
-        @include('welcome.cta')
-        @include('welcome.mobileapp')
-        @include('welcome.memberdirectory')
-        @include('welcome.membergroups')
-        @include('welcome.donation')
-        @include('welcome.events')
-        @include('welcome.seremon')
-        @include('welcome.broadcast')
+       
     </div>
 
-    @include('welcome.more')
-    <!-- @include('welcome.contact') -->
-    @include('welcome.cta_footer')
 @endsection
 {{-- @section('content')
     <div class=" min-h-screen">

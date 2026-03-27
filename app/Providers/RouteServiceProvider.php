@@ -41,7 +41,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->mapWebRoutes();
 
-        $this->mapStaticRoutes();
+
 
         $this->mapPreacherRoutes();
 
@@ -80,12 +80,7 @@ class RouteServiceProvider extends ServiceProvider
              ->group(base_path('routes/api.php'));
     }
 
-    protected function mapStaticRoutes()  
-    {
-        Route::middleware('web')
-            ->namespace($this->namespace)
-            ->group(base_path('routes/static.php'));
-    }
+
 
     protected function mapPreacherRoutes()  
     {
