@@ -6,6 +6,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Common;
 
+/**
+ * ChurchDetail Model
+ *
+ * Stores metadata and configuration details for churches.
+ * Manages key-value pair configurations like logos, banners, and custom settings.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property string $meta_key Configuration key/option name
+ * @property string|null $meta_value Configuration value/option value
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The church this configuration belongs to
+ */
 class ChurchDetail extends Model
 {
 	//

@@ -5,9 +5,28 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Authentication Model
+ *
+ * Manages user authentication tokens and session information.
+ * Tracks authentication tokens, IP addresses, and expiration for security.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $user_id Foreign key to user
+ * @property string $token Authentication token
+ * @property string $ip_address IP address of the authenticated session
+ * @property \Carbon\Carbon $expires_on Token expiration timestamp
+ * @property string $status Status of the authentication record
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\User $user The user associated with this authentication
+ */
 class Authentication extends Model
-{
-    //
+{    //
     use SoftDeletes;
 
     /**

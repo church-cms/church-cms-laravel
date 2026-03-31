@@ -5,6 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * PageDetail Model
+ *
+ * Tracks interactions and details on pages.
+ * Records user engagements, likes, dislikes, and comments on pages.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int|null $page_id Foreign key to page
+ * @property int|null $user_id Foreign key to user
+ * @property bool $is_like Whether this is a like (true) or unlike (false)
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\User $user The user who interacted with the page
+ * @property-read \App\Models\Page $page The page being interacted with
+ */
 class PageDetail extends Model
 {
     //
@@ -20,7 +39,7 @@ class PageDetail extends Model
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [
@@ -46,15 +65,15 @@ class PageDetail extends Model
 
     public function scopeByLike($query,$page_id)
     {
-        $count = $query->where('page_id',$page_id)->where('like',1)->get(); 
-        
+        $count = $query->where('page_id',$page_id)->where('like',1)->get();
+
         return $count;
     }
 
     public function scopeByUnlike($query,$page_id)
     {
-        $count = $query->where('page_id',$page_id)->where('dislike',1)->count();  
-        
+        $count = $query->where('page_id',$page_id)->where('dislike',1)->count();
+
         return $count;
     }
 }

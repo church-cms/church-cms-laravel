@@ -6,6 +6,35 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Common;
 
+/**
+ * Page Model
+ *
+ * Represents static and dynamic website pages.
+ * Manages page content, metadata, and page organizational properties.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property int|null $page_category_id Foreign key to page category
+ * @property string|null $title Page title
+ * @property string|null $slug URL-friendly slug
+ * @property string|null $description Page description/excerpt
+ * @property string|null $content Page HTML content
+ * @property string|null $cover_image Cover image path
+ * @property int $status Page status (published/draft/archived)
+ * @property int|null $created_by User who created the page
+ * @property int|null $updated_by User who last updated the page
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The church this page belongs to
+ * @property-read \App\Models\PageCategory $pageCategory The page category
+ * @property-read \App\Models\User $user Creator user information
+ * @property-read \Illuminate\Database\Eloquent\Collection $pageDetail Page details/interactions
+ * @property-read \Illuminate\Database\Eloquent\Collection $pageAttachment Page attachments
+ */
 class Page extends Model
 {
     //
@@ -22,7 +51,7 @@ class Page extends Model
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [

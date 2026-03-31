@@ -4,10 +4,37 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Common;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * PrayerRequest Model
+ *
+ * Represents prayer requests submitted by members.
+ * Manages prayer intentions and community prayer coordination.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property int|null $user_id Foreign key to request submitter
+ * @property string|null $title Prayer request title
+ * @property string|null $description Detailed prayer request
+ * @property string|null $audio Audio file path for voice requests
+ * @property string|null $image Image attachment path
+ * @property bool $is_anonymous Whether request is anonymous
+ * @property string $status Request status (open, answered, archived)
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The church this request is posted to
+ * @property-read \App\Models\User $user The member who requested prayer
+ * @property-read \Illuminate\Database\Eloquent\Collection $prayerResponse Responses/updates to this request
+ */
 class PrayerRequest extends Model
 {
     //
+    use SoftDeletes;
     use Common;
 
     /**

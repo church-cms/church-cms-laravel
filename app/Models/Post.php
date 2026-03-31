@@ -17,6 +17,38 @@ class Post extends Model implements HasMedia
     use Common;
 
     /**
+     * Post Model
+     *
+     * Represents user-generated posts with media attachments and nested comments.
+     * Manages post creation, interaction tracking, and content management.
+     *
+     * @package App\Models
+     * @property int $id Primary key
+     * @property int $church_id Foreign key to church
+     * @property int|null $entity_id ID of the entity (polymorphic)
+     * @property string|null $entity_name Type of entity (polymorphic)
+     * @property string|null $title Post title
+     * @property string|null $description Post content/body
+     * @property array|null $attachment_file Attached files as JSON
+     * @property \Carbon\Carbon|null $post_created_at Post creation date (can differ from DB created_at)
+     * @property bool $is_posted Whether post is published
+     * @property \Carbon\Carbon|null $posted_at Publication timestamp
+     * @property int $status Post status (published/draft/archived)
+     * @property int|null $created_by User who created the post
+     * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+     * @property \Carbon\Carbon $created_at Record creation timestamp
+     * @property \Carbon\Carbon $updated_at Record update timestamp
+     *
+     * Relations:
+     * @property-read \App\Models\Church $church The church this post belongs to
+     * @property-read \App\Models\User $createdBy Creator user information
+     * @property-read \App\Models\PostDetail $postDetail Post interaction detail
+     * @property-read \Illuminate\Database\Eloquent\Collection $postComment Comments on this post
+     * @property-read \Illuminate\Database\Eloquent\Collection $postReplyComment Reply comments
+     * @property-read \Illuminate\Database\Eloquent\Collection $tag Tags on this post
+     */
+
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -25,11 +57,11 @@ class Post extends Model implements HasMedia
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [
-        'church_id' , 'entity_id' , 'entity_name' , 'title' , 'description' , 'attachment_file' , 'post_created_at' , 'is_posted' , 'posted_at' , 'status' , 'created_by' //, 'visibility' , 'visible_for' 
+        'church_id' , 'entity_id' , 'entity_name' , 'title' , 'description' , 'attachment_file' , 'post_created_at' , 'is_posted' , 'posted_at' , 'status' , 'created_by' //, 'visibility' , 'visible_for'
     ];
 
     /**
@@ -99,13 +131,13 @@ class Post extends Model implements HasMedia
     {
         return $this->getFilePath($this->attachment_file[0]);
     }
-    
+
     public function getPostCommentsAttribute()
     {
         $i = 0;
         $array = [];
-        foreach ($this->postComment as $postComment) 
-        { 
+        foreach ($this->postComment as $postComment)
+        {
             $array[$i]['comment_id']        = $postComment->id;
             $array[$i]['post_id']           = $postComment->entity_id;
             $array[$i]['user_id']           = $postComment->user_id;

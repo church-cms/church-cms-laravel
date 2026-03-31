@@ -6,7 +6,22 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
-class MailinglistSubscriber extends  Pivot
+/**
+ * MailinglistSubscriber Model
+ *
+ * Junction model for mailing list subscriptions.
+ * Tracks subscriber memberships in mailing lists.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int|null $subscribers_id Foreign key to subscriber
+ * @property int|null $mailing_list_id Foreign key to mailing list
+ * @property int $status Subscription status
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ */
+class MailinglistSubscriber extends Pivot
 {
     //
     use SoftDeletes;
@@ -23,14 +38,14 @@ class MailinglistSubscriber extends  Pivot
       *
       * @var array
     */
-    protected $fillable = [ 
+    protected $fillable = [
         'subscribers_id' , 'mailing_list_id' , 'status'
     ];
 
     protected $dates = ['deleted_at'];
-  
+
     /*public function subscriber()
     {
         return $this->belongsTo('App\Models\Subscribers','subscriber_id','id');
-    }*/   
+    }*/
 }

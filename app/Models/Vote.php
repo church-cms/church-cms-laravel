@@ -5,6 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Vote Model
+ *
+ * Represents votes and ratings on content.
+ * Tracks voting activities for sermons, posts, and other voteable content.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property int|null $user_id Foreign key to voting user
+ * @property int|null $entity_id ID of the entity being voted on (polymorphic)
+ * @property string|null $entity_name Type of entity (polymorphic)
+ * @property bool $like Whether this is a like (true) or unlike (false)
+ * @property bool|null $unlike Whether this is an unlike/dislike
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The church this vote is from
+ * @property-read \App\Models\User $user The user who voted
+ * @property-read \App\Models\Sermon $sermon The sermon being voted on (if applicable)
+ */
 class Vote extends Model
 {
     //
@@ -16,10 +39,10 @@ class Vote extends Model
      * @var string
      */
     protected $table = 'votes';
-    
+
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [

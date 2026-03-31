@@ -4,6 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Plan Model
+ *
+ * Represents subscription plan tiers.
+ * Defines available subscription levels and pricing for churches.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property string|null $name Plan name
+ * @property string|null $description Plan description
+ * @property decimal $price Monthly price in currency
+ * @property int|null $max_users Maximum users allowed
+ * @property int|null $max_files Maximum files allowed
+ * @property int $status Plan status (active/inactive)
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \Illuminate\Database\Eloquent\Collection $subscription Subscriptions to this plan
+ */
 class Plan extends Model
 {
     //

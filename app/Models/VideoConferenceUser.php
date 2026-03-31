@@ -5,6 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * VideoConferenceUser Model
+ *
+ * Represents user participation in video conferences.
+ * Tracks conference participants and their join/leave times.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int|null $video_conference_id Foreign key to conference
+ * @property int|null $user_id Foreign key to participant
+ * @property \Carbon\Carbon|null $joined_at Time participant joined
+ * @property \Carbon\Carbon|null $left_at Time participant left
+ * @property string|null $status Participation status (joined, left, absent)
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \Illuminate\Database\Eloquent\Collection $usersInfo Participant user information
+ * @property-read \App\Models\VideoConference $videoConference The conference this user is in
+ * @property-read \App\Models\User $user The participant
+ */
 class VideoConferenceUser extends Model
 {
 	//

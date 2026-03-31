@@ -10,6 +10,58 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Carbon\Carbon;
 
+/**
+ * User Model
+ *
+ * Central authentication model representing system users with role-based access control.
+ * Extends Laravel's Authenticatable to handle authentication, authorization via Laratrust,
+ * API token management, and notification capabilities. Serves as hub for user relationships
+ * including profile, family hierarchy, groups, and activity tracking.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int|null $church_id Foreign key to church (multi-tenancy)
+ * @property int|null $usergroup_id Foreign key to user role/group
+ * @property int|null $ref_id Self-referential foreign key for family hierarchy
+ * @property string $name User display name
+ * @property string $email User email address (unique)
+ * @property string $password Hashed password
+ * @property string|null $mobile_no User mobile number
+ * @property bool $is_activated Whether user account is activated
+ * @property string|null $email_verification_code Email verification token
+ * @property bool $email_verified Whether email has been verified
+ * @property \Carbon\Carbon|null $email_verified_at Email verification timestamp
+ * @property bool $is_reset Password reset flag
+ * @property string|null $platform_token Mobile app push notification token
+ * @property string|null $remember_token Remember me token for session
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The user's church organization
+ * @property-read \App\Models\ChurchDetail $churchdetails Church metadata associated with user
+ * @property-read \App\Models\Userprofile $userprofile Extended user profile information
+ * @property-read \Illuminate\Database\Eloquent\Collection $members Users referred by this user (children in hierarchy)
+ * @property-read \App\Models\User $refer The user who referred this user (parent in hierarchy)
+ * @property-read \Illuminate\Database\Eloquent\Collection $children Family members with relation='child'
+ * @property-read \Illuminate\Database\Eloquent\Collection $patner Family member with relation='patner'
+ * @property-read \Illuminate\Database\Eloquent\Collection $father Family member with relation='father'
+ * @property-read \Illuminate\Database\Eloquent\Collection $mother Family member with relation='mother'
+ * @property-read \App\Models\Usergroup $usergroup User's role/permission group
+ * @property-read \Illuminate\Database\Eloquent\Collection $AauthAcessToken OAuth/API access tokens for this user
+ * @property-read \Illuminate\Database\Eloquent\Collection $activitylog Audit log entries created by this user
+ * @property-read \Illuminate\Database\Eloquent\Collection $notes Entity notes/annotations by this user
+ * @property-read \Illuminate\Database\Eloquent\Collection $subscription Service subscriptions for this user
+ * @property-read \Illuminate\Database\Eloquent\Collection $fund Financial contributions/funds by this user
+ *
+ * Traits:
+ * - LaratrustUserTrait: Role-based access control permissions and roles
+ * - PresentableTrait: Presenter pattern for view representation
+ * - HasApiTokens: Sanctum API token management
+ * - SoftDeletes: Soft delete capability with deleted_at tracking
+ * - Notifiable: Email/notification sending capabilities
+ */
 class User extends Authenticatable
 {
     use LaratrustUserTrait;

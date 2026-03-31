@@ -9,6 +9,25 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\Models\Media;
 use App\Traits\Common;
 
+/**
+ * PageAttachment Model
+ *
+ * Represents files attached to pages.
+ * Manages media and document attachments for page content.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int|null $page_id Foreign key to page
+ * @property string|null $attachment_name Attachment file name
+ * @property string|null $attachment_path File path
+ * @property string|null $mime_type File MIME type
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Page $page The page this attachment belongs to
+ */
 class PageAttachment extends Model implements HasMedia
 {
     //
@@ -25,7 +44,7 @@ class PageAttachment extends Model implements HasMedia
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [

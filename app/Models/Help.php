@@ -4,6 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Help Model
+ *
+ * Represents help requests and support tickets from users.
+ * Manages member assistance requests and support inquiries.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property int|null $user_id Foreign key to user requesting help
+ * @property string|null $title Help request title
+ * @property string|null $description Detailed description of the help request
+ * @property string|null $contact_details Contact information for follow-up
+ * @property string $status Request status (open/resolved/closed)
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The church this help request is for
+ * @property-read \App\Models\User $user The user requesting help
+ */
 class Help extends Model
 {
     //

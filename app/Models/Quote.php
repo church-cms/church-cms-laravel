@@ -6,6 +6,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Common;
 
+/**
+ * Quote Model
+ *
+ * Represents inspirational and motivational quotes.
+ * Stores quotes for daily inspiration and member encouragement.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property int|null $user_id Foreign key to quote author/submitter
+ * @property string|null $quote The quote text
+ * @property string|null $author Author name
+ * @property string|null $image Image associated with quote
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The church this quote belongs to
+ * @property-read \App\Models\User $user The user who submitted the quote
+ */
 class Quote extends Model
 {
     use SoftDeletes;

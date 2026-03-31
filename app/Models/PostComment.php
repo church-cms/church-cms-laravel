@@ -13,6 +13,31 @@ class PostComment extends Model
     use Common;
 
     /**
+     * PostComment Model
+     *
+     * Represents comments on posts with support for nested replies.
+     * Manages post comments, interactions, and nested comment threads.
+     *
+     * @package App\Models
+     * @property int $id Primary key
+     * @property int|null $user_id Foreign key to commenter
+     * @property int|null $post_id Foreign key to post if direct comment
+     * @property int|null $entity_id ID for polymorphic comment references
+     * @property string|null $entity_name Type of entity for polymorphic relation
+     * @property string|null $comment Comment text content
+     * @property array|null $attachment_file Attached files as JSON
+     * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+     * @property \Carbon\Carbon $created_at Record creation timestamp
+     * @property \Carbon\Carbon $updated_at Record update timestamp
+     *
+     * Relations:
+     * @property-read \App\Models\User $user The comment author
+     * @property-read \App\Models\Post $post The post being commented on
+     * @property-read \Illuminate\Database\Eloquent\Collection $postComment Nested replies to this comment
+     * @property-read \Illuminate\Database\Eloquent\Collection $postCommentDetail Comment interactions (likes)
+     */
+
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -21,7 +46,7 @@ class PostComment extends Model
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [
@@ -64,8 +89,8 @@ class PostComment extends Model
     {
         $i = 0;
         $array = [];
-        foreach ($this->postCommentDetail as $postCommentDetail) 
-        { 
+        foreach ($this->postCommentDetail as $postCommentDetail)
+        {
             $array[$i]['detail_id']         = $postCommentDetail->id;
             $array[$i]['user_id']           = $postCommentDetail->user_id;
             $array[$i]['user_name']         = $postCommentDetail->user->name;

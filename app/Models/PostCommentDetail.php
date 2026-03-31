@@ -11,6 +11,26 @@ class PostCommentDetail extends Model
     use SoftDeletes;
 
     /**
+     * PostCommentDetail Model
+     *
+     * Tracks interactions (likes/unlikes) on post comments.
+     * Records user engagement with individual comments.
+     *
+     * @package App\Models
+     * @property int $id Primary key
+     * @property int|null $user_id Foreign key to user interacting
+     * @property int|null $post_comment_id Foreign key to comment
+     * @property bool $is_like Whether this is a like (true) or unlike (false)
+     * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+     * @property \Carbon\Carbon $created_at Record creation timestamp
+     * @property \Carbon\Carbon $updated_at Record update timestamp
+     *
+     * Relations:
+     * @property-read \App\Models\User $user The user who liked/unliked
+     * @property-read \App\Models\PostComment $postComment The comment being interacted with
+     */
+
+    /**
      * The table associated with the model.
      *
      * @var string
@@ -20,7 +40,7 @@ class PostCommentDetail extends Model
 
     /**
      * The attributes that are mass assignable.
-     * 
+     *
      * @var array
      */
     protected $fillable = [

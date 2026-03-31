@@ -7,6 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 use App\Traits\Common;
 use App\Models\Photos;
 
+/**
+ * Gallery Model
+ *
+ * Represents photo galleries for organizing collections of images.
+ * Manages photo collections for events, galleries, and media organization.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property string|null $name Gallery name/title
+ * @property string|null $description Gallery description
+ * @property string|null $path Directory path for gallery images
+ * @property int|null $created_by User who created the gallery
+ * @property int|null $updated_by User who last updated the gallery
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \Illuminate\Database\Eloquent\Collection $photos Photos in this gallery
+ */
 class Gallery extends Model
 {
     //
@@ -25,7 +46,7 @@ class Gallery extends Model
       *
       * @var array
     */
-	protected $fillable = [ 
+	protected $fillable = [
         'church_id' , 'name' , 'description' , 'path' , 'created_by' , 'updated_by'
 	];
 
@@ -52,5 +73,5 @@ class Gallery extends Model
     public function getPhotoCount($gallery_id)
     {
         return Photos::where('gallery_id',$gallery_id)->count();
-    } 
+    }
 }

@@ -6,6 +6,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Common;
 
+/**
+ * SermonLink Model
+ *
+ * Represents links to sermon media files (video, audio).
+ * Manages sermon recordings and streaming links.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property int|null $sermons_id Foreign key to sermon
+ * @property int|null $user_id Foreign key to uploader
+ * @property string|null $link Sermon file URL or link
+ * @property string|null $link_type Type of link (youtube, vimeo, audio, document)
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \Illuminate\Database\Eloquent\Collection $sermons Associated sermons
+ * @property-read \App\Models\Church $church The church this sermon link belongs to
+ * @property-read \App\Models\User $user The user who provided the link
+ */
 class SermonLink extends Model
 {
     //
@@ -34,7 +56,7 @@ class SermonLink extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
-    
+
 
     public function sermons()
     {

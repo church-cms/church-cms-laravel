@@ -7,6 +7,32 @@ use Laracasts\Presenter\PresentableTrait;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Common;
 
+/**
+ * FeedbackMessage Model
+ *
+ * Represents individual messages within feedback/support threads.
+ * Stores conversation messages between users and administrators.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property int|null $user_id Foreign key to message author
+ * @property int $feedback_id Foreign key to parent feedback
+ * @property string|null $message Message content
+ * @property array|null $file Attached files as JSON
+ * @property string|null $category Message category/type
+ * @property bool $is_seen Whether message has been read
+ * @property bool $deleted_from_sender Deleted from sender's view
+ * @property bool $deleted_from_receiver Deleted from receiver's view
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \App\Models\Church $church The church this message belongs to
+ * @property-read \App\Models\User $user The user who sent the message
+ * @property-read \App\Models\Feedback $feedback The parent feedback thread
+ */
 class FeedbackMessage extends Model
 {
     //
@@ -32,7 +58,7 @@ class FeedbackMessage extends Model
      * @var array
      */
     protected $fillable = [
-        'church_id' , 'user_id' , 'feedback_id' , 'message' , 'file' , 'category' , 'is_seen' , 'deleted_from_sender' , 'deleted_from_receiver'    
+        'church_id' , 'user_id' , 'feedback_id' , 'message' , 'file' , 'category' , 'is_seen' , 'deleted_from_sender' , 'deleted_from_receiver'
     ];
 
     /**

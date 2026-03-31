@@ -7,6 +7,30 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Webhook;
 use App\Traits\Common;
 
+/**
+ * MailingList Model
+ *
+ * Represents email mailing lists for campaigns and newsletters.
+ * Manages subscriber lists and email distribution groups.
+ *
+ * @package App\Models
+ * @property int $id Primary key
+ * @property int $church_id Foreign key to church
+ * @property string|null $scope Scope of the mailing list (internal, public, etc.)
+ * @property string|null $name Mailing list name
+ * @property string|null $description List description
+ * @property bool $is_published Whether list is published
+ * @property string|null $slug URL-friendly identifier
+ * @property \Carbon\Carbon|null $deleted_at Soft delete timestamp
+ * @property \Carbon\Carbon $created_at Record creation timestamp
+ * @property \Carbon\Carbon $updated_at Record update timestamp
+ *
+ * Relations:
+ * @property-read \Illuminate\Database\Eloquent\Collection $subscribers All subscribers
+ * @property-read \Illuminate\Database\Eloquent\Collection $activesubscribers Active subscribers
+ * @property-read \Illuminate\Database\Eloquent\Collection $queue Emails in queue
+ * @property-read \Illuminate\Database\Eloquent\Collection $webhooks Associated webhooks
+ */
 class MailingList extends Model
 {
     //
@@ -25,7 +49,7 @@ class MailingList extends Model
       *
       * @var array
     */
-    protected $fillable = [ 
+    protected $fillable = [
         'church_id' , 'scope' , 'name' , 'description' , 'is_published' , 'slug'
     ];
 
@@ -52,7 +76,7 @@ class MailingList extends Model
     {
         return $this->belongsToMany('App\Campaign','mailinglist_id');
     }*/
-  
+
     public function queue()
     {
         return $this->hasMany('App\Models\MailQueue','mailing_list_id','id');
@@ -61,5 +85,5 @@ class MailingList extends Model
     public function webhooks()
     {
         return $this->hasMany('App\Models\Webhook','mailing_list_id');
-    }  
+    }
 }
