@@ -15,6 +15,37 @@ define('LARAVEL_START', microtime(true));
 
 /*
 |--------------------------------------------------------------------------
+| Check Installation Status
+|--------------------------------------------------------------------------
+|
+| If the application is not yet installed, redirect to the installer.
+|
+*/
+
+$basePath = dirname(__DIR__);
+$storagePath = $basePath . '/storage';
+
+// Check if installation is complete
+$isInstalled = file_exists($storagePath . '/installed');
+
+// Allow access to installer
+$currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$isInstallerRequest = strpos($currentPath, '/installer') === 0;
+
+// If not installed and not accessing installer, redirect to installer
+if (!$isInstalled && !$isInstallerRequest) {
+    header('Location: /installer/');
+    exit;
+}
+
+// If installed and accessing installer, redirect away
+if ($isInstalled && $isInstallerRequest) {
+    header('Location: /login');
+    exit;
+}
+
+/*
+|--------------------------------------------------------------------------
 | Register The Auto Loader
 |--------------------------------------------------------------------------
 |

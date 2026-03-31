@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder {
         $this->call( KeywordsTableSeeder::class );
         $this->call( SettingsTableSeeder::class );
         $this->call( PaymentgatewaysTableSeeder::class );
-        $this->call( UsersTableSeeder::class );
+        // UsersTableSeeder removed - users created via installer only
         //default seeders//
 
          $this->call( ChurchTableSeeder::class );

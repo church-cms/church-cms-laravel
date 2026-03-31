@@ -1,6 +1,6 @@
 # ChurchCMS
 
-ChurchCMS is an open source church management platform built with Laravel 7, Vue 2, and Laravel Mix. It is designed for ministries that need a single system for member data, communication, sermons, events, prayer workflows, media, and community engagement.
+ChurchCMS is an open source church management platform built with Laravel 8+, Vue 2, and Laravel Mix. It is designed for ministries that need a single system for member data, communication, sermons, events, prayer workflows, media, and community engagement.
 
 Developed and maintained by GegoSoft Technologies (OPC) Private Limited, India.
 Website: https://gegosoft.com
@@ -30,69 +30,104 @@ Church teams often end up stitching together spreadsheets, messaging tools, live
 
 ## Technology stack
 
-- PHP 7.3 or 7.4
-- Laravel 7
+- PHP 8.2+
+- Laravel 8 or higher
 - Vue 2
-- MySQL or MariaDB
+- MySQL 5.7+ or MariaDB
 - Node.js and npm for frontend assets
 - Optional integrations for S3-compatible storage, Firebase Cloud Messaging, Twilio, Pusher, and analytics
 
 ## Getting started
 
-### 1. Clone the repository
+Church CMS offers **two installation methods** to suit your preference:
+
+### 📱 Option 1: Web Installer (Recommended for first-time users)
+
+A visual, browser-based installation wizard that guides you through setup step-by-step.
+
+**Best for:** Non-technical users, local desktop setup, visual feedback
+
+1. Clone the repository:
+   ```bash
+   git clone <your-fork-or-repo-url>
+   cd church-cms-laravel
+   ```
+
+2. Copy and configure `.env`:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials
+   nano .env
+   ```
+
+3. Open the installer in your browser:
+   ```
+   http://localhost:your-port/installer
+   ```
+
+4. Follow the 6-step visual wizard to complete setup
+
+📖 **Full guide:** [INSTALL_GUIDE.md](INSTALL_GUIDE.md)
+
+---
+
+### 💻 Option 2: CLI Installer (Recommended for developers)
+
+A command-line installation method perfect for automation, CI/CD, and SSH servers.
+
+**Best for:** Developers, automation, servers without browser access, scripting
 
 ```bash
+# 1. Clone the repository
 git clone <your-fork-or-repo-url>
 cd church-cms-laravel
+
+# 2. Copy and configure .env
+cp .env.example .env
+nano .env  # Update database credentials
+
+# 3. Run framework setup
+bash install.sh
+
+# 4. Create your church and admin user
+php artisan church:setup
+
+# 5. Start the development server
+php artisan serve
+
+# 6. Access the application
+# http://localhost:8000/admin
 ```
 
-### 2. Install dependencies
+📖 **Full guide:** [CLI_INSTALL_GUIDE.md](CLI_INSTALL_GUIDE.md)
+
+---
+
+### 🔧 Manual Setup (If you prefer complete control)
+
+For experienced Laravel developers who want to set up manually:
 
 ```bash
+# 1. Install dependencies
 composer install
 npm install
-```
 
-### 3. Configure the environment
-
-```bash
+# 2. Configure environment
 cp .env.example .env
 php artisan key:generate
-```
 
-Update `.env` with at least the following:
-
-- Application URL
-- Database credentials
-- Mail configuration
-- Storage configuration if you are not using local disk
-- Any optional third-party service credentials you plan to enable
-
-The committed `.env.example` only contains placeholders. Do not commit real secrets to the repository.
-
-### 4. Prepare the database
-
-```bash
+# 3. Setup database
 php artisan migrate
 php artisan db:seed
 php artisan passport:install
-```
 
-### 5. Build frontend assets
-
-```bash
+# 4. Build frontend assets
 npm run dev
-```
 
-For production builds:
+# 5. Create church and admin user
+php artisan church:setup
 
-```bash
-npm run prod
-```
-
-### 6. Run the application
-
-```bash
+# 6. Run the application
 php artisan serve
 ```
 
