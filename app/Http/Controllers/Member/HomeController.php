@@ -16,6 +16,12 @@ class HomeController extends Controller
 
     public function index()
     {
+        $user = auth()->user();
+
+        if (optional($user->userprofile)->membership_type === 'guest') {
+            return view('member.guest-home', compact('user'));
+        }
+
         return view('home');
     }
 

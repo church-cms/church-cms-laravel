@@ -13,7 +13,6 @@
     @stack('styles')
 </head>
 <body class="bg-gray-100" style="font-family: 'Inter', sans-serif;">
-<div id="app">
 
     {{-- ── Header ─────────────────────────────────────────────────── --}}
     <header class="bg-white shadow-sm sticky top-0 z-50">
@@ -35,13 +34,13 @@
 
                 {{-- Right: Avatar + Dropdown --}}
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" @click.outside="open = false"
+                    <button x-on:click="open = !open"
                         class="flex items-center space-x-2 focus:outline-none group">
                         @if(optional(auth()->user()->userprofile)->avatar)
                             <img src="{{ auth()->user()->userprofile->AvatarPath }}"
                                 class="w-9 h-9 rounded-full object-cover ring-2 ring-indigo-300 group-hover:ring-indigo-500 transition">
                         @else
-                            <div class="w-9 h-9 rounded-full bg-indigo-100 ring-2 ring-indigo-300 group-hover:ring-indigo-500 transition flex items-center justify-center">
+                            <div class="w-9 h-9 rounded-full bg-indigo-100 ring-2 ring-indigo-300 group-hover:ring-indigo-500 transition flex items-center justify-center flex-shrink-0">
                                 <span class="text-indigo-700 font-semibold text-sm">
                                     {{ strtoupper(substr(optional(auth()->user()->userprofile)->firstname ?? auth()->user()->name, 0, 1)) }}
                                 </span>
@@ -54,14 +53,15 @@
                     </button>
 
                     {{-- Dropdown --}}
-                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                    <div x-show="open" x-on:click.outside="open = false"
+                        x-transition:enter="transition ease-out duration-100"
                         x-transition:enter-start="transform opacity-0 scale-95"
                         x-transition:enter-end="transform opacity-100 scale-100"
                         x-transition:leave="transition ease-in duration-75"
                         x-transition:leave-start="transform opacity-100 scale-100"
                         x-transition:leave-end="transform opacity-0 scale-95"
-                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1"
-                        style="display: none;">
+                        class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50"
+                        style="display:none;">
 
                         {{-- User info strip --}}
                         <div class="px-4 py-3 border-b border-gray-100">
@@ -99,23 +99,22 @@
         </div>
     </header>
 
-    {{-- ── Main ────────────────────────────────────────────────────── --}}
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        @if(session('status'))
-            <div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
-                {{ session('status') }}
-            </div>
-        @endif
+    {{-- ── Main (Vue mounts here only) ────────────────────────────── --}}
+    <div id="app">
+        <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            @if(session('status'))
+                <div class="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
+                    {{ session('status') }}
+                </div>
+            @endif
 
-        @yield('content')
-    </main>
+            @yield('content')
+        </main>
+    </div>
 
     <script src="{{ asset('js/app.js') }}"></script>
-
-    {{-- Alpine.js for dropdown (lightweight, no jQuery needed) --}}
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @stack('scripts')
-</div>
 </body>
 </html>

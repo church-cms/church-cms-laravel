@@ -19,12 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes(['verify' => true]);
-
-Route::get('/register/add/list','Auth\RegisterController@list');
-Route::post('/register/stepOne','Auth\RegisterController@stepOne');
-Route::post('/register/stepTwo','Auth\RegisterController@stepTwo');
-Route::post('/register','Auth\RegisterController@store');
+Auth::routes(['verify' => true, 'register' => false]);
 
 //Impersonate as preacher
 Route::get('/preacher/{id}/impersonate', 'Auth\ImpersonateController@impersonate')->middleware('auth', 'churchadmin');

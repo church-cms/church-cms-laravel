@@ -85,10 +85,6 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div>
-                                    <p class="text-gray-200 text-center tracking-wider">To Create an Account click <a
-                                            href="{{ url('/register') }}" class="underline text-blue-500">Signup</a></p>
-                                </div>
                             </div>
                         </form>
                     @endif

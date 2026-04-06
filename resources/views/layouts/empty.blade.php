@@ -17,8 +17,14 @@
 <body>
     <div id="app">
         <main>
-            <div class="login-page flex items-center">
-                @yield('content')
+            <div class="login-page flex flex-col items-center justify-between">
+                <div class="flex-1 flex items-center w-full">
+                    @yield('content')
+                </div>
+                <p class="text-xs text-white text-opacity-60 py-4">
+                    Powered by <a href="https://churchcms.app" target="_blank" rel="noopener noreferrer"
+                        class="underline text-white text-opacity-80 hover:text-opacity-100">ChurchCMS</a>
+                </p>
             </div>
         </main>
     </div>
@@ -27,30 +33,12 @@
     <script src="{{ asset('js/custom.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
 
-    
 
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {},
-            Tawk_LoadStart = new Date();
-        (function() {
-            var s1 = document.createElement("script"),
-                s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/6157065ad326717cb68441a8/1fgtv1l4v';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin', '*');
-            s0.parentNode.insertBefore(s1, s0);
-        })();
-    </script>
-    <!--End of Tawk.to Script-->
+
     @stack('scripts')
     <style>
         .login-page {
-            background: url('uploads/static/banner1.png');
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 45%, #0e7490 100%);
             min-height: 100vh;
             padding: 40px 0;
             position: relative;
