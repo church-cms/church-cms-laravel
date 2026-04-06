@@ -47,7 +47,7 @@ trait SendMessageProcess
      *
      * @return void
      */
-    public function sendMessage(object $data, int $church_id, string $admin_email, User $user, object $admin): void {
+    public function sendMessage(object $data, int $church_id, string $admin_email, User $user, object $admin): array|null {
         try {
             $sendmail = new SendMail;
 

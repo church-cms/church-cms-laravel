@@ -15,20 +15,7 @@ class ChurchTableSeeder extends Seeder
     {
 
         $churchnames = [
-            "Jesus blessing",
-            "ucf",
-            "christ church (anglican church)",
-            "St Thomas Church",
-            "Monte Hill",
-            "st. francis xavier's church",
-            "Church And Convent Of St Francis Of Assisi",
-            "Christ Church",
-            "Edathua Church",
-            "church of st. lawrence",
-            "Mount Mary Church",
-            "St. Mary’s Church",
-            "Infant Jesus Church",
-            "all saints cathedral"
+            "St. Mary's Cathedral Shrine"
         ];
 
         //changed for demo
@@ -77,8 +64,8 @@ class ChurchTableSeeder extends Seeder
         foreach($churchnames as $churchname)
         {
             $church = factory(App\Models\Church::class)->create(['name' => strtolower($churchname) , 'slug' => Str::slug($churchname,'-')]);
-             //,'quotes'=>$quotes[mt_rand(0, count($quotes) - 1)],
 
+            // 1 Church Admin
             factory(App\Models\User::class, 1)->create([
                 'email'        => 'admin'.$church->id.'@churchcms.app',
                 'church_id'    => $church->id ,
@@ -93,7 +80,7 @@ class ChurchTableSeeder extends Seeder
                 $user->attachPermissions($AdminPermissions);
             });
 
-            //subadmin
+            // 2 Sub-admins
             factory(App\Models\User::class, 2)->create([
                 'church_id'     =>  $church->id,
                 'usergroup_id'  =>  4
@@ -105,49 +92,37 @@ class ChurchTableSeeder extends Seeder
                 ]);
             });
 
-            //member
-            $members = factory(App\Models\User::class, 10)->create([
+            // 6 Staff (ChurchSubadmin)
+            factory(App\Models\User::class, 6)->create([
+                'church_id'     =>  $church->id,
+                'usergroup_id'  =>  4
+            ])->each(function($staff){
+                factory(App\Models\Userprofile::class, 1)->create([
+                    'user_id'           =>  $staff->id,
+                    'church_id'         =>  $staff->church_id,
+                    'membership_type'   =>  'member',
+                ]);
+            });
+
+            // 100 Members
+            $members = factory(App\Models\User::class, 100)->create([
                 'church_id'     =>  $church->id ,
                 'usergroup_id'  =>  5
             ]);
 
-            foreach ($members as $member) 
+            foreach ($members as $member)
             {
                 factory(App\Models\Userprofile::class)->create([
                     'user_id'   =>  $member->id,
                     'church_id' =>  $member->church_id
                 ]);
-
-                $wife = factory(App\Models\User::class)->create([
-                    'church_id'     =>  $member->church_id,
-                    'usergroup_id'  =>  5,
-                    'ref_id'        =>  $member->id,
-                ]);
-
-                factory(App\Models\Userprofile::class)->create([
-                    'user_id'   =>  $wife->id,
-                    'church_id' =>  $wife->church_id,
-                    'relation'  =>  'patner',
-                ]);
-
-                $child = factory(App\Models\User::class)->create([
-                    'church_id'     =>  $member->church_id,
-                    'usergroup_id'  =>  5,
-                    'ref_id'        =>  $member->id,
-                ]);
-
-                factory(App\Models\Userprofile::class)->create([
-                    'user_id'   =>  $child->id,
-                    'church_id' =>  $child->church_id,
-                    'relation'  =>  'child',
-                ]);
             }
 
-            //preacher
-            factory(App\Models\User::class, 2)->create([
+            // 3 Preachers
+            factory(App\Models\User::class, 3)->create([
                 'church_id'     =>  $church->id ,
                 'usergroup_id'  =>  6
-            ])->each(function($preacher)  use($PreacherPermissions){
+            ])->each(function($preacher) use($PreacherPermissions){
                 factory(App\Models\Userprofile::class, 1)->create([
                     'user_id'   =>  $preacher->id ,
                     'church_id' =>  $preacher->church_id

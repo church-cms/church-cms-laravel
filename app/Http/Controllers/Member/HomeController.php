@@ -2,36 +2,38 @@
 
 namespace App\Http\Controllers\Member;
 
+use App\Http\Controllers\Admin\MemberController as AdminMemberController;
+use App\Http\Resources\UserDetail as UserDetailResource;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
-/**
- * HomeController
- *
- * Displays the member dashboard and home page.
- * Only accessible to authenticated members with 'auth' middleware.
- * Provides home interface and navigation for member area.
- *
- * @package App\Http\Controllers\Member
- */
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         return view('home');
     }
+
+    public function changePassword()
+    {
+        return view('member.change-password');
+    }
+
+    public function showDetails($name)
+    {
+        $users = User::with('userprofile')->where('name', $name)->get();
+        return UserDetailResource::collection($users);
+    }
+
+    public function familytree($name)
+    {
+        $tree = new AdminMemberController();
+        return response()->json($tree->familytree($name));
+    }
 }
+

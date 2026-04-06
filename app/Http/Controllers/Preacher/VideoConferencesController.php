@@ -29,8 +29,6 @@ use DB;
  * @package App\Http\Controllers\Preacher
  */
 class VideoConferencesController extends Controller
-
-class VideoConferencesController extends Controller
 {
     //
     /**

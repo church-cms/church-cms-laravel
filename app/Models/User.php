@@ -8,6 +8,7 @@ use Laracasts\Presenter\PresentableTrait;
 use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Nckg\Impersonate\Traits\CanImpersonate;
 use Carbon\Carbon;
 
 /**
@@ -45,7 +46,7 @@ use Carbon\Carbon;
  * @property-read \Illuminate\Database\Eloquent\Collection $members Users referred by this user (children in hierarchy)
  * @property-read \App\Models\User $refer The user who referred this user (parent in hierarchy)
  * @property-read \Illuminate\Database\Eloquent\Collection $children Family members with relation='child'
- * @property-read \Illuminate\Database\Eloquent\Collection $patner Family member with relation='patner'
+ * @property-read \Illuminate\Database\Eloquent\Collection $partner Family member with relation='partner'
  * @property-read \Illuminate\Database\Eloquent\Collection $father Family member with relation='father'
  * @property-read \Illuminate\Database\Eloquent\Collection $mother Family member with relation='mother'
  * @property-read \App\Models\Usergroup $usergroup User's role/permission group
@@ -69,6 +70,7 @@ class User extends Authenticatable
     use HasApiTokens;
     use SoftDeletes;
     use Notifiable;
+    use CanImpersonate;
 
     protected $presenter = "App\Presenters\UserprofilePresenter";
 
@@ -136,14 +138,13 @@ class User extends Authenticatable
               $query->where('relation', 'child');
           });
     }
-    public function patner()
+    public function partner()
     {
-
-         $patner=$this->members()->whereHas('userprofile', function($query) {
-              $query->where('relation', 'patner');
+         $partner = $this->members()->whereHas('userprofile', function($query) {
+              $query->where('relation', 'partner');
           });
 
-        return $patner;
+        return $partner;
     }
     public function father()
     {

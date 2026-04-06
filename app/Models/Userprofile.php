@@ -36,7 +36,7 @@ use App\Traits\Common;
  * @property string|null $membership_type Type of membership (member, guest, etc.)
  * @property \Carbon\Carbon|null $membership_start_date When user became member
  * @property array|null $membership_end_date When membership ends (null if active)
- * @property string|null $family Family relationship to reference user (child, patner, father, mother)
+ * @property string|null $family Family relationship to reference user (child, partner, father, mother)
  * @property string|null $marriage_status Marriage status (single, married, widowed, divorced)
  * @property \Carbon\Carbon|null $marriage_start_date Marriage/partnership date
  * @property string|null $notes Internal notes about member
@@ -191,6 +191,9 @@ class Userprofile extends Model
 
     public function getAvatarPathAttribute()
     {
+        if (! $this->avatar) {
+            return null;
+        }
         return $this->getFilePath($this->avatar);
     }
 }

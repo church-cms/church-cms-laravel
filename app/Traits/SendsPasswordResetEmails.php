@@ -59,7 +59,6 @@ trait SendsPasswordResetEmails
      * @return void
      */
     protected function validateEmail(Request $request): void
-    protected function validateEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
     }

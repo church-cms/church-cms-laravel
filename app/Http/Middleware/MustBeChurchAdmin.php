@@ -15,11 +15,11 @@ class MustBeChurchAdmin
      */
     public function handle($request, Closure $next)
     {
-        if(\Auth::user()->usergroup_id == 3)
+        if(\Auth::user()->usergroup_id == 3 || \Auth::user()->usergroup_id == 4)
         {
             return $next($request);
         }
-      
+
         if(\Auth::user()->usergroup_id == 1)
         {
             return redirect('/portal');
@@ -29,7 +29,7 @@ class MustBeChurchAdmin
         {
             return redirect('/preacher/dashboard');
         }
- 
+
         abort(404);
     }
 }

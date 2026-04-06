@@ -60,3 +60,124 @@
  * @import "utilities/background-patterns";
  * @import "utilities/skew-transforms";
  */
+
+ // Sophisticated Color Palette Variables
+$primary: #8B6F47;
+$primary-dark: #6B5437;
+$accent: #C4A574;
+$text-dark: #2C2416;
+$text-light: #5C5449;
+$bg-cream: #FAF8F5;
+$bg-warm: #F5F1EB;
+
+// Typography
+$font-body: 'Outfit', sans-serif;
+$font-display: 'Cormorant Garamond', serif;
+
+// Base Styles
+body {
+    font-family: $font-body;
+    color: $text-dark;
+    background: $bg-cream;
+}
+
+// Typography Classes
+.font-display {
+    font-family: $font-display;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+// Backgrounds
+.hero-gradient {
+    background: linear-gradient(135deg,
+        $bg-cream 0%,
+        $bg-warm 50%,
+        #EDE8DF 100%
+    );
+}
+
+// Decorative Elements
+.ornament {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: $primary;
+    }
+}
+
+// Animations
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+// Animation Delays
+.delay-100 { animation-delay: 0.1s; opacity: 0; }
+.delay-200 { animation-delay: 0.2s; opacity: 0; }
+.delay-300 { animation-delay: 0.3s; opacity: 0; }
+.delay-400 { animation-delay: 0.4s; opacity: 0; }
+
+// Card Effects
+.card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba($primary, 0.15);
+    }
+}
+
+// Buttons
+.btn-primary {
+    background: $primary;
+    color: white;
+    padding: 1rem 2.5rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    border: 2px solid $primary;
+
+    &:hover {
+        background: $primary-dark;
+        border-color: $primary-dark;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba($primary, 0.3);
+    }
+}
+
+// Texture Overlay
+.texture-overlay {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B6F47' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+    }
+}

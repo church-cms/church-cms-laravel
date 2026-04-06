@@ -38,7 +38,8 @@ use Illuminate\Support\Facades\Route;
         //show
         Route::get('/contact/show/{id}', 'ContactController@show');
 
-    //Campaign
+    //Campaign (admin only - email marketing)
+    Route::group(['middleware' => ['adminonly']], function() {
         //index
         Route::get('/campaigns', 'CampaignController@index');
         Route::get('/campaigns/list', 'CampaignController@list');
@@ -277,8 +278,10 @@ use Illuminate\Support\Facades\Route;
 
         //delete
         Route::delete('/webhook/delete/{id}', 'EmailBlaster\WebhooksController@destroy');
+    });
 
     //church details
+    Route::group(['middleware' => ['adminonly']], function() {
         //index
         Route::get('/churchdetails', 'ChurchDetailsController@index');
 
@@ -289,6 +292,7 @@ use Illuminate\Support\Facades\Route;
         //edit
         Route::get('/churchdetails/edit/{church_id}','ChurchDetailsController@edit');
         Route::post('/churchdetails/edit/{church_id}','ChurchDetailsController@update');
+    });
 
     //video conference
         //index
@@ -338,10 +342,11 @@ use Illuminate\Support\Facades\Route;
 
     Route::get('/activity','ActivityLogController@index');
 
-    //faq category
-    Route::post('/faq/category/create','FaqCategoryController@store');
+    //faq (admin only)
+    Route::group(['middleware' => ['adminonly']], function() {
+        Route::post('/faq/category/create','FaqCategoryController@store');
 
-    //faq
+        //faq
         //index
         Route::get('/faq/list','FaqController@list');
         Route::get('/faq','FaqController@index');
@@ -361,8 +366,10 @@ use Illuminate\Support\Facades\Route;
 
         //delete
         Route::delete('/faq/delete/{id}','FaqController@destroy');
+    });
 
     //members
+    Route::group(['middleware' => ['permission:read-members']], function() {
         //index
         Route::get('/members','UserController@index');
         Route::get('/members/find','UserController@find');
@@ -409,8 +416,10 @@ use Illuminate\Support\Facades\Route;
         Route::get('/message/show/{id}', 'SendMessageController@show');
         Route::post('/member/sendMessage/{name}','SendMessageController@store');
         Route::post('/member/sendMessageToAll', 'SendMessageController@memberstore');
+    });
 
     //guests
+    Route::group(['middleware' => ['permission:read-members']], function() {
         //index
         Route::get('/guests','GuestsController@index');
         Route::get('/guests/find','GuestsController@find');
@@ -455,8 +464,10 @@ use Illuminate\Support\Facades\Route;
 
         //export
         Route::get('/exportGuests', 'ExportMemberController@exportGuests');
+    });
 
     //preacher
+    Route::group(['middleware' => ['permission:read-preachers']], function() {
         //index
         Route::get('/preacher','PreacherController@member');
         Route::get('/preachers','PreacherController@index');
@@ -474,8 +485,10 @@ use Illuminate\Support\Facades\Route;
         Route::get('/preacher/edit/list/{name}','PreacherController@editList');
         Route::get('/preacher/edit/{name}','PreacherController@edit');
         Route::post('/preacher/edit/{name}','PreacherController@update');
+    });
 
     //subadmin
+    Route::group(['middleware' => ['adminonly']], function() {
         //index
         Route::get('/subadmins/find','SubAdminController@find');
         Route::get('/subadmins','SubAdminController@index');
@@ -495,9 +508,14 @@ use Illuminate\Support\Facades\Route;
         Route::post('/subadmin/edit/validationUser/{name}', 'SubAdminController@editValidationUser' );
         Route::post('/subadmin/edit/{name}','SubAdminController@update');
 
-    //recurring events
+        //permissions
+        Route::get('/subadmin/permissions/{name}','SubAdminController@getPermissions');
+        Route::post('/subadmin/permissions/{name}','SubAdminController@updatePermissions');
+    });
 
-    Route::get('/events', 'EventsController@index');
+    //recurring events
+    Route::group(['middleware' => ['permission:read-events']], function() {
+        Route::get('/events', 'EventsController@index');
     Route::get('/events/show', 'EventsController@events');
     Route::post('/events/create', 'EventsController@store');
     Route::post('/events/update/{id}', 'EventsController@update');
@@ -508,12 +526,12 @@ use Illuminate\Support\Facades\Route;
     Route::get('/events/showdetails/{id}', 'EventsController@showdetails');
     Route::get('/events/details/{id}','EventsController@details');
     Route::delete('/events/delete/{id}','EventsController@destroy');
-    Route::get('/event/showAttendees/{id}/{status}','EventsController@showAttendees');
+        Route::get('/event/showAttendees/{id}/{status}','EventsController@showAttendees');
+    });
 
     //Settings
-
-
-    Route::get('/settings/generalsettings','Setting\GeneralController@create');
+    Route::group(['middleware' => ['adminonly']], function() {
+        Route::get('/settings/generalsettings','Setting\GeneralController@create');
     Route::post('/settings/generalsettings','Setting\GeneralController@store');
     Route::get('/settings/maintenancesettings','Setting\MaintenanceController@create');
     Route::post('/settings/maintenancesettings','Setting\MaintenanceController@store');
@@ -521,7 +539,8 @@ use Illuminate\Support\Facades\Route;
     Route::get('/settings/seodetail','Setting\SeoDetailController@create');
     Route::get('/settings/seo/list','Setting\SeoDetailController@list');
     Route::post('/settings/basicseo','Setting\SeoDetailController@store');
-    Route::post('/settings/advancedseo','Setting\SeoDetailController@update');
+        Route::post('/settings/advancedseo','Setting\SeoDetailController@update');
+    });
 
     //password and avatar
 
@@ -537,9 +556,9 @@ use Illuminate\Support\Facades\Route;
     Route::get('/profile','UserProfileController@create');
     Route::post('/profile','UserProfileController@update');
 
-    //Export
-
-    Route::get('/export', 'ExportMemberController@index');
+    //Export/Import
+    Route::group(['middleware' => ['permission:read-members']], function() {
+        Route::get('/export', 'ExportMemberController@index');
     Route::get('/exportUsers', 'ExportMemberController@exportUsers');
 
 
@@ -548,9 +567,11 @@ use Illuminate\Support\Facades\Route;
 
     Route::get('/import', 'ImportMemberController@index');
     Route::post('/importUsers', 'ImportMemberController@importUsers');
-    Route::get('/downloadformat', 'ImportMemberController@downloadFormat');
+        Route::get('/downloadformat', 'ImportMemberController@downloadFormat');
+    });
 
     //Gallery
+    Route::group(['middleware' => ['permission:read-gallery']], function() {
         //index
         Route::get('/gallery', 'GalleryController@index');
 
@@ -575,9 +596,11 @@ use Illuminate\Support\Facades\Route;
     Route::get('gallery/view/photos/{gallery_id}', 'PhotosController@show');
     Route::get('gallery/display/photos/{gallery_id}', 'PhotosController@showdetails');
     Route::get('gallery/getphoto/{gallery_id}', 'PhotosController@getPhoto');
-    Route::delete('/gallery/photo/delete/{id}', 'PhotosController@destroy');
+        Route::delete('/gallery/photo/delete/{id}', 'PhotosController@destroy');
+    });
 
     //media file
+    Route::group(['middleware' => ['permission:read-files']], function() {
         //index
         Route::get('/mediafile/list/{type}','MediaFilesController@list');
         Route::get('/mediafiles','MediaFilesController@index');
@@ -599,10 +622,11 @@ use Illuminate\Support\Facades\Route;
 
         //delete
         Route::delete('/mediafile/delete/{id}','MediaFilesController@destroy');
-
+    });
 
     //sermon
-    Route::get('/sermons', 'SermonsController@index');
+    Route::group(['middleware' => ['permission:read-sermons']], function() {
+        Route::get('/sermons', 'SermonsController@index');
     Route::get('/sermon/show/{id}','SermonsController@show');
     Route::get('/download/sermon/{id}','SermonsController@download');
 
@@ -611,10 +635,11 @@ use Illuminate\Support\Facades\Route;
     Route::post('/upload/photos/{event_id}','EventGalleryController@store');
     Route::get('/display/photos/{event_id}', 'EventsController@showimage');
     Route::get('/getphoto/{event_id}', 'EventGalleryController@getPhoto');
-    Route::delete('/event/photo/delete/{id}', 'EventGalleryController@destroy');
-
+        Route::delete('/event/photo/delete/{id}', 'EventGalleryController@destroy');
+    });
 
     //Bulletins
+    Route::group(['middleware' => ['permission:read-bulletins']], function() {
         //index
         Route::get('/bulletin/list/{type}','BulletinsController@list');
         Route::get('/bulletins','BulletinsController@index');
@@ -629,9 +654,10 @@ use Illuminate\Support\Facades\Route;
 
         //download
         Route::get('/bulletin/download/{id}','BulletinsController@downloadattachments');
+    });
 
     //Groups
-
+    Route::group(['middleware' => ['permission:read-groups']], function() {
         //index
         Route::get('/groups','GroupsController@index');
 
@@ -668,13 +694,14 @@ use Illuminate\Support\Facades\Route;
 
         //delete
         Route::delete('/group/removeMember/{id}','GroupLinksController@destroy');
-
+    });
 
     //reminder
 
     // Route::post('/reminder/events', 'ReminderController@events');
 
     //Quotes
+    Route::group(['middleware' => ['permission:read-quotes']], function() {
         //index
         Route::get('/quote/list/{type}','QuotesController@list');
         Route::get('/quotes','QuotesController@index');
@@ -699,9 +726,10 @@ use Illuminate\Support\Facades\Route;
 
         //delete
         Route::delete('/quote/delete/{id}', 'QuotesController@destroy');
-
+    });
 
     //Funds
+    Route::group(['middleware' => ['permission:read-funds']], function() {
         //index
         Route::get('/fund/list','FundController@list');
         Route::get('/funds','FundController@index');
@@ -721,10 +749,11 @@ use Illuminate\Support\Facades\Route;
 
         //delete
         Route::delete('/fund/delete/{id}','FundController@destroy');
-
+    });
 
     //reports
-    Route::get('/reports','ReportsController@report');
+    Route::group(['middleware' => ['permission:read-reports']], function() {
+        Route::get('/reports','ReportsController@report');
     Route::get('/report/messageHistory/{subject}','ReportsController@messageHistory');
     //Route::get('/report/index','ReportsController@index');
     //Route::get('/report/show/{id}','ReportsController@show');
@@ -733,12 +762,14 @@ use Illuminate\Support\Facades\Route;
     Route::get('/report/anniversary','ReportsController@exportAnniversary');
     Route::get('/report/activeMembers','ReportsController@exportActiveMembers');
     Route::get('/report/guestMembers','ReportsController@exportGuestMembers');
-    Route::get('/report/suspendedMembers','ReportsController@exportSuspendedMembers');
+        Route::get('/report/suspendedMembers','ReportsController@exportSuspendedMembers');
+    });
 
     //payment
-
-    Route::get('/payment/index/{id}','PaymentController@index');
-    Route::post('/payment/response','PaymentController@response');
+    Route::group(['middleware' => ['permission:read-payments']], function() {
+        Route::get('/payment/index/{id}','PaymentController@index');
+        Route::post('/payment/response','PaymentController@response');
+    });
 
     //prayer_requests
     Route::get('/prayerrequest/list/{status}','PrayerRequestsController@list');
@@ -777,7 +808,8 @@ use Illuminate\Support\Facades\Route;
         Route::post('/help/update/{id}', 'HelpsController@update');
 
     //attendance
-    Route::get('/meetings','AttendancesController@Create');
+    Route::group(['middleware' => ['permission:read-members']], function() {
+        Route::get('/meetings','AttendancesController@Create');
     Route::post('/meetings/importSummary','AttendancesController@store');
     Route::get('/meetings/downloadSummary','AttendancesController@index');
 
@@ -785,20 +817,23 @@ use Illuminate\Support\Facades\Route;
     Route::get('/event/{event_id}/downloadSummary','AttendancesController@summary');
     Route::get('/event/{event_id}/attendance','AttendancesController@createAttendance');
     Route::post('/event/{event_id}/attendance','AttendancesController@saveAttendance');
+    });
 
-            //bot church admin
-    Route::get('/botman/index', 'BotmanMasterController@index');
-    Route::get('/botman/create', 'BotmanMasterController@create');
-    Route::post('/botman/create', 'BotmanMasterController@store');
-    Route::get('/botman/{id}/edit', 'BotmanMasterController@edit');
-    Route::post('/botman/{id}/update', 'BotmanMasterController@update');
-    Route::delete('/botman/remove/{id}', 'BotmanMasterController@remove');
-    Route::get('/botman/messages', 'BotmanMasterController@getMessages');
-    Route::get('/botman/details/{id}/{type}', 'BotmanMasterController@getDetails');
+    //botman (admin only)
+    Route::group(['middleware' => ['adminonly']], function() {
+        Route::get('/botman/index', 'BotmanMasterController@index');
+        Route::get('/botman/create', 'BotmanMasterController@create');
+        Route::post('/botman/create', 'BotmanMasterController@store');
+        Route::get('/botman/{id}/edit', 'BotmanMasterController@edit');
+        Route::post('/botman/{id}/update', 'BotmanMasterController@update');
+        Route::delete('/botman/remove/{id}', 'BotmanMasterController@remove');
+        Route::get('/botman/messages', 'BotmanMasterController@getMessages');
+        Route::get('/botman/details/{id}/{type}', 'BotmanMasterController@getDetails');
+    });
 
-
-    //page category
-    Route::get( '/pageCategory/list', 'PageCategoryController@list' );
+    //page (admin only)
+    Route::group(['middleware' => ['adminonly']], function() {
+        Route::get( '/pageCategory/list', 'PageCategoryController@list' );
     Route::post( '/pageCategory/add', 'PageCategoryController@store' );
 
     //page
@@ -858,9 +893,10 @@ use Illuminate\Support\Facades\Route;
     Route::delete( '/post/reply/delete/comment/{post_comment_id}', 'PostReplyCommentsController@destroy' );
 
     Route::post( '/post/comment/like/{comment_id}', 'PostCommentDetailsController@like' );
-    Route::post( '/post/comment/dislike/{comment_id}', 'PostCommentDetailsController@dislike' );
+        Route::post( '/post/comment/dislike/{comment_id}', 'PostCommentDetailsController@dislike' );
 
-    Route::get( '/blogs', 'BlogsController@index' );
+        Route::get( '/blogs', 'BlogsController@index' );
+    });
 
     //feedbacks
         //index
@@ -876,6 +912,7 @@ use Illuminate\Support\Facades\Route;
 
 
     //Payaccounts
+    Route::group(['middleware' => ['permission:read-payments']], function() {
        //index
         Route::get('/payaccount/list','Payment\PayaccountContorller@getlist');
         Route::get('/payaccounts','Payment\PayaccountContorller@index');
@@ -896,5 +933,6 @@ use Illuminate\Support\Facades\Route;
 
         //delete
         Route::delete('/payaccount/delete/{id}','Payment\PayaccountContorller@destroy');
+    });
 
 

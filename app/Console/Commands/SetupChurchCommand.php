@@ -215,7 +215,11 @@ class SetupChurchCommand extends Command
                     'church_id' => $church->id,
                     'firstname' => explode('@', $admin_email)[0],
                     'lastname' => 'Administrator',
-                    'profession' => 'Church Admin',
+                    'profession' => 'admin',
+                    'status' => 'active',
+                    'membership_type' => 'member',
+                    'membership_start_date' => now()->toDateString(),
+                    'membership_end_date' => null,
                 ]);
 
                 $logMsg .= "✓ User profile created\n";

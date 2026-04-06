@@ -38,7 +38,6 @@ trait SubscriberProcess
         try {
             $subscriber = Subscribers::where('email', $request->email)->first();
             if (count($subscriber) == 0) {
-            {
                 $subscriber = Subscribers::create([
                     'church_id' =>  $church_id,
                     'firstname' =>  $request->firstname,

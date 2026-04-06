@@ -40,3 +40,4 @@ trait SettingProcess
             return null;
         }
     }
+}

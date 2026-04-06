@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -59,6 +62,9 @@ Route::get('/payment/subscription', 'Admin\PaymentController@Subscription');
 Route::group(['prefix' => 'member', 'middleware' => ['auth','churchmember'], 'namespace' =>'Member' ], function() {
 
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/change-password', 'HomeController@changePassword')->name('member.change-password');
+    Route::get('/familytree/{name}', 'HomeController@familytree');
+    Route::get('/show/details/{name}', 'HomeController@showDetails');
 });
 
 
@@ -101,7 +107,7 @@ Route::post('/contact','ContactController@store');
 
 //permissions
 
-Route::group(['prefix' => 'admin' , 'middleware' => ['permission:read-members|read-events|read-bulletins|read-sermons|read-groups|read-gallery|read-files'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin' , 'middleware' => ['auth'] , 'namespace' =>'Admin' ], function() {
 
     Route::get('/dashboard','DashboardController@index')->name( 'dashboard' );
 

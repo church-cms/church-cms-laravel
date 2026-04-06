@@ -1,8 +1,19 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Models\Widget;
 
 @include('angularapi.php');
+
+// Public widget endpoint — no auth required
+Route::get('/widget/{uid}', function ($uid) {
+    $widget = Widget::where('slug', $uid)->first();
+    if (! $widget) {
+        return response()->json(['content' => ''], 404);
+    }
+    return response()->json(['content' => $widget->content]);
+});
 @include('guestapi.php');
 
 /*
@@ -55,15 +66,15 @@ Route::post('/reset/change/password', 'Api\UserController@resetChangePassword');
 
 //Route::post('/password/reset', 'Api\UserController@reset');
 
-Route::group(['namespace' =>'Api' , 'middleware'=>['auth:sanctum']], 
+Route::group(['namespace' =>'Api' , 'middleware'=>['auth:sanctum']],
 	function() {
 		Route::post('/logout', 'LoginController@logout');
 	});
 
 Route::group([
-	'prefix' => 'v1', 
+	'prefix' => 'v1',
 	'namespace' =>'Api' ,
-	'middleware'=>['auth:sanctum']], 
+	'middleware'=>['auth:sanctum']],
 	function() {
 
 	//Test Push Notification
@@ -170,7 +181,7 @@ Route::group([
 
 	//groups
 
-	Route::get('/groups/list' , 'GroupsController@index'); 
+	Route::get('/groups/list' , 'GroupsController@index');
 
     //video conference
 

@@ -16,6 +16,7 @@ use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
 use App\Models\Userprofile;
 use App\Traits\Common;
+use App\Models\Permission;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -318,5 +319,22 @@ class SubAdminController extends Controller
             Log::info($e->getMessage());
 
         }
+    }
+
+    public function getPermissions($name)
+    {
+        $user = User::where('name', $name)->firstOrFail();
+        return response()->json([
+            'all'      => Permission::orderBy('name')->get(['name']),
+            'assigned' => $user->permissions()->get(['name']),
+        ]);
+    }
+
+    public function updatePermissions(Request $request, $name)
+    {
+        $user = User::where('name', $name)->firstOrFail();
+        $permissions = $request->input('permissions', []);
+        $user->syncPermissions($permissions);
+        return response()->json(['message' => 'Permissions updated successfully']);
     }
 }

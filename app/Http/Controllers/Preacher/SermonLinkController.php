@@ -28,9 +28,6 @@ use Response;
  * @package App\Http\Controllers\Preacher
  */
 class SermonLinkController extends Controller
-use Log;
-
-class SermonLinkController extends Controller
 {
     //
     use LogActivity;

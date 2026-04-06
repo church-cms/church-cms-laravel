@@ -16,7 +16,13 @@ use Log;
 /**
  * PayaccountContorller
  *
- * Manages payment accounts and payment gateway configurations.\n * Handles CRUD operations for payment account management.\n * Provides payment gateway selection and payment method setup.\n *\n * @package App\Http\Controllers\Admin\Payment\n */\nclass PayaccountContorller extends Controller
+ * Manages payment accounts and payment gateway configurations.
+ * Handles CRUD operations for payment account management.
+ * Provides payment gateway selection and payment method setup.
+ *
+ * @package App\Http\Controllers\Admin\Payment
+ */
+class PayaccountContorller extends Controller
 {
     /**
      * Display a listing of the resource.

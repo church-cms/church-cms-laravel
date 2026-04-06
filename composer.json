@@ -38,9 +38,10 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",
-        "filp/whoops": "^2.14",
         "fakerphp/faker": "^1.21",
+        "filp/whoops": "^2.14",
         "laravel/dusk": "^7.0",
+        "laravel/legacy-factories": "^1.4",
         "mockery/mockery": "^1.5",
         "nunomaduro/collision": "^6.0",
         "phpunit/phpunit": "^10.5"
@@ -48,6 +49,7 @@
     "autoload": {
         "classmap": [
             "database/seeds",
+            "database/seeders",
             "database/factories"
         ],
         "psr-4": {

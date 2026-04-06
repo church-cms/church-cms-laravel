@@ -40,7 +40,7 @@ class UserDetail extends JsonResource
 
             'church_name'           => $this->church->name,
 
-            'user_id'               => $this->id, 
+            'user_id'               => $this->id,
 
             'fullname'              => $this->FullName,
 
@@ -64,14 +64,14 @@ class UserDetail extends JsonResource
 
 
             'profession_display'    => ucwords(str_replace('_', ' ', optional($this->userprofile)->profession)),
-            
+
             'sub_occupation'        => $this->userprofile->sub_occupation,
 
             'address'               => $this->userprofile->address,
 
             'city'                  => $this->userprofile->city->name,
 
-            'state'                 => $this->userprofile->state->name, 
+            'state'                 => $this->userprofile->state->name,
 
             'country'               => $this->userprofile->country->name,
 
@@ -89,22 +89,22 @@ class UserDetail extends JsonResource
 
             'marriage_status'       => optional($this->userprofile)->marriage_status=="" ? null:optional($this->userprofile)->marriage_status,
 
-            'marriage_date'         => optional($this->userprofile)->marriage_start_date=="" ? null:date('d-m-Y',strtotime(optional($this->userprofile)->marriage_start_date)), 
+            'marriage_date'         => optional($this->userprofile)->marriage_start_date=="" ? null:date('d-m-Y',strtotime(optional($this->userprofile)->marriage_start_date)),
 
-            'relation'              => optional($this->userprofile)->relation=="patner" ? 'Partner':optional($this->userprofile)->relation,
+            'relation'              => optional($this->userprofile)->relation=="partner" ? 'Partner':optional($this->userprofile)->relation,
 
             'notes'                 => optional($this->userprofile)->notes=="" ? null:optional($this->userprofile)->notes,
 
             'avatar'                => $avatar,
 
-            'created_at'            => optional($this->userprofile)->created_at=="" ? null:date('d-m-Y H:i:s',strtotime(optional($this->userprofile)->created_at)), 
+            'created_at'            => optional($this->userprofile)->created_at=="" ? null:date('d-m-Y H:i:s',strtotime(optional($this->userprofile)->created_at)),
 
             'updated_at'            => optional($this->userprofile)->updated_at=="" ? null:date('d-m-Y H:i:s',strtotime(optional($this->userprofile)->updated_at)),
 
             'age'                   => date('Y')-date('Y',strtotime(optional($this->userprofile)->date_of_birth)),
 
             'ref_id'                => $this->ref_id,
-            
+
             'email_verified'        => $email_verified,
 
             'referby'               => $this->refer,

@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
         'siteadmin' => \App\Http\Middleware\MustBeSiteAdmin::class,
         'sitesubadmin' => \App\Http\Middleware\MustBeSiteSubAdmin::class,
         'churchadmin' => \App\Http\Middleware\MustBeChurchAdmin::class,
+        'adminonly' => \App\Http\Middleware\AdminOnly::class,
         'churchsubadmin' => \App\Http\Middleware\MustBeChurchSubAdmin::class,
         'preacher' => \App\Http\Middleware\MustBePreacher::class,
         'role' => \Laratrust\Middleware\LaratrustRole::class,

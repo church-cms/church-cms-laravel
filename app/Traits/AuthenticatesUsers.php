@@ -73,109 +73,76 @@ trait AuthenticatesUsers
      * @param  \Illuminate\Http\Request  $request
      * @return void
 */
-    protected function validateLogin(Request $request)
+    protected function validateLogin(Request $request): void
     {
-        Validator::extend('checkchurch', function ($attribute, $value, $parameters, $validator) {
-            $users = User::where('email', request('email'))->with('userprofile')->first();
-            $church = Church::IsActive($users->church_id)->exists();
+        $this->registerLoginValidators();
 
-            if($users->church_id == '')
-            {
-                return TRUE;
-            }
-            else
-            {
-                if($church == FALSE)
-                {
-                    return FALSE;
-                }
-                else
-                {
-                    return TRUE;
-                }
-            }
-        },'Contact Church Admin for more Details');
-
-        Validator::extend('checkusers', function ($attribute, $value, $parameters, $validator) {
-            $users = User::where('email', request('email'))->with('userprofile')->first();
-                if($users==null)
-                {
-                    return FALSE;
-                }
-                else
-                {
-                    return TRUE;
-                }
-        },'Invalid Credentials');
-
-        Validator::extend('checkactive', function ($attribute, $value, $parameters, $validator) {
-            $users = User::where('email', request('email'))->with('userprofile')->first();
-                if($users->userprofile->status=="inactive")
-                {
-                    return FALSE;
-                }
-                else
-                {
-                    return TRUE;
-                }
-        },'You are suspended by site admin');
-
-        Validator::extend('checkexit', function ($attribute, $value, $parameters, $validator) {
-            $users = User::where('email', request('email'))->with('userprofile')->first();
-                if($users->userprofile->status=="exit")
-                {
-                    return FALSE;
-                }
-                else
-                {
-                    return TRUE;
-                }
-        },'You have exited this church');
-
-        Validator::extend('checkstatus', function ($attribute, $value, $parameters, $validator) {
-            $user = User::where('email', request('email'))->with('userprofile','permissionUser')->first();
-                if($user->count())
-                {
-                    if($user->usergroup_id==1)
-                    {
-                        return TRUE;
-                    }
-                    elseif(($user->usergroup_id==3) && ($user->userprofile->membership_type=="member"))
-                    {
-                        return TRUE;
-                    }
-                    elseif($user->usergroup_id==4)
-                    {
-                        return TRUE;
-                    }
-                    elseif( ($user->usergroup_id==5) && ( count($user->permissionUser) != '') )
-                    {
-                        if(\Config::get('settings.login_status')==1)
-                        return TRUE;
-                    }
-                    elseif( ($user->usergroup_id==5) && ( env('APP_NAME') == 'Laravel-Test' ) )
-                    {
-                        if(\Config::get('settings.login_status')==1)
-                        return TRUE;
-                    }
-                    elseif($user->usergroup_id==6)
-                    {
-                        return TRUE;
-                    }
-                    return FALSE;
-                }
-                return FALSE;
-        },'Invalid Credentials');
-
-         $this->validate($request,[
+        $this->validate($request, [
             $this->username() => 'required|string',
-            'password' => 'bail|required|string|checkchurch|checkusers|checkactive|checkstatus|checkexit',
+            'password'        => 'bail|required|string|checkchurch|checkusers|checkactive|checkstatus|checkexit',
         ]);
+    }
 
-        $messages=[];
-        $rules=[];
-        $this->validate($request,$rules,$messages);
+    private function registerLoginValidators(): void
+    {
+        Validator::extend('checkchurch',  fn () => $this->checkChurchIsActive(),   'Contact Church Admin for more Details');
+        Validator::extend('checkusers',   fn () => $this->checkUserExists(),        'Invalid Credentials or Account does not exist');
+        Validator::extend('checkactive',  fn () => $this->checkUserNotSuspended(),  'You are suspended by site admin');
+        Validator::extend('checkexit',    fn () => $this->checkUserNotExited(),     'You have exited this church');
+        Validator::extend('checkstatus',  fn () => $this->checkLoginAllowed(),      'Invalid Credentials. This account is not allowed to login. Contact Church Admin for more Details');
+    }
 
+    private function loginUser(): ?User
+    {
+        return User::where('email', request('email'))->with('userprofile', 'permissionUser')->first();
+    }
+
+    private function checkChurchIsActive(): bool
+    {
+        $user = User::where('email', request('email'))->first();
+
+        if (!$user || $user->church_id == '') {
+            return true;
+        }
+
+        return Church::IsActive($user->church_id)->exists();
+    }
+
+    private function checkUserExists(): bool
+    {
+        return User::where('email', request('email'))->exists();
+    }
+
+    private function checkUserNotSuspended(): bool
+    {
+        $user = $this->loginUser();
+
+        return $user && optional($user->userprofile)->status !== 'inactive';
+    }
+
+    private function checkUserNotExited(): bool
+    {
+        $user = $this->loginUser();
+
+        return $user && optional($user->userprofile)->status !== 'exit';
+    }
+
+    private function checkLoginAllowed(): bool
+    {
+        $user = $this->loginUser();
+
+        if (!$user) {
+            return false;
+        }
+
+        return match (true) {
+            $user->usergroup_id == 1                                                               => true,
+            $user->usergroup_id == 3 && optional($user->userprofile)->membership_type === 'member' => true,
+            $user->usergroup_id == 4                                                               => true,
+            $user->usergroup_id == 5                                                               => \Config::get('settings.login_status') == 1,
+            $user->usergroup_id == 6                                                               => true,
+            default                                                                                => false,
+        };
     }
 
     /**

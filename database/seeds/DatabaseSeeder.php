@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder {
         //test
          $this->call( SubscriptionsTableSeeder::class );
         $this->call(BibleTableSeeder::class);
-        $this->call(BibleVerseTableSeeder::class);
+        //$this->call(BibleVerseTableSeeder::class);
         //test ----- hide to remove seeded members -----
         // $this->call( EventsTableSeeder::class );
         //test

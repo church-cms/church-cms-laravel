@@ -37,11 +37,6 @@ class GalleryController extends Controller
 
     use LogActivity;
     use Common;
- *
- * @package App\Http\Controllers\Admin
- * @uses LogActivity Trait for audit logging
- * @uses Common Trait for file and path utilities
- */
 
     public function index(Request $request)
     {

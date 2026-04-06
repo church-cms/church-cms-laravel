@@ -13,9 +13,9 @@
 @endsection
 
 @section('content')
-    @include('welcome.homebanner')
+
     <div class="bg-white">
-       
+       <app-widgets widget-id="d976854c-c8b0-4de8-bc69-b5c892419a31"></app-widgets>
     </div>
 
 @endsection

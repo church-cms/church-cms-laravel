@@ -5,6 +5,12 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use GuzzleHttp\Client;
 
+/**
+ * Validation rule to verify a Google reCAPTCHA token.
+ *
+ * Sends the token to the reCAPTCHA siteverify API and returns
+ * whether the challenge was successfully completed.
+ */
 class ValidRecaptcha implements Rule
 {
     /**
@@ -18,11 +24,14 @@ class ValidRecaptcha implements Rule
     }
 
     /**
-     * Determine if the validation rule passes.
+     * Determine if the validation rule passes by verifying the reCAPTCHA token.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
+     * Sends a POST request to the Google reCAPTCHA siteverify endpoint using
+     * the configured secret key and the token provided by the user.
+     *
+     * @param  string  $attribute  The name of the attribute being validated.
+     * @param  mixed   $value      The reCAPTCHA token submitted by the client.
+     * @return bool True if the reCAPTCHA challenge was passed successfully.
      */
     public function passes($attribute, $value)
     {
@@ -40,9 +49,9 @@ class ValidRecaptcha implements Rule
     }
 
     /**
-     * Get the validation error message.
+     * Get the validation error message shown when reCAPTCHA verification fails.
      *
-     * @return string
+     * @return string The error message string.
      */
     public function message()
     {

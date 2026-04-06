@@ -12,7 +12,7 @@ use App\Models\City;
 use App\Models\User;
 
 class SiteHelper
-{  
+{
     public static function getAdmin($church_id)
     {
         $churchCacheKey = "admin".$church_id;
@@ -83,7 +83,7 @@ class SiteHelper
     {
         $array = [];
 
-        $list_id = array('father','mother','child','patner');
+        $list_id = array('father','mother','child','partner');
         $list_name = array('Father','Mother','Child','Husband/Wife');
 
         return Cache::remember( "relationlist", env('CACHE_TIME'), function () use($list_id,$list_name) {
@@ -116,7 +116,7 @@ class SiteHelper
     public static function getGenderList()
     {
         $array = [];
-        
+
         $list_id = array('male','female');
         $list_name = array('Male','Female');
 

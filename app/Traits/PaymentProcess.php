@@ -39,11 +39,10 @@ trait PaymentProcess
      *
      * @return void
      */
-    public function CreatePayment(object $data, int $user_id, int $church_id, object $payment): void {
+    public function CreatePayment(object $data, int $user_id, int $church_id, object $payment): mixed {
         \DB::beginTransaction();
         try {
             if (($data->status == 'success') && ($payment->status == 'pending')) {
-            {
                 $plan = Plan::where('id', $data->udf1)->first();
                 $payment->plan_id = $plan->id;
                 $payment->status = "approve";

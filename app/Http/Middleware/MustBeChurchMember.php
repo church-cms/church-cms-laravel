@@ -20,12 +20,12 @@ class MustBeChurchMember
             return $next($request);
         }
 
-        if(\Auth::user()->usergroup_id == 3)
+        if(\Auth::user()->usergroup_id == 3 || \Auth::user()->usergroup_id == 4)
         {
             return redirect('/admin/dashboard');
         }
-      
-        if(\Auth::user()->usergroup_id == 1)
+
+        if(\Auth::user()->usergroup_id == 1 || \Auth::user()->usergroup_id == 2)
         {
             return redirect('/portal');
         }
@@ -34,7 +34,7 @@ class MustBeChurchMember
         {
             return redirect('/preacher/dashboard');
         }
-        
+
         abort(404);
     }
 }

@@ -41,7 +41,7 @@ Vue.component('edit-campaign-email', require('./components/campaignemail/Edit.vu
 Vue.component('notification-list', require('./components/notification/List.vue').default);
 Vue.component('notification', require('./components/notification/Show.vue').default);
 
-//payaccount 
+//payaccount
 Vue.component('payaccount-list', require('./components/payaccount/List.vue').default);
 Vue.component('create-payaccount', require('./components/payaccount/Create.vue').default);
 Vue.component('edit-payaccount', require('./components/payaccount/Edit.vue').default);
@@ -92,6 +92,7 @@ Vue.component('sub-admin-list', require('./components/subadmin/List.vue').defaul
 Vue.component('create-subadmin', require('./components/subadmin/Create.vue').default);
 Vue.component('edit-subadmin', require('./components/subadmin/Edit.vue').default);
 Vue.component('filter-subadmin', require('./components/subadmin/Filter.vue').default);
+Vue.component('subadmin-permissions', require('./components/member/profile/subadminPermissions.vue').default);
 
 //Member
 Vue.component('member-list', require('./components/member/List.vue').default);
@@ -102,6 +103,8 @@ Vue.component('search-filter', require('./components/member/Filter.vue').default
 Vue.component('send-message', require('./components/member/sendMessage.vue').default);
 Vue.component('exit-member', require('./components/member/Exit.vue').default);
 Vue.component('family-tree', require('./components/member/profile/familytree.vue').default);
+Vue.component('member-family-tree', require('./components/member/profile/MemberFamilyTree.vue').default);
+Vue.component('app-widgets', require('./components/AppWidgets.vue').default);
 
 //Guest
 Vue.component('guest-list', require('./components/guest/List.vue').default);

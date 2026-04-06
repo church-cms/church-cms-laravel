@@ -59,7 +59,7 @@ class MemberController extends Controller
         {
             $array['members'][1]['name']        = $user->refer->name;
             $array['members'][1]['fullname']    = $user->refer->FullName;
-            $array['members'][1]['relation']    = $user->userprofile->relation === 'patner' ? 'Partner':ucfirst($user->userprofile->relation);
+            $array['members'][1]['relation']    = $user->userprofile->relation === 'partner' ? 'Partner':ucfirst($user->userprofile->relation);
             $array['members'][1]['avatar']      = $user->refer->userprofile->AvatarPath;
 
             $i = 2;
@@ -69,7 +69,7 @@ class MemberController extends Controller
                 {
                     $array['members'][$i]['name']        = $member->name;
                     $array['members'][$i]['fullname']    = $member->FullName;
-                    $array['members'][$i]['relation']    = $member->userprofile->relation === 'patner' ? 'Partner':ucfirst($member->userprofile->relation);
+                    $array['members'][$i]['relation']    = $member->userprofile->relation === 'partner' ? 'Partner':ucfirst($member->userprofile->relation);
                     $array['members'][$i]['avatar']      = $member->userprofile->AvatarPath;
                     $i++;
                 }
@@ -84,7 +84,7 @@ class MemberController extends Controller
                 {
                     $array['members'][$i]['name']        = $member->name;
                     $array['members'][$i]['fullname']    = $member->FullName;
-                    $array['members'][$i]['relation']    = $member->userprofile->relation === 'patner' ? 'Partner':ucfirst($member->userprofile->relation);
+                    $array['members'][$i]['relation']    = $member->userprofile->relation === 'partner' ? 'Partner':ucfirst($member->userprofile->relation);
                     $array['members'][$i]['avatar']      = $member->userprofile->AvatarPath;
                     $i++;
                 }
@@ -124,7 +124,7 @@ class MemberController extends Controller
     {
         $user = User::where('name', $son->mother[0]->name)->get();
         $user = $user->map(function( $user, $key) use ($family,$son)  {
-            if($user->userprofile->relation === 'patner')
+            if($user->userprofile->relation === 'partner')
             {
                 $relation = 'Partner';
             }
@@ -149,11 +149,11 @@ class MemberController extends Controller
         $user = $user->map(function( $user, $key) use ($family,$son)  {
             if($son->mother->isEmpty())
             {
-               $patner='';
+               $partner='';
             }
             else
             {
-                if($son->mother[0]->userprofile->relation === 'patner')
+                if($son->mother[0]->userprofile->relation === 'partner')
                 {
                     $relation = 'Partner';
                 }
@@ -161,12 +161,12 @@ class MemberController extends Controller
                 {
                     $relation = ucfirst($son->mother[0]->userprofile->relation);
                 }
-                $patner=[
+                $partner=[
                     'name'      =>  $son->mother[0]->userprofile->firstname."\n"."(".$relation.")",
                     'image_url' =>  $son->mother[0]->userprofile->AvatarPath
                 ];
             }
-            if($user->userprofile->relation === 'patner')
+            if($user->userprofile->relation === 'partner')
             {
                 $relations = 'Partner';
             }
@@ -178,7 +178,7 @@ class MemberController extends Controller
                 'id'        =>  $user->id,
                 'name'      =>  $user->FullName."\n"."(".$relations.")" ,
                 'image_url' =>  $user->userprofile->AvatarPath ,
-                'mate'      =>  $patner,
+                'mate'      =>  $partner,
                 'children'  =>  $family,
             ];
 
@@ -207,13 +207,13 @@ class MemberController extends Controller
                 $child=$this->myfunction($user->children);
             }
 
-            if($user->patner->isEmpty())
+            if($user->partner->isEmpty())
             {
                 if($user->refer != null)
                 {
                     if($user->userprofile->relation != null)
                     {
-                        if($user->userprofile->relation === 'patner')
+                        if($user->userprofile->relation === 'partner')
                         {
                             $relation1 = 'Partner';
                         }
@@ -224,7 +224,7 @@ class MemberController extends Controller
                     }
                     else
                     {
-                        if($user->userprofile->relation === 'patner')
+                        if($user->userprofile->relation === 'partner')
                         {
                             $relation1 = 'Partner';
                         }
@@ -233,34 +233,34 @@ class MemberController extends Controller
                             $relation1 = ucfirst($user->userprofile->relation);
                         }
                     }
-                    $patner=[
+                    $partner=[
                         'name'      =>  $user->refer->FullName."\n"."(".$relation1.")",
                         'image_url' =>  $user->refer->userprofile->AvatarPath
                     ];
                 }
                 else
                 {
-                    $patner = '';
+                    $partner = '';
                 }
             }
             else
             {
-                if($user->patner[0]->userprofile->relation === 'patner')
+                if($user->partner[0]->userprofile->relation === 'partner')
                 {
                     $relation = 'Partner';
                 }
                 else
                 {
-                    $relation = ucfirst($user->patner[0]->userprofile->relation);
+                    $relation = ucfirst($user->partner[0]->userprofile->relation);
                 }
-                $patner=[
-                    'name'      =>  $user->patner[0]->FullName."\n"."(".$relation.")",
-                    'image_url' =>  $user->patner[0]->userprofile->AvatarPath
+                $partner=[
+                    'name'      =>  $user->partner[0]->FullName."\n"."(".$relation.")",
+                    'image_url' =>  $user->partner[0]->userprofile->AvatarPath
                 ];
             }
             if($user->userprofile->relation != null)
             {
-                if($user->userprofile->relation === 'patner')
+                if($user->userprofile->relation === 'partner')
                 {
                     $relations = 'Partner';
                 }
@@ -271,13 +271,13 @@ class MemberController extends Controller
             }
             else
             {
-                if($user->patner[0]->userprofile->relation === 'patner')
+                if($user->partner[0]->userprofile->relation === 'partner')
                 {
                     $relations = 'Partner';
                 }
                 else
                 {
-                    $relations = ucfirst($user->patner[0]->userprofile->relation);
+                    $relations = ucfirst($user->partner[0]->userprofile->relation);
                 }
             }
 
@@ -285,7 +285,7 @@ class MemberController extends Controller
                 'id'        =>  $user->id,
                 'name'      =>  $user->FullName."\n"."(".$relations.")",
                 'image_url' =>  $user->userprofile->AvatarPath ,
-                'mate'      =>  $patner,
+                'mate'      =>  $partner,
                 'children'  =>  $child,
             ];
 
@@ -298,26 +298,26 @@ class MemberController extends Controller
     public function myfunction($children)
     {
         $childrenData = $children->map(function( $children, $key){
-            if($children->patner->isEmpty())
+            if($children->partner->isEmpty())
             {
-                $patner='';
+                $partner='';
             }
             else
             {
-                if($children->patner[0]->userprofile->relation === 'patner')
+                if($children->partner[0]->userprofile->relation === 'partner')
                 {
                     $relation = 'Partner';
                 }
                 else
                 {
-                    $relation = ucfirst($children->patner[0]->userprofile->relation);
+                    $relation = ucfirst($children->partner[0]->userprofile->relation);
                 }
-                $patner=[
-                    'name'      =>  $children->patner[0]->FullName."\n"."(".$relation.")",
-                    'image_url' =>  $children->patner[0]->userprofile->AvatarPath
+                $partner=[
+                    'name'      =>  $children->partner[0]->FullName."\n"."(".$relation.")",
+                    'image_url' =>  $children->partner[0]->userprofile->AvatarPath
                 ];
             }
-            if($children->userprofile->relation === 'patner')
+            if($children->userprofile->relation === 'partner')
             {
                 $relations = 'Partner';
             }
@@ -328,7 +328,7 @@ class MemberController extends Controller
             $childrens=[
                 'id'        =>  $children->id,
                 'name'      =>  $children->FullName."\n"."(".$relations.")",
-                'mate'      =>  $patner,
+                'mate'      =>  $partner,
                 'image_url' =>  $children->userprofile->AvatarPath ,
                 'children'  =>  $this->myfunction($children->children),
             ];

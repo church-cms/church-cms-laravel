@@ -1,3 +1,7 @@
+@php
+    $isAdmin = auth()->user()->usergroup_id == 3;
+    $user    = auth()->user();
+@endphp
 <ul class="list-reset tracking-wide font-navigation text-xs">
     <li class="py-2 px-3 {{ Request::segment('2') == 'dashboard' ? 'active' : '' }}">
         <a href="{{ url('admin/dashboard') }}" class="flex items-center">
@@ -6,13 +10,16 @@
         </a>
     </li>
 
+    @if($isAdmin)
     <li class="py-2 px-3 {{ Request::segment('2') == 'churchdetails' ? 'active' : '' }}">
         <a href="{{ url('/admin/churchdetails') }}" class="flex items-center whitespace-no-wrap">
             <img src="{{ url('uploads/icons/church.svg') }}" class="w-4 h-4">
             <span class="mx-3 whitespace-no-wrap">Church Details</span>
         </a>
     </li>
+    @endif
 
+    @if($isAdmin)
     <!-- start -->
     @php
         $class = '';
@@ -90,7 +97,14 @@
         </ul>
     </li>
     <!-- end -->
+    @endif
 
+    @php
+        $showUsers = $isAdmin
+            || $user->hasPermission('read-members')
+            || $user->hasPermission('read-preachers');
+    @endphp
+    @if($showUsers)
     <!-- start -->
     @php
         $class = '';
@@ -106,6 +120,7 @@
             <img src="{{ url('uploads/icons/right-arrow.svg') }}" class="w-2 h-2"> </span>
         </a>
         <ul class="list-reset sites-sidebar">
+            @if($isAdmin || $user->hasPermission('read-members'))
             <li
                 class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'members' ? 'active' : '' }} || {{ Request::segment('2') == 'member' ? 'active' : '' }}">
                 <a href="{{ url('/admin/members') }}" class="flex items-center">
@@ -113,6 +128,8 @@
                     <span class="mx-3 whitespace-no-wrap">Members</span>
                 </a>
             </li>
+            @endif
+            @if($isAdmin || $user->hasPermission('read-members'))
             <li
                 class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'guests' ? 'active' : '' }} || {{ Request::segment('2') == 'guest' ? 'active' : '' }}">
                 <a href="{{ url('/admin/guests') }}" class="flex items-center">
@@ -120,6 +137,8 @@
                     <span class="mx-3 whitespace-no-wrap">Guests</span>
                 </a>
             </li>
+            @endif
+            @if($isAdmin || $user->hasPermission('read-preachers'))
             <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'preachers' ? 'active' : '' }}">
                 <a href="{{ url('/admin/preachers') }}" class="flex items-center">
                     <img src="{{ url('uploads/icons/preacher.svg') }}" class="w-4 h-4"
@@ -127,6 +146,8 @@
                     <span class="mx-3 whitespace-no-wrap">Preachers</span>
                 </a>
             </li>
+            @endif
+            @if($isAdmin)
             <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'subadmins' ? 'active' : '' }}">
                 <a href="{{ url('/admin/subadmins') }}" class="flex items-center">
                     <img src="{{ url('uploads/icons/subadmin.svg') }}" class="w-4 h-4"
@@ -134,17 +155,22 @@
                     <span class="mx-3 whitespace-no-wrap">Sub Admins</span>
                 </a>
             </li>
+            @endif
         </ul>
     </li>
     <!-- end -->
+    @endif
 
+    @if($isAdmin || $user->hasPermission('read-events'))
     <li class="py-2 px-3 {{ Request::segment('2') == 'events' ? 'active' : '' }}">
         <a href="{{ url('admin/events') }}" class="flex items-center">
             <img src="{{ url('uploads/icons/calendar.svg') }}" class="w-4 h-4">
             <span class="mx-3 whitespace-no-wrap">Calendar</span>
         </a>
     </li>
+    @endif
 
+    @if($isAdmin || $user->hasPermission('read-groups'))
     <li
         class="py-2 px-3 {{ Request::segment('2') == 'groups' ? 'active' : '' }} && {{ Request::segment('2') == 'group' ? 'active' : '' }}">
         <a href="{{ url('admin/groups') }}" class="flex items-center">
@@ -152,6 +178,7 @@
             <span class="mx-3 whitespace-no-wrap">Groups</span>
         </a>
     </li>
+    @endif
 
     <li class="py-2 px-3 {{ Request::segment('2') == 'video-conference' ? 'active' : '' }}">
         <a href="{{ url('/admin/video-conference') }}" class="flex items-center">
@@ -163,6 +190,7 @@
         </a>
     </li>
 
+    @if($isAdmin || $user->hasPermission('read-members'))
     <li
         class="py-2 px-3 {{ Request::segment('2') == 'messages' ? 'active' : '' }} || {{ Request::segment('2') == 'message' ? 'active' : '' }}">
         <a href="{{ url('/admin/messages') }}" class="flex items-center">
@@ -171,8 +199,10 @@
             <span class="mx-3 whitespace-no-wrap">Messages</span>
         </a>
     </li>
+    @endif
 
 
+    @if($isAdmin)
     @php
         $class = '';
         $array = ['campaigns', 'emails', 'email', 'campaign', 'subscribers', 'subscriber', 'mailinglists', 'email-templates', 'mailinglist', 'mailqueues', 'mailqueue', 'smtps', 'smtp', 'newsletter', 'rules', 'rule', 'mails-delivered', 'mail-delivered', 'webhooks', 'webhook'];
@@ -298,7 +328,9 @@
             </li>
         </ul>
     </li>
+    @endif
 
+    @if($isAdmin || $user->hasPermission('read-files'))
     <li
         class="py-2 px-3 {{ Request::segment('2') == 'mediafiles' ? 'active' : '' }} && {{ Request::segment('2') == 'mediafile' ? 'active' : '' }}">
         <a href="{{ url('/admin/mediafiles') }}" class="flex items-center">
@@ -306,7 +338,9 @@
             <span class="mx-3 whitespace-no-wrap">Media Files</span>
         </a>
     </li>
+    @endif
 
+    @if($isAdmin || $user->hasPermission('read-bulletins'))
     <li
         class="py-2 px-3 {{ Request::segment('2') == 'bulletins' ? 'active' : '' }} && {{ Request::segment('2') == 'bulletin' ? 'active' : '' }}">
         <a href="{{ url('/admin/bulletins') }}" class="flex  items-center">
@@ -314,13 +348,16 @@
             <span class="mx-3 whitespace-no-wrap">Bulletin</span>
         </a>
     </li>
+    @endif
 
+    @if($isAdmin || $user->hasPermission('read-gallery'))
     <li class="py-2 px-3 {{ Request::segment('2') == 'gallery' ? 'active' : '' }}">
         <a href="{{ url('admin/gallery') }}" class="flex items-center">
             <img src="{{ url('uploads/icons/gallery.svg') }}" class="w-4 h-4">
             <span class="mx-3 whitespace-no-wrap">Gallery</span>
         </a>
     </li>
+    @endif
 
     <!-- <li class="py-2 px-3 {{ Request::segment('2') == 'funds' ? 'active' : '' }} && {{ Request::segment('2') == 'fund' ? 'active' : '' }}">
         <a href="{{ url('admin/funds') }}" class="flex items-center">
@@ -329,6 +366,12 @@
         </a>
     </li> -->
 
+    @php
+        $showOfferings = $isAdmin
+            || $user->hasPermission('read-payments')
+            || $user->hasPermission('read-funds');
+    @endphp
+    @if($showOfferings)
     <!-- start -->
     @php
         $class = '';
@@ -344,6 +387,7 @@
             <img src="{{ url('uploads/icons/right-arrow.svg') }}" class="w-2 h-2"> </span>
         </a>
         <ul class="list-reset sites-sidebar">
+            @if($isAdmin || $user->hasPermission('read-payments'))
             <li
                 class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'payaccounts' ? 'active' : '' }} || {{ Request::segment('2') == 'member' ? 'active' : '' }}">
                 <a href="{{ url('/admin/payaccounts') }}" class="flex items-center">
@@ -351,6 +395,8 @@
                     <span class="mx-3 whitespace-no-wrap">Payaccounts</span>
                 </a>
             </li>
+            @endif
+            @if($isAdmin || $user->hasPermission('read-funds'))
             <li
                 class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'guests' ? 'active' : '' }} || {{ Request::segment('2') == 'guest' ? 'active' : '' }}">
                 <a href="{{ url('/admin/funds') }}" class="flex items-center">
@@ -358,9 +404,11 @@
                     <span class="mx-3 whitespace-no-wrap">Funds</span>
                 </a>
             </li>
+            @endif
         </ul>
     </li>
     <!-- end -->
+    @endif
 
 
 
@@ -379,6 +427,7 @@
         </a>
     </li>
 
+    @if($isAdmin || $user->hasPermission('read-sermons'))
     <li
         class="py-2 px-3 {{ Request::segment('2') == 'sermons' ? 'active' : '' }} || {{ Request::segment('2') == 'sermon' ? 'active' : '' }}">
         <a href="{{ url('/admin/sermons') }}" class="flex  items-center">
@@ -386,7 +435,9 @@
             <span class="mx-3 whitespace-no-wrap">Sermons</span>
         </a>
     </li>
+    @endif
 
+    @if($isAdmin || $user->hasPermission('read-quotes'))
     <li
         class="py-2 px-3 {{ Request::segment('2') == 'quotes' ? 'active' : '' }} || {{ Request::segment('2') == 'quote' ? 'active' : '' }}">
         <a href="{{ url('/admin/quotes') }}" class="flex  items-center">
@@ -394,7 +445,9 @@
             <span class="mx-3 whitespace-no-wrap">Quotes / Bible Verse</span>
         </a>
     </li>
+    @endif
 
+    @if($isAdmin || $user->hasPermission('read-reports'))
     <li
         class="py-2 px-3 {{ Request::segment('2') == 'reports' ? 'active' : '' }} && {{ Request::segment('2') == 'report' ? 'active' : '' }}">
         <a href="{{ url('/admin/reports') }}" class="flex items-center">
@@ -402,6 +455,7 @@
             <span class="mx-3 whitespace-no-wrap">Reports</span>
         </a>
     </li>
+    @endif
 
     <li class="py-2 px-3 {{ Request::segment('2') == 'activity' ? 'active' : '' }}">
         <a href="{{ url('/admin/activity') }}" class="flex  items-center">

@@ -8,7 +8,7 @@
                 <a href="{{ url('/admin/subadmins') }}" class="rounded-full bg-gray-100 p-2" title="Back">
                     <img src="{{ url('uploads/icons/back.svg') }}" class="w-3 h-3">
                 </a>
-                <span class="mx-3">Person Profile</span>
+                <span class="mx-3">Sub Admin Profile</span>
             </h1>
         </div>
         <div class="flex flex-col lg:flex-row">
@@ -160,6 +160,15 @@
                         church_id="{{ $user->church_id }}" name="{{ $user->name }}" mode="subadmin"></profile-tab>
 
                     <portal-target name="profile"></portal-target>
+                </div>
+
+                <div class="bg-white shadow my-5">
+                    <div class="px-4 py-3 border-b">
+                        <h3 class="text-sm font-semibold text-gray-700">Roles &amp; Permissions</h3>
+                    </div>
+                    <div class="px-4 py-4">
+                        <subadmin-permissions url="{{ url('/') }}" name="{{ $user->name }}"></subadmin-permissions>
+                    </div>
                 </div>
             </div>
         </div>

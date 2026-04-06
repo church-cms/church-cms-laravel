@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Community Church - A Place of Hope & Community</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts - Distinctive Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom CSS Variables for Sophisticated Color Palette */
+        :root {
+            --primary: #8B6F47;      /* Warm bronze/gold */
+            --primary-dark: #6B5437;
+            --accent: #C4A574;       /* Light gold */
+            --text-dark: #2C2416;
+            --text-light: #5C5449;
+            --bg-cream: #FAF8F5;
+            --bg-warm: #F5F1EB;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-dark);
+            background: var(--bg-cream);
+        }
+
+        /* Sophisticated Typography */
+        .font-display {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        /* Elegant gradient background */
+        .hero-gradient {
+            background: linear-gradient(135deg,
+                #FAF8F5 0%,
+                #F5F1EB 50%,
+                #EDE8DF 100%);
+        }
+
+        /* Decorative elements */
+        .ornament {
+            position: relative;
+        }
+
+        .ornament::before {
+            content: '';
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        /* Smooth animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .delay-100 { animation-delay: 0.1s; opacity: 0; }
+        .delay-200 { animation-delay: 0.2s; opacity: 0; }
+        .delay-300 { animation-delay: 0.3s; opacity: 0; }
+        .delay-400 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(139, 111, 71, 0.15);
+        }
+
+        /* Custom button */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2.5rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            border: 2px solid var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 111, 71, 0.3);
+        }
+
+        /* Texture overlay */
+        .texture-overlay {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .texture-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B6F47' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-2xl font-semibold" style="color: var(--primary);">Grace Church</h2>
+                        <p class="text-xs" style="color: var(--text-light);">Faith • Hope • Love</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#" class="text-sm font-medium tracking-wide transition" style="color: var(--text-dark);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-dark)'">Home</a>
+                    <a href="#about" class="text-sm font-medium tracking-wide transition" style="color: var(--text-dark);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-dark)'">About</a>
+                    <a href="#services" class="text-sm font-medium tracking-wide transition" style="color: var(--text-dark);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-dark)'">Services</a>
+                    <a href="#events" class="text-sm font-medium tracking-wide transition" style="color: var(--text-dark);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-dark)'">Events</a>
+                    <a href="#team" class="text-sm font-medium tracking-wide transition" style="color: var(--text-dark);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-dark)'">Team</a>
+                    <a href="#contact" class="text-sm font-medium tracking-wide transition" style="color: var(--text-dark);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-dark)'">Contact</a>
+                    <button class="btn-primary rounded-sm">Give</button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2" style="color: var(--primary);">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden lg:hidden pb-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="#" class="px-4 py-2 text-sm font-medium rounded transition" style="color: var(--text-dark);">Home</a>
+                    <a href="#about" class="px-4 py-2 text-sm font-medium rounded transition" style="color: var(--text-dark);">About</a>
+                    <a href="#services" class="px-4 py-2 text-sm font-medium rounded transition" style="color: var(--text-dark);">Services</a>
+                    <a href="#events" class="px-4 py-2 text-sm font-medium rounded transition" style="color: var(--text-dark);">Events</a>
+                    <a href="#team" class="px-4 py-2 text-sm font-medium rounded transition" style="color: var(--text-dark);">Team</a>
+                    <a href="#contact" class="px-4 py-2 text-sm font-medium rounded transition" style="color: var(--text-dark);">Contact</a>
+                    <button class="w-full mt-2 btn-primary rounded-sm">Give</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient texture-overlay relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto text-center py-20">
+            <h1 class="font-display text-6xl sm:text-7xl lg:text-8xl font-semibold mb-6 animate-fade-in-up" style="color: var(--primary);">
+                Welcome Home
+            </h1>
+            <p class="text-xl sm:text-2xl lg:text-3xl mb-8 animate-fade-in-up delay-100 font-light" style="color: var(--text-light);">
+                A community of faith, hope, and love
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-200">
+                <button class="btn-primary rounded-sm">Join Us This Sunday</button>
+                <button class="px-8 py-4 font-medium text-sm tracking-wide transition rounded-sm" style="color: var(--primary); border: 2px solid var(--primary);" onmouseover="this.style.backgroundColor='var(--primary)'; this.style.color='white';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--primary)';">
+                    Learn More
+                </button>
+            </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6" style="color: var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Welcome Section -->
+    <section class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="ornament mb-12">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-6" style="color: var(--primary);">
+                    Welcome to Our Church Family
+                </h2>
+                <p class="text-xl font-light" style="color: var(--accent);">
+                    Where believers gather in faith and unity
+                </p>
+            </div>
+
+            <div class="prose prose-lg mx-auto" style="color: var(--text-light);">
+                <p class="text-lg leading-relaxed">
+                    We are delighted to welcome you to Grace Community Church, a place dedicated to spreading the Gospel of Jesus Christ and fostering spiritual growth. Our congregation believes in the power of faith, the importance of community, and the transformative message of God's love. Whether you are exploring faith for the first time, returning after a long absence, or seeking a deeper connection with your church community, you will find a warm welcome here. We gather together in worship, study the scriptures, support one another through life's challenges, and work toward building a kingdom that reflects God's values of compassion, justice, and unconditional love. Our church is committed to serving not only our congregation but also the broader community through charitable work, outreach programs, and spiritual guidance. We believe that faith in action creates meaningful change in the world. Come as you are, and join us in celebrating our shared journey of faith and the hope we find through Jesus Christ.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story - Detailed Section -->
+    <section id="about" class="py-24 px-4 sm:px-6 lg:px-8 texture-overlay" style="background: linear-gradient(to bottom, var(--bg-warm), white);">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center ornament mb-16">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-4" style="color: var(--primary);">
+                    Our Story
+                </h2>
+                <p class="text-lg" style="color: var(--text-light);">
+                    Founded in faith, growing in grace
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="font-display text-3xl font-semibold mb-4" style="color: var(--text-dark);">Our History</h3>
+                    <p class="mb-4 leading-relaxed" style="color: var(--text-light);">
+                        Grace Community Church was founded in 1995 with a simple mission: to create a welcoming space where people could encounter God's love and grow in their faith. What started as a small group of believers meeting in a living room has blossomed into a vibrant community of over 2,000 members.
+                    </p>
+                    <p class="leading-relaxed" style="color: var(--text-light);">
+                        Throughout our journey, we have remained committed to our core values: biblical teaching, authentic worship, genuine community, and compassionate service to others.
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-lg shadow-lg" style="border-left: 4px solid var(--primary);">
+                    <h3 class="font-display text-3xl font-semibold mb-6" style="color: var(--text-dark);">Our Vision</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="mr-4 text-2xl" style="color: var(--primary);">✦</span>
+                            <p style="color: var(--text-light);"><strong style="color: var(--text-dark);">Authentic Faith:</strong> Growing deeper in our relationship with Jesus Christ</p>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-4 text-2xl" style="color: var(--primary);">✦</span>
+                            <p style="color: var(--text-light);"><strong style="color: var(--text-dark);">Strong Community:</strong> Building meaningful connections and supporting one another</p>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-4 text-2xl" style="color: var(--primary);">✦</span>
+                            <p style="color: var(--text-light);"><strong style="color: var(--text-dark);">Kingdom Impact:</strong> Serving our community and spreading God's love</p>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-4 text-2xl" style="color: var(--primary);">✦</span>
+                            <p style="color: var(--text-light);"><strong style="color: var(--text-dark);">Spirit-Led Transformation:</strong> Allowing God's Holy Spirit to change lives</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Explore Our Church - 4 Big Cards -->
+    <section class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center ornament mb-16">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-4" style="color: var(--primary);">
+                    Explore Our Church
+                </h2>
+                <p class="text-lg" style="color: var(--text-light);">
+                    Learn more about who we are and how you can get involved
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Big Card 1: Beliefs -->
+                <div class="card-hover rounded-xl shadow-lg overflow-hidden" style="background: linear-gradient(135deg, #EDE8DF 0%, #E5DFD2 100%); border: 1px solid var(--accent);">
+                    <div class="p-8 h-full">
+                        <div class="text-5xl mb-4">✝️</div>
+                        <h3 class="font-display text-3xl font-semibold mb-4" style="color: var(--text-dark);">What We Believe</h3>
+                        <p class="mb-6 leading-relaxed" style="color: var(--text-light);">
+                            We believe in the authority of Scripture, the Trinity of God, salvation through Christ, and the transformative power of the Holy Spirit. Our theology is rooted in historic Christian faith adapted for today's world.
+                        </p>
+                        <a href="#" class="inline-flex items-center font-semibold transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">
+                            Learn Our Beliefs
+                            <span class="ml-2">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Big Card 2: Visitor Guide -->
+                <div class="card-hover rounded-xl shadow-lg overflow-hidden" style="background: linear-gradient(135deg, #F5F1EB 0%, #EDE8DF 100%); border: 1px solid var(--accent);">
+                    <div class="p-8 h-full">
+                        <div class="text-5xl mb-4">👋</div>
+                        <h3 class="font-display text-3xl font-semibold mb-4" style="color: var(--text-dark);">First Time Visitor?</h3>
+                        <p class="mb-6 leading-relaxed" style="color: var(--text-light);">
+                            Welcome! We want your first visit to be comfortable and meaningful. Discover what to expect, where to park, childcare options, and everything you need to know to feel at home with us.
+                        </p>
+                        <a href="#" class="inline-flex items-center font-semibold transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">
+                            Visitor Guide
+                            <span class="ml-2">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Big Card 3: Ministries -->
+                <div class="card-hover rounded-xl shadow-lg overflow-hidden" style="background: linear-gradient(135deg, #E5DFD2 0%, #DDD7C8 100%); border: 1px solid var(--accent);">
+                    <div class="p-8 h-full">
+                        <div class="text-5xl mb-4">🤝</div>
+                        <h3 class="font-display text-3xl font-semibold mb-4" style="color: var(--text-dark);">Our Ministries</h3>
+                        <p class="mb-6 leading-relaxed" style="color: var(--text-light);">
+                            From youth and children's programs to senior outreach and community service, we have ministries for every life stage. Find the perfect ministry to grow, serve, and connect with others.
+                        </p>
+                        <a href="#" class="inline-flex items-center font-semibold transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">
+                            Explore Ministries
+                            <span class="ml-2">→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Big Card 4: Giving -->
+                <div class="card-hover rounded-xl shadow-lg overflow-hidden" style="background: linear-gradient(135deg, #FAF8F5 0%, #F5F1EB 100%); border: 1px solid var(--accent);">
+                    <div class="p-8 h-full">
+                        <div class="text-5xl mb-4">💝</div>
+                        <h3 class="font-display text-3xl font-semibold mb-4" style="color: var(--text-dark);">Support Our Mission</h3>
+                        <p class="mb-6 leading-relaxed" style="color: var(--text-light);">
+                            Your generosity helps us fulfill our mission to reach more people with the Gospel and serve our community. Learn about giving options and how your tithes make a difference.
+                        </p>
+                        <a href="#" class="inline-flex items-center font-semibold transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">
+                            Ways to Give
+                            <span class="ml-2">→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access - 8 Small Cards -->
+    <section class="py-24 px-4 sm:px-6 lg:px-8 texture-overlay" style="background: var(--bg-warm);">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Small Card 1: Testimonies -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                        <span class="text-2xl text-white">💬</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Testimonies</h4>
+                        <p class="text-xs" style="color: var(--text-light);">Stories of faith</p>
+                    </div>
+                </div>
+
+                <!-- Small Card 2: Small Groups -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);">
+                        <span class="text-2xl text-white">👥</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Small Groups</h4>
+                        <p class="text-xs" style="color: var(--text-light);">Connect & grow</p>
+                    </div>
+                </div>
+
+                <!-- Small Card 3: Children's Ministry -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #D4A574 0%, var(--accent) 100%);">
+                        <span class="text-2xl text-white">👶</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Children's Ministry</h4>
+                        <p class="text-xs" style="color: var(--text-light);">Programs for kids</p>
+                    </div>
+                </div>
+
+                <!-- Small Card 4: Sermons -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);">
+                        <span class="text-2xl text-white">🎙️</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Sermon Library</h4>
+                        <p class="text-xs" style="color: var(--text-light);">Audio & video sermons</p>
+                    </div>
+                </div>
+
+                <!-- Small Card 5: Prayer -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
+                        <span class="text-2xl text-white">🙏</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Prayer Requests</h4>
+                        <p class="text-xs" style="color: var(--text-light);">Share prayer needs</p>
+                    </div>
+                </div>
+
+                <!-- Small Card 6: Volunteers -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #A58A5F 0%, var(--primary-dark) 100%);">
+                        <span class="text-2xl text-white">🙌</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Volunteer</h4>
+                        <p class="text-xs" style="color: var(--text-light);">Ways to serve</p>
+                    </div>
+                </div>
+
+                <!-- Small Card 7: Calendar -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--accent) 0%, #D4A574 100%);">
+                        <span class="text-2xl text-white">📅</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Event Calendar</h4>
+                        <p class="text-xs" style="color: var(--text-light);">All upcoming events</p>
+                    </div>
+                </div>
+
+                <!-- Small Card 8: Staff Directory -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition duration-300 p-4 flex items-center gap-4 cursor-pointer">
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                        <span class="text-2xl text-white">📋</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-semibold text-sm mb-1" style="color: var(--text-dark);">Staff Directory</h4>
+                        <p class="text-xs" style="color: var(--text-light);">Leadership & contacts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Events Section - 6 Events -->
+    <section id="events" class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center ornament mb-16">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-4" style="color: var(--primary);">
+                    Upcoming Events & Services
+                </h2>
+                <p class="text-lg" style="color: var(--text-light);">
+                    Mark your calendar for our events and worship services
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Event Card 1 -->
+                <div class="card-hover bg-white rounded-lg overflow-hidden shadow-lg" style="border-top: 4px solid var(--primary);">
+                    <div class="h-48 overflow-hidden" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                        <div class="h-full flex items-center justify-center">
+                            <span class="text-5xl">🙏</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-display text-2xl font-semibold mb-2" style="color: var(--text-dark);">Sunday Worship Service</h3>
+                        <p class="mb-4" style="color: var(--text-light);">Join us for our weekly worship service with music, prayer, and sermon.</p>
+                        <div class="flex justify-between items-center text-sm" style="color: var(--text-light);">
+                            <span>⏰ Every Sunday 10:00 AM</span>
+                            <span>📍 Main Sanctuary</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 2 -->
+                <div class="card-hover bg-white rounded-lg overflow-hidden shadow-lg" style="border-top: 4px solid var(--accent);">
+                    <div class="h-48 overflow-hidden" style="background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);">
+                        <div class="h-full flex items-center justify-center">
+                            <span class="text-5xl">📖</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-display text-2xl font-semibold mb-2" style="color: var(--text-dark);">Bible Study & Prayer Group</h3>
+                        <p class="mb-4" style="color: var(--text-light);">Deep dive into Scripture and grow spiritually through group discussion.</p>
+                        <div class="flex justify-between items-center text-sm" style="color: var(--text-light);">
+                            <span>⏰ Wednesday 7:00 PM</span>
+                            <span>📍 Fellowship Hall</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 3 -->
+                <div class="card-hover bg-white rounded-lg overflow-hidden shadow-lg" style="border-top: 4px solid var(--primary-dark);">
+                    <div class="h-48 overflow-hidden" style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);">
+                        <div class="h-full flex items-center justify-center">
+                            <span class="text-5xl">🤝</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-display text-2xl font-semibold mb-2" style="color: var(--text-dark);">Community Service Day</h3>
+                        <p class="mb-4" style="color: var(--text-light);">Serve our community and make a difference together in faith and action.</p>
+                        <div class="flex justify-between items-center text-sm" style="color: var(--text-light);">
+                            <span>⏰ Saturday 9:00 AM</span>
+                            <span>📍 Community Center</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 4 -->
+                <div class="card-hover bg-white rounded-lg overflow-hidden shadow-lg" style="border-top: 4px solid #D4A574;">
+                    <div class="h-48 overflow-hidden" style="background: linear-gradient(135deg, #D4A574 0%, var(--accent) 100%);">
+                        <div class="h-full flex items-center justify-center">
+                            <span class="text-5xl">👨‍👩‍👧‍👦</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-display text-2xl font-semibold mb-2" style="color: var(--text-dark);">Family Fellowship Night</h3>
+                        <p class="mb-4" style="color: var(--text-light);">Bring the whole family for games, food, and meaningful time together.</p>
+                        <div class="flex justify-between items-center text-sm" style="color: var(--text-light);">
+                            <span>⏰ First Friday 6:00 PM</span>
+                            <span>📍 Church Grounds</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 5 -->
+                <div class="card-hover bg-white rounded-lg overflow-hidden shadow-lg" style="border-top: 4px solid var(--primary);">
+                    <div class="h-48 overflow-hidden" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
+                        <div class="h-full flex items-center justify-center">
+                            <span class="text-5xl">🎵</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-display text-2xl font-semibold mb-2" style="color: var(--text-dark);">Choir & Worship Practice</h3>
+                        <p class="mb-4" style="color: var(--text-light);">Share your talents and help lead our congregation in praise and worship.</p>
+                        <div class="flex justify-between items-center text-sm" style="color: var(--text-light);">
+                            <span>⏰ Thursday 7:00 PM</span>
+                            <span>📍 Music Room</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 6 -->
+                <div class="card-hover bg-white rounded-lg overflow-hidden shadow-lg" style="border-top: 4px solid #A58A5F;">
+                    <div class="h-48 overflow-hidden" style="background: linear-gradient(135deg, #A58A5F 0%, var(--primary-dark) 100%);">
+                        <div class="h-full flex items-center justify-center">
+                            <span class="text-5xl">🕯️</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-display text-2xl font-semibold mb-2" style="color: var(--text-dark);">Evening Prayer & Reflection</h3>
+                        <p class="mb-4" style="color: var(--text-light);">Find peace and spiritual renewal through quiet prayer and contemplation.</p>
+                        <div class="flex justify-between items-center text-sm" style="color: var(--text-light);">
+                            <span>⏰ Tuesday 6:00 PM</span>
+                            <span>📍 Prayer Chapel</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pastoral Leadership Section -->
+    <section id="team" class="py-24 px-4 sm:px-6 lg:px-8 texture-overlay" style="background: var(--bg-warm);">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center ornament mb-16">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-4" style="color: var(--primary);">
+                    Our Pastoral Leadership
+                </h2>
+                <p class="text-lg" style="color: var(--text-light);">
+                    Serving with dedication and faith
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Pastor 1 -->
+                <div class="text-center bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition duration-300">
+                    <div class="mb-4 mx-auto w-32 h-32 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);">
+                        <span class="text-4xl text-white">📿</span>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-1" style="color: var(--text-dark);">Rev. Dr. James Patterson</h3>
+                    <p class="font-semibold mb-3" style="color: var(--primary);">Senior Pastor</p>
+                    <p class="text-sm" style="color: var(--text-light);">Leading our congregation with Scripture, wisdom, and pastoral care for over 20 years</p>
+                </div>
+
+                <!-- Pastor 2 -->
+                <div class="text-center bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition duration-300">
+                    <div class="mb-4 mx-auto w-32 h-32 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);">
+                        <span class="text-4xl text-white">👼</span>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-1" style="color: var(--text-dark);">Rev. Margaret Thompson</h3>
+                    <p class="font-semibold mb-3" style="color: var(--primary);">Associate Pastor</p>
+                    <p class="text-sm" style="color: var(--text-light);">Devoted to spiritual formation and community outreach ministries</p>
+                </div>
+
+                <!-- Pastor 3 -->
+                <div class="text-center bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition duration-300">
+                    <div class="mb-4 mx-auto w-32 h-32 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);">
+                        <span class="text-4xl text-white">🎼</span>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-1" style="color: var(--text-dark);">David Mitchell</h3>
+                    <p class="font-semibold mb-3" style="color: var(--primary);">Director of Music & Worship</p>
+                    <p class="text-sm" style="color: var(--text-light);">Creating inspirational music and leading our worship experience</p>
+                </div>
+
+                <!-- Pastor 4 -->
+                <div class="text-center bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition duration-300">
+                    <div class="mb-4 mx-auto w-32 h-32 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #D4A574 0%, var(--accent) 100%);">
+                        <span class="text-4xl text-white">🤲</span>
+                    </div>
+                    <h3 class="font-display text-xl font-semibold mb-1" style="color: var(--text-dark);">Susan Adams</h3>
+                    <p class="font-semibold mb-3" style="color: var(--primary);">Director of Christian Education</p>
+                    <p class="text-sm" style="color: var(--text-light);">Nurturing spiritual growth through education and discipleship programs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Address & Map Section -->
+    <section id="contact" class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center ornament mb-16">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-4" style="color: var(--primary);">
+                    Visit Us
+                </h2>
+                <p class="text-lg" style="color: var(--text-light);">
+                    We'd love to welcome you at our church
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Map -->
+                <div class="lg:col-span-2 rounded-lg overflow-hidden shadow-lg">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3915.157151843241!2d77.35156!3d11.310489!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba9ece51b4c7d2f%3A0x2d7d7d7d7d7d7d7d!2sTiruppur%2C%20Tamil%20Nadu%2C%20India!5e0!3m2!1sen!2sin!4v1234567890"
+                        width="100%"
+                        height="400"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy">
+                    </iframe>
+                </div>
+
+                <!-- Address Info -->
+                <div class="p-8 rounded-lg shadow-md" style="background: linear-gradient(135deg, var(--bg-warm) 0%, var(--bg-cream) 100%); border-left: 4px solid var(--primary);">
+                    <h3 class="font-display text-2xl font-semibold mb-6" style="color: var(--text-dark);">Contact Information</h3>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold mb-2 flex items-center" style="color: var(--text-dark);"><span class="mr-2">📍</span>Address</h4>
+                        <p style="color: var(--text-light);">
+                            Grace Community Church<br>
+                            123 Faith Street<br>
+                            Tiruppur, Tamil Nadu 641603<br>
+                            India
+                        </p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold mb-2 flex items-center" style="color: var(--text-dark);"><span class="mr-2">☎️</span>Phone</h4>
+                        <p style="color: var(--text-light);">+91 (0) 421 xxx xxxx</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="font-semibold mb-2 flex items-center" style="color: var(--text-dark);"><span class="mr-2">📧</span>Email</h4>
+                        <p style="color: var(--text-light);">info@gracechurch.org</p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold mb-3 flex items-center" style="color: var(--text-dark);"><span class="mr-2">⏰</span>Service Hours</h4>
+                        <p class="text-sm" style="color: var(--text-light);">
+                            <strong>Sunday:</strong> 10:00 AM<br>
+                            <strong>Wednesday:</strong> 7:00 PM<br>
+                            <strong>Prayer Chapel:</strong> Daily 6:00 AM - 6:00 PM
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-24 px-4 sm:px-6 lg:px-8 texture-overlay" style="background: linear-gradient(to bottom, var(--bg-warm), white);">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center ornament mb-16">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-4" style="color: var(--primary);">
+                    Frequently Asked Questions
+                </h2>
+                <p class="text-lg" style="color: var(--text-light);">
+                    Find answers to common questions about our church
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover cursor-pointer" style="border-left: 4px solid var(--primary);">
+                    <h3 class="font-semibold text-lg mb-2" style="color: var(--text-dark);">❓ General Questions</h3>
+                    <p class="text-sm mb-4" style="color: var(--text-light);">Information about our church, mission, and history</p>
+                    <a href="#" class="font-semibold text-sm transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">View FAQ →</a>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover cursor-pointer" style="border-left: 4px solid var(--accent);">
+                    <h3 class="font-semibold text-lg mb-2" style="color: var(--text-dark);">🤔 Beliefs & Theology</h3>
+                    <p class="text-sm mb-4" style="color: var(--text-light);">Questions about what we believe and teach</p>
+                    <a href="#" class="font-semibold text-sm transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">View FAQ →</a>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover cursor-pointer" style="border-left: 4px solid var(--primary-dark);">
+                    <h3 class="font-semibold text-lg mb-2" style="color: var(--text-dark);">📅 Services & Events</h3>
+                    <p class="text-sm mb-4" style="color: var(--text-light);">Details about worship times and programs</p>
+                    <a href="#" class="font-semibold text-sm transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">View FAQ →</a>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover cursor-pointer" style="border-left: 4px solid #D4A574;">
+                    <h3 class="font-semibold text-lg mb-2" style="color: var(--text-dark);">🙏 Spiritual Matters</h3>
+                    <p class="text-sm mb-4" style="color: var(--text-light);">Faith-related questions and spiritual guidance</p>
+                    <a href="#" class="font-semibold text-sm transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">View FAQ →</a>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover cursor-pointer" style="border-left: 4px solid var(--primary);">
+                    <h3 class="font-semibold text-lg mb-2" style="color: var(--text-dark);">👶 Children & Youth</h3>
+                    <p class="text-sm mb-4" style="color: var(--text-light);">Information about programs for kids and teenagers</p>
+                    <a href="#" class="font-semibold text-sm transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">View FAQ →</a>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md card-hover cursor-pointer" style="border-left: 4px solid var(--accent);">
+                    <h3 class="font-semibold text-lg mb-2" style="color: var(--text-dark);">🤝 Getting Involved</h3>
+                    <p class="text-sm mb-4" style="color: var(--text-light);">How to join groups, volunteer, and connect</p>
+                    <a href="#" class="font-semibold text-sm transition" style="color: var(--primary);" onmouseover="this.style.color='var(--primary-dark)'" onmouseout="this.style.color='var(--primary)'">View FAQ →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="ornament mb-12">
+                <h2 class="font-display text-5xl sm:text-6xl font-semibold mb-6" style="color: var(--primary);">
+                    Stay Connected
+                </h2>
+                <p class="text-lg" style="color: var(--text-light);">
+                    Subscribe to receive our weekly newsletter and stay updated on events
+                </p>
+            </div>
+
+            <form class="max-w-xl mx-auto">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input
+                        type="email"
+                        placeholder="Enter your email address"
+                        class="flex-1 px-6 py-4 rounded-sm border-2 focus:outline-none transition"
+                        style="border-color: var(--accent); color: var(--text-dark);"
+                        onfocus="this.style.borderColor='var(--primary)'"
+                        onblur="this.style.borderColor='var(--accent)'"
+                    >
+                    <button type="submit" class="btn-primary rounded-sm whitespace-nowrap">
+                        Subscribe
+                    </button>
+                </div>
+                <p class="mt-4 text-sm" style="color: var(--text-light);">
+                    We respect your privacy and will never share your information.
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="texture-overlay py-16 px-4 sm:px-6 lg:px-8" style="background: var(--text-dark); color: white;">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <!-- About -->
+                <div class="md:col-span-2">
+                    <h3 class="font-display text-3xl font-semibold mb-4" style="color: var(--accent);">Grace Community Church</h3>
+                    <p class="mb-4 opacity-80">
+                        A community of believers dedicated to worship, fellowship, and serving our neighbors with the love of Christ.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center transition hover:opacity-70" style="background: var(--primary);">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center transition hover:opacity-70" style="background: var(--primary);">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full flex items-center justify-center transition hover:opacity-70" style="background: var(--primary);">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4" style="color: var(--accent);">Church Info</h4>
+                    <ul class="space-y-2 opacity-80">
+                        <li><a href="#" class="hover:opacity-60 transition">Our History</a></li>
+                        <li><a href="#" class="hover:opacity-60 transition">Mission & Vision</a></li>
+                        <li><a href="#" class="hover:opacity-60 transition">Leadership</a></li>
+                        <li><a href="#" class="hover:opacity-60 transition">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h4 class="font-semibold text-lg mb-4" style="color: var(--accent);">Resources</h4>
+                    <ul class="space-y-2 opacity-80">
+                        <li><a href="#" class="hover:opacity-60 transition">Sermons</a></li>
+                        <li><a href="#" class="hover:opacity-60 transition">Bible Study</a></li>
+                        <li><a href="#" class="hover:opacity-60 transition">Prayer Requests</a></li>
+                        <li><a href="#" class="hover:opacity-60 transition">Announcements</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t pt-8 text-center opacity-60" style="border-color: rgba(196, 165, 116, 0.2);">
+                <p>&copy; 2026 Grace Community Church. All rights reserved. Built with faith and love.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -39,13 +39,6 @@ use App\Models\Plan;
  * @package App\Http\Controllers\Auth
  */
 class RegisterController extends Controller
-use App\Models\City;
-use App\Models\User;
-use Carbon\Carbon;
-use Exception;
-use Log;
-
-class RegisterController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
