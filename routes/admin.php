@@ -294,6 +294,34 @@ use Illuminate\Support\Facades\Route;
         Route::post('/churchdetails/edit/{church_id}','ChurchDetailsController@update');
     });
 
+    //master data
+    Route::group(['middleware' => ['adminonly'], 'namespace' => 'MasterData'], function () {
+        Route::get('/countries',             'CountryController@index');
+        Route::get('/country/create',        'CountryController@create');
+        Route::post('/country/create',       'CountryController@store');
+        Route::get('/country/edit/{id}',     'CountryController@edit');
+        Route::post('/country/edit/{id}',    'CountryController@update');
+        Route::delete('/country/delete/{id}','CountryController@destroy');
+
+        Route::get('/states',                'StateController@index');
+        Route::get('/state/create',          'StateController@create');
+        Route::post('/state/create',         'StateController@store');
+        Route::get('/state/edit/{id}',       'StateController@edit');
+        Route::post('/state/edit/{id}',      'StateController@update');
+        Route::delete('/state/delete/{id}',  'StateController@destroy');
+
+        Route::get('/cities',                'CityController@index');
+        Route::get('/city/create',           'CityController@create');
+        Route::post('/city/create',          'CityController@store');
+        Route::get('/city/edit/{id}',        'CityController@edit');
+        Route::post('/city/edit/{id}',       'CityController@update');
+        Route::delete('/city/delete/{id}',   'CityController@destroy');
+        Route::post('/cities/bulk',          'CityController@bulk');
+
+        // AJAX helpers
+        Route::get('/ajax/states',           'StateController@ajaxByCountry');
+    });
+
     //video conference
         //index
         Route::get('/video-conference', 'VideoConferencesController@index');

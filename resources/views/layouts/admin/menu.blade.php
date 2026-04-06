@@ -20,6 +20,40 @@
     @endif
 
     @if($isAdmin)
+    @php
+        $masterDataClass = '';
+        $masterDataSegments = ['countries', 'country', 'states', 'state', 'cities', 'city'];
+        if (in_array(\Request()->segment('2'), $masterDataSegments)) {
+            $masterDataClass = 'active';
+        }
+    @endphp
+    <li class="relative py-2 px-3 hover:bg-red-900 {{ $masterDataClass }}">
+        <a href="#" class="flex items-center">
+            <img src="{{ url('uploads/icons/settings.svg') }}" class="w-4 h-4">
+            <span class="ml-3 whitespace-no-wrap flex items-center justify-between w-10/12">Master Data</span>
+            <img src="{{ url('uploads/icons/right-arrow.svg') }}" class="w-2 h-2">
+        </a>
+        <ul class="list-reset sites-sidebar">
+            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'countries' ? 'active' : '' }}">
+                <a href="{{ url('/admin/countries') }}" class="flex items-center">
+                    <span class="mx-3 whitespace-no-wrap">Countries</span>
+                </a>
+            </li>
+            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'states' ? 'active' : '' }}">
+                <a href="{{ url('/admin/states') }}" class="flex items-center">
+                    <span class="mx-3 whitespace-no-wrap">States</span>
+                </a>
+            </li>
+            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'cities' ? 'active' : '' }}">
+                <a href="{{ url('/admin/cities') }}" class="flex items-center">
+                    <span class="mx-3 whitespace-no-wrap">Cities</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    @endif
+
+    @if($isAdmin)
     <!-- start -->
     @php
         $class = '';
