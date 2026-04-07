@@ -13,10 +13,12 @@ class EventController extends Controller
         $today = Carbon::today();
 
         $upcoming = Events::where('start_date', '>=', $today)
+                          ->where('select_type', 'public')
                           ->orderBy('start_date', 'asc')
                           ->paginate(9, ['*'], 'upcoming_page');
 
         $completed = Events::where('start_date', '<', $today)
+                           ->where('select_type', 'public')
                            ->orderBy('start_date', 'desc')
                            ->paginate(9, ['*'], 'completed_page');
 
@@ -25,7 +27,7 @@ class EventController extends Controller
 
     public function show($id)
     {
-        $event = Events::findOrFail($id);
+        $event = Events::with('gallery')->findOrFail($id);
 
         return view('theme::event', compact('event'));
     }

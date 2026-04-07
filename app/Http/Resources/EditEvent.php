@@ -26,9 +26,10 @@ class EditEvent extends JsonResource
             'location' =>$this->location,
             'category' =>$this->category,
             'organised_by'=>$this->organised_by,
-            'image' =>$this->ImagePath,
-            'start_date' =>date('d-m-Y H:i:s', strtotime($this->start_date)),
-            'end_date' => date('d-m-Y H:i:s', strtotime($this->end_date)),
+            'image'      => $this->ImagePath,
+            'image_raw'  => $this->image,
+            'start_date' => date('d-m-Y H:i:s', strtotime($this->start_date)),
+            'end_date'   => date('d-m-Y H:i:s', strtotime($this->end_date)),
 
         ];
     }

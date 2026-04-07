@@ -96,6 +96,22 @@ class EventsController extends Controller
             $events->start_date     = date('Y-m-d H:i:s',strtotime($request->start_date));
             $events->end_date       = date('Y-m-d H:i:s',strtotime($request->end_date));
 
+            if ($request->cover_image_id) {
+                if (str_starts_with($request->cover_image_id, 'media_')) {
+                    $mediaId    = str_replace('media_', '', $request->cover_image_id);
+                    $mediaImage = \App\Models\MediaFile::where([
+                        ['id', $mediaId],
+                        ['church_id', Auth::user()->church_id],
+                        ['media_type', 'image'],
+                    ])->first();
+                    if ($mediaImage) {
+                        $events->image = $mediaImage->url;
+                    }
+                } elseif ($request->cover_image_path) {
+                    $events->image = $request->cover_image_path;
+                }
+            }
+
             $events->save();
 
             $executed_at  =  date('Y-m-d', strtotime('-2 days', strtotime($events->start_date)));
@@ -189,6 +205,22 @@ class EventsController extends Controller
             $events->organised_by= $request->organised_by;
             $events->start_date  = date('Y-m-d H:i:s',strtotime($request->start_date));
             $events->end_date    = date('Y-m-d H:i:s',strtotime($request->end_date));
+
+            if ($request->cover_image_id) {
+                if (str_starts_with($request->cover_image_id, 'media_')) {
+                    $mediaId    = str_replace('media_', '', $request->cover_image_id);
+                    $mediaImage = \App\Models\MediaFile::where([
+                        ['id', $mediaId],
+                        ['church_id', Auth::user()->church_id],
+                        ['media_type', 'image'],
+                    ])->first();
+                    if ($mediaImage) {
+                        $events->image = $mediaImage->url;
+                    }
+                } elseif ($request->cover_image_path) {
+                    $events->image = $request->cover_image_path;
+                }
+            }
 
             $events->save();
 
@@ -326,6 +358,9 @@ class EventsController extends Controller
     public function show($id)
     {
         $event = Events::where('id',$id)->first();
+        if (!$event) {
+            abort(404);
+        }
         if(Gate::allows('event',$event))
         {
             if(date('Y-m-d H:i:s',strtotime($event->start_date)) <= date('Y-m-d H:i:s'))

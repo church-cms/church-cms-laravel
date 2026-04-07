@@ -6,7 +6,7 @@
                     <div class="">
                         <div class="flex lg:justify-end md:justify-end items-center">
                             <div class="search relative w-48">
-                                <input type="text" name="search" v-model="search" class="tw-form-control w-full relative" placeholder="Search">                    
+                                <input type="text" name="search" v-model="search" class="tw-form-control w-full relative" placeholder="Search">
                                 <a href="#" @click="searchList()" class="no-underline text-white px-4 mx-1 py-1 absolute right-0 focus:outline-none">
                                     <img :src="url+'/uploads/icons/search.svg'" class="w-4 h-4 absolute right-0 mt-2 mx-1 top-0">
                                 </a>
@@ -29,6 +29,9 @@
                             <li class="px-2">
                                 <a :href="url+'/admin/mediafile/video/create'">Video</a>
                             </li>
+                            <li class="px-2">
+                                <a :href="url+'/admin/mediafile/image/create'">Image</a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -42,17 +45,18 @@
                         <div class="flex justify-between">
                             <img class="card-img-top w-16 h-16" :src="url+'/uploads/video_logo.png'" v-if="mediafile.media_type == 'video'">
                             <img class="card-img-top w-16 h-16" :src="url+'/uploads/audio_logo.png'" v-if="mediafile.media_type == 'audio'">
+                            <img class="card-img-top w-16 h-16 object-cover rounded" :src="mediafile.url" v-if="mediafile.media_type == 'image'">
                             <div class="w-11/12 flex justify-between">
-                            <div class="px-3">    
-                                <p class="font-bold text-base text-gray-700 capitalize">{{ mediafile.name }}</p>    
+                            <div class="px-3">
+                                <p class="font-bold text-base text-gray-700 capitalize">{{ mediafile.name }}</p>
                                 <p class="font-medium text-xs text-gray-600 capitalize flex items-center py-1">{{ mediafile.description }}</p>
 
-                                <p class="font-medium text-xs text-gray-500 capitalize flex items-center py-1">
-                                    <a :href="mediafile.url" target="_blank">Download File</a> 
-                                </p>    
+                                <p class="font-medium text-xs text-gray-500 capitalize flex items-center py-1" v-if="mediafile.media_type != 'image'">
+                                    <a :href="mediafile.url" target="_blank">Download File</a>
+                                </p>
                             </div>
                             <div class="flex items-right">
-                                <a href="#" @click="viewFile(mediafile.id)" title="View" class="left-auto">
+                                <a href="#" @click="viewFile(mediafile.id)" title="View" class="left-auto" v-if="mediafile.media_type != 'image'">
                                     <svg class="w-4 h-4 m-2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999; filter: brightness(0);" xml:space="preserve" width="512px" height="512px"><g><g> <g><path d="M508.745,246.041c-4.574-6.257-113.557-153.206-252.748-153.206S7.818,239.784,3.249,246.035c-4.332,5.936-4.332,13.987,0,19.923c4.569,6.257,113.557,153.206,252.748,153.206s248.174-146.95,252.748-153.201 C513.083,260.028,513.083,251.971,508.745,246.041z M255.997,385.406c-102.529,0-191.33-97.533-217.617-129.418c26.253-31.913,114.868-129.395,217.617-129.395c102.524,0,191.319,97.516,217.617,129.418 C447.361,287.923,358.746,385.406,255.997,385.406z" data-original="#000000" class="active-path" fill="#fba33a"/></g></g><g><g><path d="M255.997,154.725c-55.842,0-101.275,45.433-101.275,101.275s45.433,101.275,101.275,101.275    s101.275-45.433,101.275-101.275S311.839,154.725,255.997,154.725z M255.997,323.516c-37.23,0-67.516-30.287-67.516-67.516 s30.287-67.516,67.516-67.516s67.516,30.287,67.516,67.516S293.227,323.516,255.997,323.516z" data-original="#000000" class="active-path" fill="#fba33a"/></g></g></g></svg>
                                 </a>
                                 <a href="#" @click="deleteFile(mediafile.id)" class="left-auto delete-video">
@@ -133,7 +137,7 @@
             {
                 axios.get('/admin/mediafile/list/'+this.type+'?search='+this.search).then(response => {
                     this.mediafiles    = response.data.data;
-                    //console.log(this.mediafiles);    
+                    //console.log(this.mediafiles);
                 });
             },
 
@@ -173,7 +177,7 @@
                 this.show = false;
             },
 
-            deleteFile(id) 
+            deleteFile(id)
             {
                 var thisswal = this;
                 swal({
@@ -186,29 +190,29 @@
                     ],
                     dangerMode: true,
                 }).then(function(isConfirm) {
-                    if (isConfirm) 
+                    if (isConfirm)
                     {
                         axios.get(thisswal.url+ '/admin/mediafile/delete/'+ id).then(response => {
                             thisswal.success = response.data.success;
                             window.location.reload();
                         });
                     }
-                    else 
+                    else
                     {
                         swal("Cancelled");
                     }
                 });
             }
         },
-  
+
         created()
-        {   
-            this.getData(); 
+        {
+            this.getData();
             bus.$on("typeTab", data => {
                 if(data!='')
                 {
-                    this.type=data;      
-                    this.getData();             
+                    this.type=data;
+                    this.getData();
                 }
             });
         }

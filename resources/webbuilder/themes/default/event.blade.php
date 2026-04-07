@@ -7,7 +7,7 @@
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
     @if($event->image)
-        <img src="{{ \Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-64 object-cover rounded-lg mb-8">
+        <img src="{{ \Storage::disk('public')->url($event->image) }}" alt="{{ $event->title }}" class="w-full h-64 object-cover rounded-lg mb-8">
     @endif
 
     <div class="flex flex-wrap gap-2 mb-3">
@@ -51,6 +51,19 @@
     @if($event->description)
     <div class="prose max-w-none text-gray-700">
         {!! $event->description !!}
+    </div>
+    @endif
+
+    @if($event->gallery->isNotEmpty())
+    <div class="mt-10">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Event Photos</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            @foreach($event->gallery as $photo)
+                <a href="{{ \Storage::disk('public')->url($photo->path) }}" target="_blank" class="block overflow-hidden rounded-lg">
+                    <img src="{{ \Storage::disk('public')->url($photo->path) }}" alt="{{ $event->title }}" class="w-full h-36 object-cover hover:opacity-90 transition-opacity">
+                </a>
+            @endforeach
+        </div>
     </div>
     @endif
 

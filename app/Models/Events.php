@@ -89,11 +89,17 @@ class Events extends Model
         return $this->hasMany('App\Models\Reminder', 'entity_id','id')->where('entity_name','=','App\\Models\\Events');
     }
 
+    public function gallery()
+    {
+        return $this->hasMany('App\Models\EventGallery', 'event_id', 'id');
+    }
+
     public function getImagePathAttribute()
     {
-        if($this->image==null)
-        {
-            return $this->eventImagePath($this->category,$this->image);
+        if ($this->image) {
+            return \Storage::disk('public')->url($this->image);
         }
+
+        return $this->eventImagePath($this->category);
     }
 }

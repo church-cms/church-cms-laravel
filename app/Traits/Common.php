@@ -130,7 +130,7 @@ trait Common {
         $path = '';
 
         try {
-            $path = \Storage::url($file);
+            $path = \Storage::disk('public')->url($file);
         } catch (Exception $e) {
             Log::info($e->getMessage());
         }
@@ -152,7 +152,7 @@ trait Common {
         $path = '';
 
         try {
-            $path = \Storage::putFile($folder, $file);
+            $path = \Storage::disk('public')->putFile($folder, $file);
         } catch (Exception $e) {
             Log::info($e->getMessage());
         }
@@ -229,7 +229,7 @@ trait Common {
         $path = '';
 
         try {
-            $path = \Storage::put($folder, $contents, 'public');
+            $path = \Storage::disk('public')->put($folder, $contents);
         } catch (Exception $e) {
             Log::info($e->getMessage());
         }
@@ -252,7 +252,7 @@ trait Common {
         $path = '';
 
         try {
-            $path = \Storage::putFileAs($folder, $contents, $filename);
+            $path = \Storage::disk('public')->putFileAs($folder, $contents, $filename);
         } catch (Exception $e) {
             Log::info($e->getMessage());
         }

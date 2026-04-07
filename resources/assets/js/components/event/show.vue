@@ -33,24 +33,24 @@
                 },
             }
         },
-        methods: 
+        methods:
         {
-            handleWeekendsToggle() 
+            handleWeekendsToggle()
             {
                 this.calendarOptions.weekends = !this.calendarOptions.weekends // update a property
             },
 
-            handleDateSelect(selectInfo) 
+            handleDateSelect(selectInfo)
             {
                 /* let title = prompt('Please enter a new title for your event')
-      
-                this.errors=[];
-                this.success=null;    
-                let formData=new FormData();
-           
-                formData.append('title',title);  
 
-                axios.post('/admin/events/create',formData,{headers: {'Content-Type': 'multipart/form-data'}}).then(response => { 
+                this.errors=[];
+                this.success=null;
+                let formData=new FormData();
+
+                formData.append('title',title);
+
+                axios.post('/admin/events/create',formData,{headers: {'Content-Type': 'multipart/form-data'}}).then(response => {
                     this.success=response.data.success;
                     this.showEvents=0;
                     window.location.reload();
@@ -59,16 +59,15 @@
                 });*/
             },
 
-            handleEventClick(clickInfo) 
+            handleEventClick(clickInfo)
             {
                 this.success=null;
-                $('#show-detail').removeClass('hide-menu').addClass('block');
                 bus.$emit("dataEventDetail", clickInfo.event.id);
             },
 
-            handleEvents(events) 
+            handleEvents(events)
             {
-     
+
             }
         }
     }

@@ -133,11 +133,57 @@
                                 </div>
 
                                 <div class="my-3">
+                                    <div class="flex">
+                                        <div class="w-1/4">
+                                            <label class="tw-form-label">Cover Image</label>
+                                        </div>
+                                        <div class="w-3/4">
+                                            <div v-if="cover_image_url" class="mb-2">
+                                                <img :src="cover_image_url" class="w-full h-24 object-cover rounded border">
+                                            </div>
+                                            <a href="#" @click.prevent="showImagePicker=true" class="text-xs text-indigo-600 underline">
+                                                {{ cover_image_url ? 'Change Image' : 'Pick from Media Library' }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="my-3">
                                     <a href="#" dusk="update-btn" class="btn btn-primary submit-btn" @click="submitForm()">Submit</a>
                                     <input type="submit" class="hidden" id="update-btn">
                                 </div>
                             </div>           
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Picker Modal -->
+        <div v-if="showImagePicker" class="modal modal-mask" style="z-index:10000;">
+            <div class="modal-wrapper px-4">
+                <div class="modal-container w-full max-w-2xl px-6 mx-auto">
+                    <div class="modal-header flex justify-between items-center">
+                        <h2 class="text-base font-semibold">Pick a Cover Image</h2>
+                        <button class="modal-default-button text-2xl py-1" @click="showImagePicker=false">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p v-if="mediaImages.length === 0" class="text-sm text-gray-500 py-4">
+                            No images in media library.
+                            <a :href="url+'/admin/mediafile/image/create'" target="_blank" class="text-indigo-600 underline">Upload images here</a>.
+                        </p>
+                        <div class="grid grid-cols-3 gap-3 py-2 max-h-80 overflow-y-auto">
+                            <div v-for="img in mediaImages" :key="img.id"
+                                class="cursor-pointer border-2 rounded overflow-hidden"
+                                :class="cover_image_id == img.id ? 'border-indigo-500' : 'border-transparent'"
+                                @click="selectImage(img)">
+                                <img :src="img.url" class="w-full h-24 object-cover">
+                                <p class="text-xs text-gray-600 px-1 py-1 truncate">{{ img.name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer flex justify-end py-2">
+                        <a href="#" class="btn btn-primary submit-btn text-sm px-4 py-1" @click.prevent="showImagePicker=false">Done</a>
                     </div>
                 </div>
             </div>
@@ -167,6 +213,11 @@
                 avatar:'',
                 start_date:'',
                 end_date:'',
+                cover_image_id:'',
+                cover_image_url:'',
+                cover_image_path:'',
+                showImagePicker: false,
+                mediaImages: [],
                 showEvents:0,
                 event_id:'',
                 errors:[],
@@ -223,6 +274,9 @@
                     {
                         this.freq_term=0;
                     }
+                    this.cover_image_id   = '';
+                    this.cover_image_path = this.events.image_raw || '';
+                    this.cover_image_url  = this.events.image || '';
                 }     
             },
 
@@ -245,7 +299,9 @@
                 formData.append('organised_by',this.organised_by);
                 formData.append('image',this.image);
                 formData.append('start_date',this.start_date);      
-                formData.append('end_date',this.end_date);   
+                formData.append('end_date',this.end_date);
+                formData.append('cover_image_id',this.cover_image_id);
+                formData.append('cover_image_path',this.cover_image_path);
 
                 axios.post('/admin/events/update/'+this.event_id,formData).then(response => {  
                     this.success = response.data.success;
@@ -276,7 +332,9 @@
                 formData.append('organised_by',this.organised_by);
                 formData.append('image',this.image);
                 formData.append('start_date',this.start_date);      
-                formData.append('end_date',this.end_date);   
+                formData.append('end_date',this.end_date);
+                formData.append('cover_image_id',this.cover_image_id);
+                formData.append('cover_image_path',this.cover_image_path);
 
                 axios.post('/admin/events/validateedit/'+this.event_id,formData).then(response => {   
                     this.updateEvents();
@@ -290,11 +348,25 @@
             {
                 this.showEvents=0;
             },
+
+            selectImage(img)
+            {
+                this.cover_image_id   = img.id;
+                this.cover_image_url  = img.url;
+                this.cover_image_path = img.path;
+            },
+
+            loadMediaImages()
+            {
+                axios.get(this.url + '/admin/mediafile/images').then(response => {
+                    this.mediaImages = response.data.data;
+                });
+            },
         },
 
         created()
         {
-            //
+            this.loadMediaImages();
         },
     }
 </script>
