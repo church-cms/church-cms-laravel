@@ -2,7 +2,7 @@
     <div>
         <div v-if="this.success!=null" class="alert alert-success" id="success-alert">{{ this.success }}</div>
         <button class="btn btn-primary hidden" @click="getData()" id="edit-event-modal" dusk="edit-event-modal">Edit</button>
-        <div v-if="this.showEvents">    
+        <div v-if="this.showEvents">
             <div class="modal-mask">
                 <div class="modal-wrapper px-4">
                     <div class="modal-container w-full  max-w-md px-8 mx-auto">
@@ -54,13 +54,13 @@
                                         </div>
                                     </div>
                                 </div>
-            
+
                                 <div id="freq" v-if="this.repeats=='1'">
                                     <div class="input-group flex my-3">
                                         <div class="w-1/4">
                                             <label class="input-group-addon tw-form-label">Every:&nbsp;<span class="text-red-500">*</span></label>
                                             <span v-if="errors.freq" class="text-red-500 text-xs font-semibold">{{ errors.freq[0] }}</span>
-                                        </div>   
+                                        </div>
                                         <div class="w-3/4 flex">
                                             <input type="number" v-model="freq" id="freq" value="1" class="freq-a tw-form-control w-3/5">
                                             <select v-model="freq_term" id="freq_term" class="freq-b tw-form-control w-2/5  ml-3">
@@ -80,7 +80,7 @@
                                             <input type="text" v-model="location" id="location" placeholder="Include a place or address" class="tw-form-control w-full">
                                             <span v-if="errors.location" class="text-red-500 text-xs font-semibold">{{ errors.location[0] }}</span>
                                         </div>
-                                    </div>    
+                                    </div>
                                 </div>
 
                                 <div class="my-3">
@@ -91,7 +91,7 @@
                                         <div class="w-3/4 flex">
                                             <select v-model="category" id="category" class="repeats tw-form-control w-full">
                                                 <option v-for="list in categorylist" v-bind:value="list.id">{{ list.name }}</option>
-                                            </select> 
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -152,7 +152,7 @@
                                     <a href="#" dusk="update-btn" class="btn btn-primary submit-btn" @click="submitForm()">Submit</a>
                                     <input type="submit" class="hidden" id="update-btn">
                                 </div>
-                            </div>           
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -197,7 +197,7 @@
         props:['url'],
 
         components: { datetime },
-  
+
         data() {
             return {
                 events:[],
@@ -233,7 +233,7 @@
             {
                 this.showEvents=1;
                 this.event_id=$('#event_id').val();
-                this.getData(); 
+                this.getData();
             },
 
             getData()
@@ -247,7 +247,7 @@
             },
 
             setData()
-            { 
+            {
                 if(Object.keys(this.events).length > 0)
                 {
                     this.title          =   this.events.title;
@@ -277,71 +277,71 @@
                     this.cover_image_id   = '';
                     this.cover_image_path = this.events.image_raw || '';
                     this.cover_image_url  = this.events.image || '';
-                }     
+                }
             },
 
             updateEvents()
             {
                 this.event_id=$('#event_id').val();
-         
+
                 this.errors=[];
-                this.success=null;   
+                this.success=null;
 
                 let formData=new FormData();
 
-                formData.append('title',this.title);      
+                formData.append('title',this.title);
                 formData.append('description',this.description);
-                formData.append('repeats',this.repeats);      
-                formData.append('freq',this.freq); 
+                formData.append('repeats',this.repeats);
+                formData.append('freq',this.freq);
                 formData.append('freq_term',this.freq_term);
                 formData.append('location',this.location);
                 formData.append('category',this.category);
                 formData.append('organised_by',this.organised_by);
                 formData.append('image',this.image);
-                formData.append('start_date',this.start_date);      
+                formData.append('start_date',this.start_date);
                 formData.append('end_date',this.end_date);
                 formData.append('cover_image_id',this.cover_image_id);
                 formData.append('cover_image_path',this.cover_image_path);
 
-                axios.post('/admin/events/update/'+this.event_id,formData).then(response => {  
+                axios.post('/admin/events/update/'+this.event_id,formData).then(response => {
                     this.success = response.data.success;
                     this.closeModal();
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 });
- 
+
             },
 
             submitForm()
             {
                 this.showEvents=1;
                 this.event_id=$('#event_id').val();
-         
+
                 this.errors=[];
-                this.success=null;    
+                this.success=null;
 
                 let formData=new FormData();
 
-                formData.append('title',this.title);      
+                formData.append('title',this.title);
                 formData.append('description',this.description);
-                formData.append('repeats',this.repeats);      
-                formData.append('freq',this.freq); 
+                formData.append('repeats',this.repeats);
+                formData.append('freq',this.freq);
                 formData.append('freq_term',this.freq_term);
                 formData.append('location',this.location);
                 formData.append('category',this.category);
                 formData.append('organised_by',this.organised_by);
                 formData.append('image',this.image);
-                formData.append('start_date',this.start_date);      
+                formData.append('start_date',this.start_date);
                 formData.append('end_date',this.end_date);
                 formData.append('cover_image_id',this.cover_image_id);
                 formData.append('cover_image_path',this.cover_image_path);
 
-                axios.post('/admin/events/validateedit/'+this.event_id,formData).then(response => {   
+                axios.post('/admin/events/validateedit/'+this.event_id,formData).then(response => {
                     this.updateEvents();
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 });
- 
+
             },
 
             closeModal()
