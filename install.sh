@@ -257,7 +257,7 @@ run_seeders() {
     cd "$PROJECT_ROOT"
 
     print_info "Populating system data (countries, permissions, bible data, etc.)..."
-    if php artisan db:seed --class=InstallerSeeder --force 2>&1 | tee /tmp/seed.log; then
+    if php artisan db:seed --class=DatabaseSeeder --force 2>&1 | tee /tmp/seed.log; then
         print_success "Database seeding completed successfully"
     else
         print_error "Seeding failed. Check /tmp/seed.log for details"
