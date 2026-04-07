@@ -22,7 +22,7 @@ class Page extends JsonResource
             'page_name'     =>  $this->page_name,
             'description'   =>  \Str::limit($this->description,50,'...'),
             'cover_image'   =>  $this->CoverImagePath,
-            'category'      =>  str_replace('_', ' ', ucwords($this->category->name)),
+            'category'      =>  $this->pageCategory ? str_replace('_', ' ', ucwords($this->pageCategory->name)) : '—',
             'like_count'    =>  $this->pageDetail()->where('like',1)->count(),
             'unlike_count'  =>  $this->pageDetail()->where('dislike',1)->count(),
             'follow_count'  =>  $this->pageDetail()->where('is_following',1)->count(),

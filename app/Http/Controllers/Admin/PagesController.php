@@ -213,10 +213,17 @@ class PagesController extends Controller
 
         $array = [];
 
-        $array['page_name']        = $page->page_name;
-        $array['category']         = $page->category_id;
-        $array['description']      = $page->description;
-        $array['cover_image']      = $page->CoverImagePath;
+        $array['page_name']         = $page->page_name;
+        $array['category']          = $page->category_id;
+        $array['description']       = $page->description;
+        $array['cover_image']       = $page->CoverImagePath;
+        $array['slug']              = $page->slug;
+        $array['menu_text']         = $page->menu_text;
+        $array['menu_order']        = $page->menu_order;
+        $array['meta_title']        = $page->meta_title;
+        $array['meta_description']  = $page->meta_description;
+        $array['meta_keywords']     = $page->meta_keywords;
+        $array['og_image']          = $page->og_image;
 
         return $array;
     }
@@ -249,16 +256,23 @@ class PagesController extends Controller
         {
             $page = Page::where('id',$id)->first();
 
-            $page->page_name        = $request->page_name;
-            $page->category_id      = $request->category;
-            $page->description      = $request->description;
-            $page->created_by       = Auth::id();
+            $page->page_name         = $request->page_name;
+            $page->category_id       = $request->category;
+            $page->description       = $request->description;
+            $page->created_by        = Auth::id();
+            $page->slug              = $request->slug ?: \Illuminate\Support\Str::slug($request->page_name) . '-' . $page->id;
+            $page->menu_text         = $request->menu_text;
+            $page->menu_order        = $request->menu_order ?? 0;
+            $page->meta_title        = $request->meta_title;
+            $page->meta_description  = $request->meta_description;
+            $page->meta_keywords     = $request->meta_keywords;
+            $page->og_image          = $request->og_image;
 
             $file = $request->file('cover_image');
             if($file)
             {
-                $folder =   $church_id.'/pages';
-                $path   =   $this->uploadFile($folder,$file);
+                $folder = Auth::user()->church_id . '/pages';
+                $path   = $this->uploadFile($folder,$file);
                 $page->cover_image = $path;
             }
 

@@ -1,31 +1,38 @@
 @extends('theme::layout')
 
-@section('title', 'Pages')
+@section('title', $activePage ? $activePage->page_name : 'Pages')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <h1 class="text-3xl font-bold text-gray-800 mb-8">Pages</h1>
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        @forelse($pages as $page)
-        <a href="{{ route('web.page', $page->id) }}" class="block bg-white rounded-lg shadow hover:shadow-md overflow-hidden transition">
-            @if($page->cover_image)
-                <img src="{{ \Storage::url($page->cover_image) }}" alt="{{ $page->page_name }}" class="w-full h-44 object-cover">
+    <div class="flex flex-col lg:flex-row gap-8">
+
+        {{-- ── LEFT NAV 1/4 ──────────────────────────────────────────── --}}
+        @include('theme::_page_menu')
+
+        {{-- ── RIGHT CONTENT 3/4 ─────────────────────────────────────── --}}
+        <main class="lg:w-3/4 min-w-0">
+            @if($activePage)
+
+                @if($activePage->cover_image)
+                <img src="{{ \Storage::url($activePage->cover_image) }}"
+                     alt="{{ $activePage->page_name }}"
+                     class="w-full h-56 object-cover rounded-lg mb-6">
+                @endif
+
+                <h1 class="text-2xl font-bold text-gray-800 mb-4">{{ $activePage->page_name }}</h1>
+
+                <div class="prose max-w-none text-gray-700 leading-relaxed">
+                    {!! $activePage->description !!}
+                </div>
+
             @else
-                <div class="w-full h-44 bg-indigo-50 flex items-center justify-center text-indigo-300 text-4xl">&#9741;</div>
+                <div class="flex items-center justify-center h-64 text-gray-400">
+                    <p>Select a page from the menu.</p>
+                </div>
             @endif
-            <div class="p-4">
-                <h2 class="font-semibold text-gray-800 text-base">{{ $page->page_name }}</h2>
-                <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ Str::limit(strip_tags($page->description), 100) }}</p>
-            </div>
-        </a>
-        @empty
-        <p class="text-gray-500 col-span-3">No pages found.</p>
-        @endforelse
-    </div>
+        </main>
 
-    <div class="mt-10">
-        {{ $pages->links() }}
     </div>
 </div>
 @endsection

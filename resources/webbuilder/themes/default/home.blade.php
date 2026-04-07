@@ -42,7 +42,7 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-8">Pages</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 @foreach($featuredPages as $page)
-                <a href="{{ route('web.page', $page->id) }}" class="block bg-white rounded-lg shadow hover:shadow-md overflow-hidden transition">
+                <a href="{{ route('web.page', [optional($page->pageCategory)->slug ?? 'general', $page->slug]) }}" class="block bg-white rounded-lg shadow hover:shadow-md overflow-hidden transition">
                     @if($page->cover_image)
                         <img src="{{ \Storage::url($page->cover_image) }}" alt="{{ $page->page_name }}" class="w-full h-40 object-cover">
                     @endif

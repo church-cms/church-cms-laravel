@@ -7,7 +7,7 @@
 
         <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-600">
             <a href="{{ route('web.home') }}"    class="hover:text-indigo-600">Home</a>
-            <a href="{{ route('web.pages') }}"   class="hover:text-indigo-600">Pages</a>
+            <a href="{{ route('web.pages') }}"   class="hover:text-indigo-600">About</a>
             <a href="{{ route('web.posts') }}"   class="hover:text-indigo-600">Blog</a>
             <a href="{{ route('web.events') }}"  class="hover:text-indigo-600">Events</a>
             <a href="{{ route('web.gallery') }}" class="hover:text-indigo-600">Gallery</a>

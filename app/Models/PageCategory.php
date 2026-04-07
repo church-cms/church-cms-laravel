@@ -44,7 +44,7 @@ class PageCategory extends Model
      * @var array
      */
     protected $fillable = [
-        'church_id' , 'name' , 'status'
+        'church_id', 'name', 'slug', 'icon', 'description', 'sort_order', 'status',
     ];
 
     /**

@@ -4,22 +4,52 @@ namespace App\Http\Controllers\WebBuilder;
 
 use App\Http\Controllers\Controller;
 use App\Models\Page;
+use App\Models\PageCategory;
+use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    public function index()
+    private function navData(): array
     {
-        $pages = Page::where('status', 1)
-                     ->orderBy('created_at', 'desc')
-                     ->paginate(12);
+        $allPages = Page::with('pageCategory')
+                        ->where('status', 1)
+                        ->orderBy('menu_order')
+                        ->orderBy('page_name')
+                        ->get();
 
-        return view('theme::page_index', compact('pages'));
+        $grouped = $allPages->groupBy(fn($p) => optional($p->pageCategory)->name ?? 'General');
+
+        return [$allPages, $grouped];
     }
 
-    public function show($id)
+    public function index(Request $request)
     {
-        $page = Page::where('id', $id)->where('status', 1)->firstOrFail();
+        [$allPages, $grouped] = $this->navData();
 
-        return view('theme::page', compact('page'));
+        // Active page: ?slug= param, otherwise first page
+        $activeSlug = $request->query('slug');
+        $activePage = $activeSlug
+            ? $allPages->firstWhere('slug', $activeSlug)
+            : $allPages->first();
+
+        return view('theme::page_index', compact('grouped', 'activePage'));
+    }
+
+    public function show($categorySlug, $pageSlug)
+    {
+        [$allPages, $grouped] = $this->navData();
+
+        $page = $allPages->first(function ($p) use ($categorySlug, $pageSlug) {
+            return $p->slug === $pageSlug
+                && optional($p->pageCategory)->slug === $categorySlug;
+        });
+
+        if (! $page) {
+            abort(404);
+        }
+
+        $activePage = $page;
+
+        return view('theme::page', compact('page', 'grouped', 'activePage'));
     }
 }

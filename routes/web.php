@@ -21,8 +21,8 @@ Route::group([
     'namespace'  => 'WebBuilder',
 ], function () {
     Route::get('/',              'HomeController@index')->name('web.home');
-    Route::get('/pages',         'PageController@index')->name('web.pages');
-    Route::get('/page/{id}',     'PageController@show')->name('web.page');
+    Route::get('/pages',                           'PageController@index')->name('web.pages');
+    Route::get('/page/{category_slug}/{page_slug}', 'PageController@show')->name('web.page');
     Route::get('/posts',         'PostController@index')->name('web.posts');
     Route::get('/post/{id}',           'PostController@show')->name('web.post');
     Route::post('/post/{id}/comment', 'PostController@storeComment')->name('web.post.comment')->middleware('throttle:20,1');
