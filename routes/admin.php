@@ -374,6 +374,16 @@ use Illuminate\Support\Facades\Route;
 
     //faq (admin only)
     Route::group(['middleware' => ['adminonly']], function() {
+        // faq categories
+        Route::get('/faq-categories', 'FaqCategoryController@index');
+        Route::get('/faqCategory/list', 'FaqCategoryController@list');
+        Route::post('/faqCategory/add', 'FaqCategoryController@store');
+        Route::get('/faqCategory/editList/{id}', 'FaqCategoryController@editList');
+        Route::get('/faqCategory/edit/{id}', 'FaqCategoryController@edit');
+        Route::post('/faqCategory/edit/{id}', 'FaqCategoryController@update');
+        Route::delete('/faqCategory/delete/{id}', 'FaqCategoryController@destroy');
+
+        // keep legacy create route (used by old Faq create form inline)
         Route::post('/faq/category/create','FaqCategoryController@store');
 
         //faq
@@ -901,6 +911,14 @@ use Illuminate\Support\Facades\Route;
     Route::post( '/page/dislike/{id}', 'PageDetailsController@dislike' );
 
     //post
+    Route::get( '/post-categories', 'PostCategoryController@index' );
+    Route::get( '/postCategory/list', 'PostCategoryController@list' );
+    Route::post( '/postCategory/add', 'PostCategoryController@store' );
+    Route::get( '/postCategory/editList/{id}', 'PostCategoryController@editList' );
+    Route::get( '/postCategory/edit/{id}', 'PostCategoryController@edit' );
+    Route::post( '/postCategory/edit/{id}', 'PostCategoryController@update' );
+    Route::delete( '/postCategory/delete/{id}', 'PostCategoryController@destroy' );
+
     Route::get( '/post/list', 'PostsController@indexList' );
     Route::get( '/posts', 'PostsController@index' );
 

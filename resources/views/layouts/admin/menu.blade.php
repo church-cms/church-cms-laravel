@@ -57,7 +57,7 @@
     <!-- start -->
     @php
         $class = '';
-        $array = ['pages', 'page', 'page-categories', 'pageCategory', 'posts', 'post', 'settings', 'setting', 'faq', 'widgets', 'seodetail', 'google-analytics'];
+        $array = ['pages', 'page', 'page-categories', 'pageCategory', 'posts', 'post', 'post-categories', 'postCategory', 'settings', 'setting', 'faq', 'faq-categories', 'widgets', 'seodetail', 'google-analytics'];
         if (in_array(\Request()->segment('2'), $array)) {
             $class = 'active';
         }
@@ -94,7 +94,34 @@
                     <span class="mx-3 whitespace-no-wrap">Posts</span>
                 </a>
             </li>
-
+            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'post-categories' ? 'active' : '' }}">
+                <a href="{{ url('/admin/post-categories') }}" class="flex items-center">
+                    <img src="{{ url('uploads/icons/posts.svg') }}" class="w-4 h-4"
+                        style="filter: brightness(0) invert(1);">
+                    <span class="mx-3 whitespace-no-wrap">Post Categories</span>
+                </a>
+            </li>
+            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'faq' && Request::segment('3') != 'categories' ? 'active' : '' }}">
+                <a href="{{ url('admin/faq') }}" class="flex items-center">
+                    <img src="{{ url('uploads/icons/faq.svg') }}" class="w-6 h-6"
+                        style="filter: brightness(0) invert(1);">
+                    <span class="mx-1 whitespace-no-wrap">FAQ</span>
+                </a>
+            </li>
+            <li class="py-3 px-3 hover:font-semibold {{ Request::segment(2) == 'faq-categories' ? 'active' : '' }}">
+                <a href="{{ url('/admin/faq-categories') }}" class="flex items-center">
+                    <img src="{{ url('uploads/icons/faq.svg') }}" class="w-6 h-6"
+                        style="filter: brightness(0) invert(1);">
+                    <span class="mx-1 whitespace-no-wrap">FAQ Categories</span>
+                </a>
+            </li>
+             <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'widgets' ? 'active' : '' }}">
+                <a href="{{ url('/admin/widgets') }}" class="flex items-center">
+                    <img src="{{ url('uploads/icons/widgets.svg') }}" class="w-4 h-4">
+                    <span class="mx-3 whitespace-no-wrap">Code Snippets</span>
+                </a>
+            </li>
+            <hr>
             <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'generalsettings' ? 'active' : '' }}">
                 <a href="{{ url('/admin/settings/generalsettings') }}" class="flex items-center">
                     <img src="{{ url('uploads/icons/settings.svg') }}" class="w-4 h-4"
@@ -116,12 +143,7 @@
                     <span class="mx-3 whitespace-no-wrap">SEO Settings</span>
                 </a>
             </li>
-            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'widgets' ? 'active' : '' }}">
-                <a href="{{ url('/admin/widgets') }}" class="flex items-center">
-                    <img src="{{ url('uploads/icons/widgets.svg') }}" class="w-4 h-4">
-                    <span class="mx-3 whitespace-no-wrap">Widgets</span>
-                </a>
-            </li>
+
             <li
                 class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'google-analytics' ? 'active' : '' }}">
                 <a href="{{ url('/admin/google-analytics') }}" class="flex items-center">
@@ -129,13 +151,7 @@
                     <span class="mx-3 whitespace-no-wrap">Google Analytics</span>
                 </a>
             </li>
-            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'faq' ? 'active' : '' }}">
-                <a href="{{ url('admin/faq') }}" class="flex items-center">
-                    <img src="{{ url('uploads/icons/faq.svg') }}" class="w-6 h-6"
-                        style="filter: brightness(0) invert(1);">
-                    <span class="mx-1 whitespace-no-wrap">FAQ</span>
-                </a>
-            </li>
+
         </ul>
     </li>
     <!-- end -->

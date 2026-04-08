@@ -138,6 +138,8 @@ defined('LOGNAME_CHANGE_NEWSLETTER_STATUS') or define('LOGNAME_CHANGE_NEWSLETTER
 
 //faq
 defined('LOGNAME_ADD_FAQ_CATEGORY') or define('LOGNAME_ADD_FAQ_CATEGORY','add_faq_category');
+defined('LOGNAME_EDIT_FAQ_CATEGORY') or define('LOGNAME_EDIT_FAQ_CATEGORY','edit_faq_category');
+defined('LOGNAME_DELETE_FAQ_CATEGORY') or define('LOGNAME_DELETE_FAQ_CATEGORY','delete_faq_category');
 defined('LOGNAME_ADD_FAQ') or define('LOGNAME_ADD_FAQ','add_faq');
 defined('LOGNAME_EDIT_FAQ') or define('LOGNAME_EDIT_FAQ','edit_faq');
 defined('LOGNAME_DELETE_FAQ') or define('LOGNAME_DELETE_FAQ','delete_faq');
@@ -183,3 +185,8 @@ defined('LOGNAME_DELETE_RULE') or define('LOGNAME_DELETE_RULE','delete_rule');
 defined('LOGNAME_ADD_WEBHOOK') or define('LOGNAME_ADD_WEBHOOK','add_webhook');
 defined('LOGNAME_EDIT_WEBHOOK') or define('LOGNAME_EDIT_WEBHOOK','edit_webhook');
 defined('LOGNAME_DELETE_WEBHOOK') or define('LOGNAME_DELETE_WEBHOOK','delete_webhook');
+
+//post category
+defined('LOGNAME_ADD_POST_CATEGORY') or define('LOGNAME_ADD_POST_CATEGORY','add_post_category');
+defined('LOGNAME_EDIT_POST_CATEGORY') or define('LOGNAME_EDIT_POST_CATEGORY','edit_post_category');
+defined('LOGNAME_DELETE_POST_CATEGORY') or define('LOGNAME_DELETE_POST_CATEGORY','delete_post_category');

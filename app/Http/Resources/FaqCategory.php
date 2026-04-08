@@ -16,8 +16,9 @@ class FaqCategory extends JsonResource
     {
         return[
             //
-            'id'    =>  $this->id,
-            'name'  =>  ucwords($this->name),
+            'id'     => $this->id,
+            'name'   => ucwords($this->name),
+            'status' => $this->status,
         ];
     }
 }

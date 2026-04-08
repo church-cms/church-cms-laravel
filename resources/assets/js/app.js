@@ -211,6 +211,10 @@ Vue.component('newsletter-send', require('./components/newsletter/Send.vue').def
 //page category
 Vue.component('page-category-list', require('./components/page_category/List.vue').default);
 Vue.component('edit-page-category', require('./components/page_category/Edit.vue').default);
+Vue.component('faq-category-list', require('./components/faq_category/List.vue').default);
+Vue.component('edit-faq-category', require('./components/faq_category/Edit.vue').default);
+Vue.component('post-category-list', require('./components/post_category/List.vue').default);
+Vue.component('edit-post-category', require('./components/post_category/Edit.vue').default);
 
 //page
 Vue.component('tiptap-editor', require('./components/TiptapEditor.vue').default);

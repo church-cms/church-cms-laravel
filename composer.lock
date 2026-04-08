@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.376.1",
+            "version": "3.377.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "475b367bb518fdfafd44b0848534f6636e0886e9"
+                "reference": "573c569d20710a902446688a0439b53fef256e3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/475b367bb518fdfafd44b0848534f6636e0886e9",
-                "reference": "475b367bb518fdfafd44b0848534f6636e0886e9",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/573c569d20710a902446688a0439b53fef256e3a",
+                "reference": "573c569d20710a902446688a0439b53fef256e3a",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.376.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.377.0"
             },
-            "time": "2026-04-01T18:11:20+00:00"
+            "time": "2026-04-07T18:14:36+00:00"
         },
         {
             "name": "barryvdh/laravel-dompdf",
@@ -236,20 +236,20 @@
         },
         {
             "name": "botman/botman",
-            "version": "v2.8.10",
+            "version": "v2.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/botman/botman.git",
-                "reference": "6abc4d6fece4ee3395f35cc4b2a534898607bc76"
+                "reference": "571f4bdf8055d4092c6060913b9f69aae81bafb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/botman/botman/zipball/6abc4d6fece4ee3395f35cc4b2a534898607bc76",
-                "reference": "6abc4d6fece4ee3395f35cc4b2a534898607bc76",
+                "url": "https://api.github.com/repos/botman/botman/zipball/571f4bdf8055d4092c6060913b9f69aae81bafb0",
+                "reference": "571f4bdf8055d4092c6060913b9f69aae81bafb0",
                 "shasum": ""
             },
             "require": {
-                "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+                "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0 || ^14.0",
                 "laravel/serializable-closure": "^1.0 || ^2.0",
                 "mpociot/pipeline": "^1.0.2",
                 "php": ">=7.1",
@@ -310,9 +310,9 @@
             ],
             "support": {
                 "issues": "https://github.com/botman/botman/issues",
-                "source": "https://github.com/botman/botman/tree/v2.8.10"
+                "source": "https://github.com/botman/botman/tree/v2.8.11"
             },
-            "time": "2025-08-12T16:27:17+00:00"
+            "time": "2026-04-03T05:14:33+00:00"
         },
         {
             "name": "botman/driver-web",

@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
     <script src="{{ asset('js/trix.js') }}"></script>
     <script src="{{ asset('js/attachments.js') }}"></script>
