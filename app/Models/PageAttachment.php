@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\Models\Media;
 use App\Traits\Common;
@@ -31,7 +31,7 @@ use App\Traits\Common;
 class PageAttachment extends Model implements HasMedia
 {
     //
-    use HasMediaTrait;
+    use InteractsWithMedia;
     use SoftDeletes;
     use Common;
 

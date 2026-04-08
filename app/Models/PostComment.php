@@ -50,7 +50,7 @@ class PostComment extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id' , 'entity_id' , 'entity_name' , 'comments' , 'attachment_file' , 'status'
+        'user_id' , 'guest_name' , 'guest_email' , 'entity_id' , 'entity_name' , 'comments' , 'attachment_file' , 'status'
     ];
 
     /**

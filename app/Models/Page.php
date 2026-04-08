@@ -55,7 +55,8 @@ class Page extends Model
      * @var array
      */
     protected $fillable = [
-        'church_id' , 'category_id' , 'page_name' , 'description' , 'cover_image' , 'created_by' , 'status'
+        'church_id', 'category_id', 'page_name', 'slug', 'description', 'cover_image', 'created_by', 'status',
+        'menu_text', 'menu_order', 'meta_title', 'meta_description', 'meta_keywords', 'og_image',
     ];
 
     /**
@@ -92,6 +93,6 @@ class Page extends Model
 
     public function getCoverImagePathAttribute()
     {
-        return $this->getFilePath($this->cover_image);
+        return $this->cover_image ? $this->getFilePath($this->cover_image) : null;
     }
 }

@@ -128,6 +128,7 @@ Vue.component('create-bulletin', require('./components/bulletin/Create.vue').def
 //video
 Vue.component('create-audio',require('./components/mediafile/Audio.vue').default);
 Vue.component('create-video',require('./components/mediafile/Video.vue').default);
+Vue.component('create-image',require('./components/mediafile/Image.vue').default);
 Vue.component('mediafile-tab',require('./components/mediafile/listTab.vue').default);
 
 //Quote

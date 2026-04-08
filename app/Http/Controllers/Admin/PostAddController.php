@@ -52,7 +52,7 @@ class PostAddController extends Controller
     public function create(Request $request)
     {
         //
-        if(count(\Request::getQueryString())>0)
+        if(count(\Request::query()) > 0)
         {
             if($request->entity_id != '')
             {
@@ -131,7 +131,7 @@ class PostAddController extends Controller
                 array_push($tagObjects,$tag);
             }
 
-            $post->tag()->saveMany($tagObjects);
+            $post->tags()->saveMany($tagObjects);
 
             $message = trans('messages.add_success_msg',['module' => 'Post']);
 

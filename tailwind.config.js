@@ -1,4 +1,8 @@
 module.exports = {
+    purge: [
+        './resources/**/*.blade.php',
+        './resources/webbuilder/**/*.blade.php',
+    ],
     theme: {
         fontFamily: {
             "headings": ['Poppins'],

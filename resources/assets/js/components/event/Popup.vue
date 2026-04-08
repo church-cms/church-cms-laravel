@@ -13,12 +13,12 @@
                                 <div class="leading-relaxed">
                                     <div class="text-base text-gray-600 mx-2 my-1 capitalize flex items-center">
                                         <p class="w-3/4">{{ this.event.title }}</p>
-                                    </div>              
-                                </div>                                    
-                            </div>                                        
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-         
+
                     <div class="flex flex-col lg:flex-row md:flex-row py-3" v-else>
                         <div class="w-full px-3">
                             <div>
@@ -47,9 +47,9 @@
                                     </div>
                                 </div>
                                 <div class="pt-3 pb-2 px-1 detail_button">
-                                    <a :href="this.url+'/'+this.mode+'/events/show/details/'+this.event.id" class="text-blue-500 text-sm flex items-center"><button class="btn-primary bg-blue-500 text-white rounded px-4 py-1">Detail</button></a>
-                                </div>              
-                            </div>  
+                                    <a v-if="this.event && this.event.id" :href="this.url+'/'+this.mode+'/events/show/details/'+this.event.id" class="text-blue-500 text-sm flex items-center"><button class="btn-primary bg-blue-500 text-white rounded px-4 py-1">Detail</button></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -67,11 +67,11 @@
             return{
                 event:[],
                 errors:[],
-                success:null,         
+                success:null,
             }
         },
 
-        created() 
+        created()
         {
             //
             bus.$on("dataEventDetail", data => {
@@ -100,8 +100,9 @@
             {
                 axios.get(this.url+'/'+this.mode+'/events/showdetails/'+this.eventid).then(response => {
                     this.event = response.data.data[0];
+                    $('#show-detail').removeClass('hide-menu').addClass('block');
                 });
-            } 
+            }
         },
     }
 </script>

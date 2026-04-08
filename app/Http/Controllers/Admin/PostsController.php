@@ -46,7 +46,7 @@ class PostsController extends Controller
     {
         //
         $posts = Post::where([['church_id',Auth::user()->church_id],['is_posted',1]])->orderBy('post_created_at','DESC');
-        if(count(\Request::getQueryString())>0)
+        if(count(\Request::query()) > 0)
         {
             if($request->entity_id != '')
             {
@@ -56,10 +56,6 @@ class PostsController extends Controller
             {
                 $posts = $posts->where('entity_name',$request->entity_name);
             }
-        }
-        else
-        {
-            $posts = $posts->where('entity_name','App\Models\User');
         }
         $posts = $posts->get();
         $posts = PostResource::collection($posts);
@@ -72,13 +68,20 @@ class PostsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $entity_id      = Auth::id();
-        $entity_name    = 'App\Models\User';
+        $posts = Post::with('category')
+            ->where('church_id', Auth::user()->church_id)
+            ->when($request->filled('status'), fn($q) => $q->where('status', $request->status))
+            ->when($request->filled('category_id'), fn($q) => $q->where('category_id', $request->category_id))
+            ->orderBy('post_created_at', 'DESC')
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('/admin/post/index' , [ 'entity_id' => $entity_id , 'entity_name' => $entity_name ]);
+        $categories = \App\Models\PostCategory::where('church_id', Auth::user()->church_id)
+            ->orderBy('name')->get();
+
+        return view('/admin/post/index', compact('posts', 'categories'));
     }
 
     /**

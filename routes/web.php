@@ -15,8 +15,32 @@ use Illuminate\Support\Facades\Auth;
 */
 
 
-Route::get('/', function () {
-    return view('welcome');
+// ─── WebBuilder Public Site ──────────────────────────────────────────────────
+Route::group([
+    'middleware' => \App\Http\Middleware\WebCmsContext::class,
+    'namespace'  => 'WebBuilder',
+], function () {
+    Route::get('/',              'HomeController@index')->name('web.home');
+    Route::get('/pages',                           'PageController@index')->name('web.pages');
+    Route::get('/page/{category_slug}/{page_slug}', 'PageController@show')->name('web.page');
+    Route::get('/posts',         'PostController@index')->name('web.posts');
+    Route::get('/post/{id}',           'PostController@show')->name('web.post');
+    Route::post('/post/{id}/comment', 'PostController@storeComment')->name('web.post.comment')->middleware('throttle:20,1');
+    Route::post('/post/{id}/like',    'PostController@toggleLike')->name('web.post.like')->middleware('throttle:30,1');
+    Route::post('/comment/{id}/like', 'PostController@toggleCommentLike')->name('web.comment.like')->middleware('throttle:30,1');
+    Route::get('/faq',           'FaqController@index')->name('web.faq');
+    Route::get('/events',        'EventController@index')->name('web.events');
+    Route::get('/event/{id}',    'EventController@show')->name('web.event');
+    Route::get('/gallery',       'GalleryController@index')->name('web.gallery');
+    Route::get('/gallery/{id}',  'GalleryController@show')->name('web.gallery.show');
+    Route::get('/sermons',       'SermonController@index')->name('web.sermons');
+    Route::get('/sermon/{id}',   'SermonController@show')->name('web.sermon');
+    Route::get('/prayer-requests',  'PrayerRequestController@index')->name('web.prayer');
+    Route::post('/prayer-requests', 'PrayerRequestController@store')->name('web.prayer.store')->middleware('throttle:10,1');
+    Route::get('/help-requests',    'HelpRequestController@index')->name('web.help');
+    Route::post('/help-requests',   'HelpRequestController@store')->name('web.help.store')->middleware('throttle:10,1');
+    Route::get('/contact',          'ContactController@show')->name('web.contact');
+    Route::post('/contact',         'ContactController@store')->name('web.contact.store')->middleware('throttle:5,1');
 });
 
 Auth::routes(['verify' => true, 'register' => false]);
@@ -85,9 +109,7 @@ Route::get('/pricing','PricingController@create');
 
 //privacypolicy
 
-//faq
-Route::get('/faq/get','FaqController@list');
-Route::get('/faq','FaqController@index')->name('faq');
+//faq — now handled by WebBuilder\FaqController (see WebBuilder route group above)
 
 //swotanalysis
 Route::get('/swotanalysis','AboutController@show');
@@ -95,10 +117,7 @@ Route::get('/swotanalysis','AboutController@show');
 //terms
 Route::get('/terms','AboutController@terms');
 
-//contact
-
-//Route::get('/contact','ContactController@show');
-Route::post('/contact','ContactController@store');
+//contact — now handled by WebBuilder\ContactController (see WebBuilder route group above)
 
 //permissions
 

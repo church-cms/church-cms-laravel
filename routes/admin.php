@@ -557,6 +557,12 @@ use Illuminate\Support\Facades\Route;
     Route::get('/events/details/{id}','EventsController@details');
     Route::delete('/events/delete/{id}','EventsController@destroy');
         Route::get('/event/showAttendees/{id}/{status}','EventsController@showAttendees');
+
+    //event_gallery
+    Route::post('/upload/photos/{event_id}','EventGalleryController@store');
+    Route::get('/display/photos/{event_id}', 'EventsController@showimage');
+    Route::get('/getphoto/{event_id}', 'EventGalleryController@getPhoto');
+    Route::delete('/event/photo/delete/{id}', 'EventGalleryController@destroy');
     });
 
     //Settings
@@ -647,6 +653,12 @@ use Illuminate\Support\Facades\Route;
 
         Route::post('/media/storeaudios','AudioController@audiostore');
 
+        //image
+        Route::get('/mediafile/image/create','ImageController@create');
+        Route::post('/mediafile/image/create','ImageController@store');
+        Route::get('/mediafile/images','ImageController@listImages');
+        Route::delete('/mediafile/image/delete/{id}','ImageController@destroy');
+
         //show
         Route::get('/mediafile/show/{id}','MediaFilesController@show');
 
@@ -659,13 +671,6 @@ use Illuminate\Support\Facades\Route;
         Route::get('/sermons', 'SermonsController@index');
     Route::get('/sermon/show/{id}','SermonsController@show');
     Route::get('/download/sermon/{id}','SermonsController@download');
-
-    //event_gallery
-
-    Route::post('/upload/photos/{event_id}','EventGalleryController@store');
-    Route::get('/display/photos/{event_id}', 'EventsController@showimage');
-    Route::get('/getphoto/{event_id}', 'EventGalleryController@getPhoto');
-        Route::delete('/event/photo/delete/{id}', 'EventGalleryController@destroy');
     });
 
     //Bulletins

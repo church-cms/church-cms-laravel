@@ -40,7 +40,7 @@ class PageUpdateRequest extends FormRequest
             'description'   =>  'required|check_description',
             'category'      =>  'required',
         ];
-        
+
         if(request('cover_image') != '')
         {
             $rules['cover_image'] = 'required|max:2048|mimes:jpg,jpeg,png';//in kb
@@ -53,19 +53,15 @@ class PageUpdateRequest extends FormRequest
     {
         $messages = [
             //
-            'page_name.required'            =>  'Page Name is required',
-            'page_name.max'                 =>  'Page Name cannot be more than 25 characters',
-            'page_name.check_page_name'     =>  'Enter Valid Page Name',
-
-            'description.required'          =>  'Description is required',
-            'description.max'               =>  'Description cannot be more than 300 characters',
-            'description.check_description' =>  'Enter Valid Description',
-
-            'category.required'             =>  'Category is required',
-
-            'cover_image.required'          =>  'Cover Photo is required',
-            'cover_image.mimes'             =>  "Cover Photo should be 'JPG or PNG'",
-            'cover_image.max'               =>  'Cover Photo size should be within 2MB',
+            'page_name.required'       => 'Page Name is required',
+            'page_name.max'            => 'Page Name cannot be more than 255 characters',
+            'description.required'     => 'Description is required',
+            'category.required'        => 'Category is required',
+            'slug.regex'               => 'Slug may only contain lowercase letters, numbers and hyphens',
+            'slug.max'                 => 'Slug cannot be more than 255 characters',
+            'cover_image.required'     => 'Cover Photo is required',
+            'cover_image.mimes'        => "Cover Photo should be JPG or PNG",
+            'cover_image.max'          => 'Cover Photo size should be within 2MB',
         ];
 
         return $messages;

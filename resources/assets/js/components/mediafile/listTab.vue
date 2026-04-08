@@ -8,6 +8,10 @@
             <li class="px-2 mx-1 py-1" v-bind:class="[{'active' : type === 'video'}]">
                 <a href="#" class="text-gray-700 font-medium" @click="setTab('video')">Video</a>
             </li>
+
+            <li class="px-2 mx-1 py-1" v-bind:class="[{'active' : type === 'image'}]">
+                <a href="#" class="text-gray-700 font-medium" @click="setTab('image')">Images</a>
+            </li>
         </ul>
 
         <portal to="list_mediafile">
@@ -27,7 +31,7 @@
         props:['url'],
         data () {
             return {
-                type:'audio',     
+                type:'audio',
             }
         },
         components: {
@@ -46,11 +50,11 @@
         created()
         {
             bus.$emit("typeTab", this.type);
-       
+
             bus.$on("typeTab", data => {
                 if(data!='')
                 {
-                    this.type=data;                   
+                    this.type=data;
                 }
             });
         }

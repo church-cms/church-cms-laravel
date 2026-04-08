@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\Models\Media;
 use App\Traits\Common;
@@ -12,7 +12,7 @@ use App\Traits\Common;
 class Post extends Model implements HasMedia
 {
     //
-    use HasMediaTrait;
+    use InteractsWithMedia;
     use SoftDeletes;
     use Common;
 
@@ -61,7 +61,7 @@ class Post extends Model implements HasMedia
      * @var array
      */
     protected $fillable = [
-        'church_id' , 'entity_id' , 'entity_name' , 'title' , 'description' , 'attachment_file' , 'post_created_at' , 'is_posted' , 'posted_at' , 'status' , 'created_by' //, 'visibility' , 'visible_for'
+        'church_id' , 'category_id' , 'entity_id' , 'entity_name' , 'title' , 'description' , 'attachment_file' , 'post_created_at' , 'is_posted' , 'posted_at' , 'status' , 'created_by'
     ];
 
     /**
@@ -69,7 +69,11 @@ class Post extends Model implements HasMedia
      *
      * @var array
      */
-    protected $casts=[ 'attachment_file' => 'array' ];
+    protected $casts = [
+        'attachment_file' => 'array',
+        'post_created_at' => 'datetime',
+        'posted_at'       => 'datetime',
+    ];
 
     /**
      * The attributes that should be mutated to dates.
@@ -81,6 +85,11 @@ class Post extends Model implements HasMedia
     public function church()
     {
         return $this->belongsTo('\App\Models\Church','church_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(PostCategory::class, 'category_id');
     }
 
     public function createdBy()
@@ -105,6 +114,9 @@ class Post extends Model implements HasMedia
 
     public function getAttachmentPathAttribute()
     {
+        if (empty($this->attachment_file)) {
+            return [];
+        }
         $count = count($this->attachment_file);
         for($i=0 ; $i < $count ; $i++)
         {
@@ -113,7 +125,7 @@ class Post extends Model implements HasMedia
             $attachment[$i]['id']               = $i;
         }
 
-        return $attachment;
+        return $attachment ?? [];
     }
 
     public function getImagePathAttribute()
@@ -162,8 +174,8 @@ class Post extends Model implements HasMedia
         return $array;
     }
 
-    public function tag()
+    public function tags()
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class, 'post_tag', 'post_id', 'tag_id');
     }
 }

@@ -26,15 +26,15 @@ class EventUpdateRequest extends FormRequest
      */
     public function rules()
     {
-    
+
       Validator::extend('checklocation', function ($attribute, $value, $parameters, $validator)
        {
         return preg_match('/^[A-Za-z0-9_\-!@#\$%\^&*.,:(\)\s]+$/',request('location'));
        });
-        Validator::extend('check_location', function ($attribute, $value, $parameters, $validator) 
-        {   
+        Validator::extend('check_location', function ($attribute, $value, $parameters, $validator)
+        {
           //validation for tamil letters
-            return preg_match('/\pL\pM*|./u',request('location'));  
+            return preg_match('/\pL\pM*|./u',request('location'));
         });
 
       Validator::extend('check_freq', function ($attribute, $value, $parameters, $validator) {
@@ -63,14 +63,14 @@ class EventUpdateRequest extends FormRequest
 
          Validator::extend('alpha_spaces', function ($attribute, $value,$parameters,$validator) {
 
-              // This will only accept alpha and spaces. 
+              // This will only accept alpha and spaces.
               // If you want to accept hyphens use: /^[\pL\s-]+$/u.
-              return preg_match('/^[\pL\s]+$/u', request('title')); 
+              return preg_match('/^[\pL\s]+$/u', request('title'));
             });
-        Validator::extend('check_title', function ($attribute, $value, $parameters, $validator) 
-        {   
+        Validator::extend('check_title', function ($attribute, $value, $parameters, $validator)
+        {
           //validation for tamil letters
-            return preg_match('/\pL\pM*|./u',request('title'));  
+            return preg_match('/\pL\pM*|./u',request('title'));
         });
 
  Validator::extend('check_start_date', function ($attribute, $value, $parameters, $validator) {
@@ -97,7 +97,7 @@ $rules=
          'category'   => 'required',
          'organised_by'=> 'required',
          //'image'      => 'required|mimes:jpg,png,jpeg',
-         'start_date' => 'required|before_or_equal:end_date|check_start_date',
+         'start_date' => 'required|before_or_equal:end_date',
          'end_date'   => 'required|after_or_equal:start_date',
 
 
@@ -121,7 +121,7 @@ $rules=
    public function messages()
    {
        return
-       [ 
+       [
            'title.required'               => 'Title is required!',
            'title.check_title'           => 'Enter only alphabets',
            'description.required'         => 'Enter Decription',
@@ -140,7 +140,7 @@ $rules=
            'start_date.check_start_date'  => 'Start Date should be after yesterday',
            'end_date.required'            => 'End Date is required!',
            'end_date.checkunique_end'     => 'End Date should be after start date',
-           
+
        ];
 }
 }
