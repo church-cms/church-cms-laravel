@@ -37,6 +37,7 @@ $to = [0, 0, 255];
                              $url=url('/admin/attandance/'.$user->name);
                                     @endphp
 
+         
          <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
     ->eye('circle')
     ->color(0, 0, 0)  

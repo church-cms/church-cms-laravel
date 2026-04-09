@@ -16,8 +16,6 @@ yarn-error.log
 .env.dusk.local
 .phpunit.result.cache
 
-
-
 public/uploads/photos/*
 !public/uploads/photos/index.html
 
