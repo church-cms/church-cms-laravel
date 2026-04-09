@@ -74,7 +74,7 @@
                     <img src="{{ Auth::user()->ChurchLogoPath }}" style="height:55px;"  class="w-32 h-32 border-4 border-white" alt="Logo" style="height: 120px; margin: 0">
                 
         @else
-        <img src="{{ asset('images/church_cms_logo.jpg') }}" style="height:55px;"  class="w-32 h-32 border-4 border-white" alt="Logo" style="height: 120px; margin: 0">
+        <img src="{{ url('images/church_cms_logo.jpg') }}" style="height:55px;"  class="w-32 h-32 border-4 border-white" alt="Logo" style="height: 120px; margin: 0">
         @endif
 
 
@@ -91,7 +91,7 @@ $to = [0, 0, 255];
                              $url=url('/admin/attandance/'.$user->name);
                                     @endphp
 
-             <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
+            <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
     ->eye('circle')
     ->color(0, 0, 0)  
     ->margin(1)
@@ -157,7 +157,7 @@ $to = [0, 0, 255];
             <p
               style="margin-bottom: 0em !important; margin-top: 2px !important"
             >
-              <span style="font-weight: 600">ADDRESS -</span> <span style="font-size:10px;"> {{ strtoupper($user->userprofile->address) }},{{strtoupper($user->userprofile->city->name)}} {{strtoupper($user->userprofile->state->name)}} ,{{strtoupper($user->userprofile->country->name)}}</span>
+              <span style="font-weight: 600">ADDRESS -</span> <span style="font-size:10px;"> {{ strtoupper($user->userprofile->address) }}, {{strtoupper($user->userprofile->city->name)}} {{strtoupper($user->userprofile->state->name)}} ,{{strtoupper($user->userprofile->country->name)}}</span>
             </p>
               <p
               style="margin-bottom: 0em !important; margin-top: 5px !important"
