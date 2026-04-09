@@ -2,8 +2,6 @@
 /aws
 /node_modules
 /public/hot
-/public/storage
-/storage/*.key
 /vendor
 /.idea
 /.vscode
@@ -15,8 +13,6 @@ yarn-error.log
 .env
 .env.dusk.local
 .phpunit.result.cache
-
-
 
 public/uploads/photos/*
 !public/uploads/photos/index.html
