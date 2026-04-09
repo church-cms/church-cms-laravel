@@ -85,6 +85,7 @@ Route::group(['prefix' => 'member', 'middleware' => ['auth','churchmember'], 'na
     Route::get('/change-password', 'HomeController@changePassword')->name('member.change-password');
     Route::get('/familytree/{name}', 'HomeController@familytree');
     Route::get('/show/details/{name}', 'HomeController@showDetails');
+    Route::get('/print/{name}','MembershipCardController@print');
 });
 
 
@@ -152,7 +153,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-members'] ,
         Route::get('/member/print/{name}','MembershipCardController@print');
         Route::get('/membershipCard/create','MembershipCardController@createAll');
         Route::get('/membershipCard/download/{usertype}','MembershipCardController@printAll');
-        
+
     Route::get('/member/show/details/{name}', ['middleware' => ['permission:update-members'], 'uses' =>'MemberController@showdetails']);
     Route::get('/member/show/activity/{name}', ['middleware' => ['permission:update-members'], 'uses' =>'MemberController@showactivity']);
     Route::get('/member/show/{name}', ['middleware' => ['permission:update-members'], 'uses' => 'MemberController@show']);

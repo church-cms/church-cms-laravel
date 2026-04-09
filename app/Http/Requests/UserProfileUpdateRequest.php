@@ -125,16 +125,29 @@ class UserProfileUpdateRequest extends FormRequest
             return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', request('sub_occupation')) ;
         });
 
-        Validator::extend('check_unique_aadhar_number',function($attribute,$value,$parameters,$validator)
-        {
-            $user = User::where('name',request('name'))->first();
-            $userprofile = Userprofile::where([['aadhar_number',request('aadhar_number')],['user_id','!=',$user->id]])->exists();
-            if($userprofile)
-            {
-                return false;
-            }
-            return true;
-        });
+        // Validator::extend('check_unique_aadhar_number',function($attribute,$value,$parameters,$validator)
+        // {
+        //     $user = User::where('name',request('name'))->first();
+        //     $userprofile = Userprofile::where([['aadhar_number',request('aadhar_number')],['user_id','!=',$user->id]])->exists();
+        //     if($userprofile)
+        //     {
+        //         return false;
+        //     }
+        //     return true;
+        // });
+
+    Validator::extend('check_unique_aadhar_number', function ($attribute, $value, $parameters, $validator) {
+
+   $user = User::where('name',request('name'))->first();
+
+   //dd($user);
+
+    $exists = Userprofile::where('aadhar_number', request('aadhar_number'))
+        ->where('user_id', '!=', $user->id)
+        ->exists();
+
+    return !$exists;
+   });
 
         $rules=
         [

@@ -410,12 +410,14 @@
                 formData.append('marriage_start_date',this.marriage_start_date);       
                 formData.append('marriage_end_date',this.marriage_end_date);
                 formData.append('relation',this.relation);
-                formData.append('aadhar_number',this.aadhar_number);  
+                formData.append('aadhar_number',this.aadhar_number); 
+                formData.append('name',this.name);  
                 formData.append('notes',this.notes);          
                 formData.append('avatar',this.avatar);
 
                 axios.post('/admin/member/edit/'+this.name,formData,{headers: {'Content-Type': 'multipart/form-data'}}).then(response => {     
                     $('#submit-btn').click(); 
+                    this.success="Member has been updated successfully";
                 }).catch(error => {
                     this.errors = error.response.data.errors;
                 });

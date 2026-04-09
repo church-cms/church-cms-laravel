@@ -226,6 +226,9 @@
                         church_id="{{ $user->church_id }}" name="{{ $user->name }}" mode="member"
                         type="{{ $user->userprofile->membership_type }}"></profile-tab>
 
+                  
+           
+
                     <portal-target name="profile"></portal-target>
                 </div>
                 <!-- <div class="bg-white shadow my-5">
@@ -235,6 +238,16 @@
                     <send-message url="{{ url('/') }}" name="{{ $user->name }}" tab="1" type="member">
                     </send-message>
                 </div>
+
+                  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                     <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide ">Membership Id Card</h3>&nbsp; <a href="{{ url('/admin/member/print/'.$user->name) }}"
+   class="text-xs font-semibold text-white bg-blue-500 px-3 py-1 rounded cursor-pointer">
+   Print
+</a>
+        </div>
+                @include('member.idcard.idcard')
+               </div>
             </div>
         </div>
     </div>

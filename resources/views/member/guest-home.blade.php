@@ -90,6 +90,20 @@
         </dl>
     </div>
 
+    {{-- Church info --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+         <div class="flex justify-between items-center mb-2">
+            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wide ">Id Card</h3>&nbsp; <a href="{{ url('/member/print/'.$user->name) }}"
+   class="text-xs font-semibold text-white bg-blue-500 px-3 py-1 rounded cursor-pointer">
+   Print
+</a>
+        </div>
+            <div class="flex items-start space-x-3">
+                <!-- Front Side -->
+     @include('member.idcard.idcard')
+
+    </div>
+
 </div>
 
 @endsection
