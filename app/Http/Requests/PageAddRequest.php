@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Validator;
 
 class PageAddRequest extends FormRequest
 {
@@ -24,46 +23,31 @@ class PageAddRequest extends FormRequest
      */
     public function rules()
     {
-        Validator::extend('check_page_name',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z\s]+$/', request('page_name'));
-        });
-
-        Validator::extend('check_description',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', $attribute);
-        });
-
-        $rules = [
-            //
-            'page_name'     =>  'required|max:25|check_page_name',
-            'description'   =>  'required|check_description',
-            'category'      =>  'required',
-            'cover_image'   =>  'required|max:2048|mimes:jpg,jpeg,png', //in kb
+        return [
+            'page_name'        => 'required|string|max:255',
+            'category'         => 'required',
+            'description'      => 'required',
+            'slug'             => 'nullable|string|max:255|regex:/^[a-z0-9\-]+$/',
+            'cover_image'      => 'nullable|max:2048|mimes:jpg,jpeg,png',
+            'menu_text'        => 'nullable|string|max:80',
+            'menu_order'       => 'nullable|integer|min:0',
+            'meta_title'       => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+            'meta_keywords'    => 'nullable|string|max:255',
+            'og_image'         => 'nullable|string|max:500',
         ];
-
-        return $rules;
     }
 
     public function messages()
     {
-        $messages = [
-            //
-            'page_name.required'            =>  'Page Name is required',
-            'page_name.max'                 =>  'Page Name cannot be more than 25 characters',
-            'page_name.check_page_name'     =>  'Enter Valid Page Name',
-
-            'description.required'          =>  'Description is required',
-            'description.max'               =>  'Description cannot be more than 300 characters',
-            'description.check_description' =>  'Enter Valid Description',
-
-            'category.required'             =>  'Category is required',
-
-            'cover_image.required'          =>  'Cover Photo is required',
-            'cover_image.mimes'             =>  "Cover Photo should be 'JPG or PNG'",
-            'cover_image.max'               =>  'Cover Photo size should be within 2MB',
+        return [
+            'page_name.required'   => 'Page Name is required',
+            'page_name.max'        => 'Page Name cannot exceed 255 characters',
+            'category.required'    => 'Category is required',
+            'description.required' => 'Description is required',
+            'slug.regex'           => 'Slug may only contain lowercase letters, numbers and hyphens',
+            'cover_image.mimes'    => "Cover Photo must be JPG or PNG",
+            'cover_image.max'      => 'Cover Photo must be under 2MB',
         ];
-
-        return $messages;
     }
 }

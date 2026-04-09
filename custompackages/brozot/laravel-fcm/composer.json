@@ -1,5 +1,6 @@
 {
     "name": "brozot/laravel-fcm",
+    "version": "1.0.0",
     "description": "Laravel / Lumen package for Firebase Cloud Messaging ",
     "keywords": ["laravel", "lumen", "firebase", "notification", "push", "fcm", "firebase cloud messaging"],
     "type": "library",

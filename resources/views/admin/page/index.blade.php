@@ -1,7 +1,7 @@
 @extends('layouts.admin.layout')
 
 @section('content')
-    <div class="relative">
+    <div class="relative admin-page-list">
         <div class="flex flex-wrap lg:flex-row justify-between">
             <div class="">
                 <h1 class="admin-h1">Pages</h1>
@@ -10,7 +10,7 @@
                 <div class="flex items-center">
                     <a href="{{ url('/admin/page/add') }}"
                         class="no-underline text-white px-4 flex items-center custom-green py-1 justify-center rounded"
-                        target="_blank">
+                        title="Add Page">
                         <span class="mx-1 text-sm font-semibold">Add</span>
                         <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                             xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 409.6 409.6"
@@ -28,7 +28,9 @@
             </div>
         </div>
         @include('partials.message')
+        <div class="bg-white shadow my-3 p-4">
         <page-list url="{{ url('/') }}" mode="admin"></page-list>
+        </div>
     </div>
 
 @endsection

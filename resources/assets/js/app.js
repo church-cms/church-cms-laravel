@@ -213,11 +213,10 @@ Vue.component('page-category-list', require('./components/page_category/List.vue
 Vue.component('edit-page-category', require('./components/page_category/Edit.vue').default);
 
 //page
+Vue.component('tiptap-editor', require('./components/TiptapEditor.vue').default);
 Vue.component('page-list', require('./components/page/List.vue').default);
 Vue.component('create-page', require('./components/page/Create.vue').default);
 Vue.component('edit-page', require('./components/page/Edit.vue').default);
-Vue.component('show-page', require('./components/page/Show.vue').default);
-Vue.component('page-tab', require('./components/page/tabs/pageTab.vue').default);
 
 //post
 Vue.component('post-list', require('./components/post/List.vue').default);

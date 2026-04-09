@@ -3,67 +3,42 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Validator;
 
 class PageUpdateRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
-        Validator::extend('check_page_name',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z\s]+$/', request('page_name'));
-        });
-
-        Validator::extend('check_description',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', $attribute);
-        });
-
-        $rules = [
-            //
-            'page_name'     =>  'required|max:25|check_page_name',
-            'description'   =>  'required|check_description',
-            'category'      =>  'required',
+        return [
+            'page_name'        => 'required|string|max:255',
+            'category'         => 'required',
+            'description'      => 'nullable|string',
+            'slug'             => 'nullable|string|max:255|regex:/^[a-z0-9\-]+$/',
+            'cover_image'      => 'nullable|max:2048|mimes:jpg,jpeg,png',
+            'menu_text'        => 'nullable|string|max:80',
+            'menu_order'       => 'nullable|integer|min:0',
+            'meta_title'       => 'nullable|string|max:60',
+            'meta_description' => 'nullable|string|max:160',
+            'meta_keywords'    => 'nullable|string|max:255',
+            'og_image'         => 'nullable|string|max:500',
+            'content'          => 'nullable|string',
+            'layout_template'  => 'nullable|in:no-sidebar,left-sidebar,right-sidebar',
         ];
-
-        if(request('cover_image') != '')
-        {
-            $rules['cover_image'] = 'required|max:2048|mimes:jpg,jpeg,png';//in kb
-        }
-
-        return $rules;
     }
 
     public function messages()
     {
-        $messages = [
-            //
-            'page_name.required'       => 'Page Name is required',
-            'page_name.max'            => 'Page Name cannot be more than 255 characters',
-            'description.required'     => 'Description is required',
-            'category.required'        => 'Category is required',
-            'slug.regex'               => 'Slug may only contain lowercase letters, numbers and hyphens',
-            'slug.max'                 => 'Slug cannot be more than 255 characters',
-            'cover_image.required'     => 'Cover Photo is required',
-            'cover_image.mimes'        => "Cover Photo should be JPG or PNG",
-            'cover_image.max'          => 'Cover Photo size should be within 2MB',
+        return [
+            'page_name.required'  => 'Page Name is required',
+            'category.required'   => 'Category is required',
+            'slug.regex'          => 'Slug may only contain lowercase letters, numbers and hyphens',
+            'cover_image.mimes'   => 'Cover Photo must be JPG or PNG',
+            'cover_image.max'     => 'Cover Photo must be under 2MB',
+            'layout_template.in'  => 'Invalid layout template selected',
         ];
-
-        return $messages;
     }
 }

@@ -20,6 +20,8 @@ class Page extends JsonResource
             //
             'id'            =>  $this->id,
             'page_name'     =>  $this->page_name,
+            'slug'          =>  $this->slug,
+            'category_slug' =>  optional($this->pageCategory)->slug,
             'description'   =>  \Str::limit($this->description,50,'...'),
             'cover_image'   =>  $this->CoverImagePath,
             'category'      =>  $this->pageCategory ? str_replace('_', ' ', ucwords($this->pageCategory->name ?? '')) : '—',

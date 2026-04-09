@@ -165,4 +165,44 @@ class SiteHelper
             return $array;
         });
     }
+
+    /**
+     * Replace <app-widgets [widgetID]='slug'></app-widgets> tags in HTML
+     * with the actual widget content from the database.
+     * Handles both raw tags and HTML-entity-encoded tags (produced by Tiptap
+     * when the embed tag is typed as plain text in the editor).
+     * All unique slugs on the page are resolved in a single DB query.
+     */
+    public static function resolveWidgetTags(string $html): string
+    {
+        // Raw version:     <app-widgets [widgetID]='slug'></app-widgets>
+        $rawPattern = '/<app-widgets\s+\[widgetID\]=[\'"]([^\'"]+)[\'"]\s*>\s*<\/app-widgets>/i';
+
+        // HTML-encoded version (Tiptap escapes typed text):
+        // &lt;app-widgets [widgetID]='slug'&gt;&lt;/app-widgets&gt;
+        $encodedPattern = '/&lt;app-widgets\s+\[widgetID\]=[\'"]([\w\-]+)[\'"]\s*&gt;\s*&lt;\/app-widgets&gt;/i';
+
+        preg_match_all($rawPattern,     $html, $rawMatches);
+        preg_match_all($encodedPattern, $html, $encMatches);
+
+        $slugs = array_unique(array_merge($rawMatches[1] ?? [], $encMatches[1] ?? []));
+
+        if (empty($slugs)) {
+            return $html;
+        }
+
+        $widgets = \App\Models\Widget::whereIn('slug', $slugs)
+            ->get(['slug', 'content'])
+            ->keyBy('slug');
+
+        $replace = function ($match) use ($widgets) {
+            $widget = $widgets->get($match[1]);
+            return $widget ? $widget->content : '';
+        };
+
+        $html = preg_replace_callback($rawPattern,     $replace, $html);
+        $html = preg_replace_callback($encodedPattern, $replace, $html);
+
+        return $html;
+    }
 }

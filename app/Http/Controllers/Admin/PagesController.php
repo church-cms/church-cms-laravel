@@ -14,6 +14,7 @@ use App\Helpers\SiteHelper;
 use App\Models\PageDetail;
 use App\Traits\Common;
 use App\Models\Page;
+use App\Models\PageVersion;
 use App\Models\User;
 use Exception;
 use Log;
@@ -46,7 +47,7 @@ class PagesController extends Controller
         $pages = Page::where([
             ['church_id',Auth::user()->church_id],
             ['status',1],
-        ])->paginate(5);
+        ])->latest()->paginate(10);
         $pages = PageResource::collection($pages);
 
         return $pages;
@@ -91,14 +92,24 @@ class PagesController extends Controller
             $page->page_name        = $request->page_name;
             $page->category_id      = $request->category;
             $page->description      = $request->description;
+            $page->slug             = $request->slug ?: \Illuminate\Support\Str::slug($request->page_name);
+            $page->menu_text        = $request->menu_text;
+            $page->menu_order       = $request->menu_order ?? 0;
+            $page->meta_title       = $request->meta_title;
+            $page->meta_description = $request->meta_description;
+            $page->meta_keywords    = $request->meta_keywords;
+            $page->og_image         = $request->og_image;
+            $page->layout_template  = $request->layout_template ?? 'left-sidebar';
+            if ($request->content) {
+                $page->content = json_decode($request->content, true);
+            }
             $page->created_by       = Auth::id();
             $page->status           = 1;
 
             $file = $request->file('cover_image');
-            if($file)
-            {
-                $folder =   $church_id.'/pages';
-                $path   =   $this->uploadFile($folder,$file);
+            if ($file) {
+                $folder = Auth::user()->church_id . '/pages';
+                $path   = $this->uploadFile($folder, $file);
                 $page->cover_image = $path;
             }
 
@@ -224,6 +235,8 @@ class PagesController extends Controller
         $array['meta_description']  = $page->meta_description;
         $array['meta_keywords']     = $page->meta_keywords;
         $array['og_image']          = $page->og_image;
+        $array['content']           = $page->content;       // array via $casts
+        $array['layout_template']   = $page->layout_template ?? 'left-sidebar';
 
         return $array;
     }
@@ -267,6 +280,10 @@ class PagesController extends Controller
             $page->meta_description  = $request->meta_description;
             $page->meta_keywords     = $request->meta_keywords;
             $page->og_image          = $request->og_image;
+            $page->layout_template   = $request->layout_template ?? 'left-sidebar';
+            if ($request->content) {
+                $page->content = json_decode($request->content, true);
+            }
 
             $file = $request->file('cover_image');
             if($file)
@@ -277,6 +294,17 @@ class PagesController extends Controller
             }
 
             $page->save();
+
+            // Auto-save version on every update
+            $nextVersion = (PageVersion::where('page_id', $id)->max('version_number') ?? 0) + 1;
+            PageVersion::create([
+                'page_id'         => $page->id,
+                'version_number'  => $nextVersion,
+                'content'         => $page->content ? json_encode($page->content) : null,
+                'description'     => $page->description,
+                'layout_template' => $page->layout_template,
+                'saved_by'        => Auth::id(),
+            ]);
 
             $message = trans('messages.update_success_msg',['module' => 'Page']);
 
@@ -338,6 +366,50 @@ class PagesController extends Controller
         {
             Log::info($e->getMessage());
 
+        }
+    }
+
+    public function versions($id)
+    {
+        $versions = PageVersion::where('page_id', $id)
+            ->orderByDesc('version_number')
+            ->get(['id', 'version_number', 'saved_by', 'created_at'])
+            ->map(function ($v) {
+                return [
+                    'id'             => $v->id,
+                    'version_number' => $v->version_number,
+                    'saved_by'       => optional(User::find($v->saved_by))->name ?? 'Unknown',
+                    'created_at'     => $v->created_at ? $v->created_at->format('M d, Y H:i') : '',
+                ];
+            });
+
+        return response()->json($versions);
+    }
+
+    public function revertVersion(Request $request, $id, $versionId)
+    {
+        try {
+            $page    = Page::where([['church_id', Auth::user()->church_id], ['id', $id]])->firstOrFail();
+            $version = PageVersion::where(['page_id' => $id, 'id' => $versionId])->firstOrFail();
+
+            $page->content         = $version->content ? json_decode($version->content, true) : null;
+            $page->description     = $version->description;
+            $page->layout_template = $version->layout_template ?? $page->layout_template;
+            $page->save();
+
+            $next = (PageVersion::where('page_id', $id)->max('version_number') ?? 0) + 1;
+            PageVersion::create([
+                'page_id'         => $page->id,
+                'version_number'  => $next,
+                'content'         => $version->content,
+                'description'     => $page->description,
+                'layout_template' => $page->layout_template,
+                'saved_by'        => Auth::id(),
+            ]);
+
+            return ['success' => "Reverted to version {$version->version_number}"];
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
         }
     }
 }

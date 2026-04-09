@@ -30,7 +30,7 @@
                                 <span class="ml-2" title="Dislikes">&#128078; {{ page.unlike_count }}</span>
                             </td>
                             <td class="py-3 px-2 whitespace-no-wrap">
-                                <a :href="url + '/' + mode + '/page/show/' + page.id" class="capitalize text-white blue-bg rounded px-2 py-1 text-xs font-medium mr-1" target="_blank">View</a>
+                                <a v-if="page.category_slug && page.slug" :href="url + '/page/' + page.category_slug + '/' + page.slug" class="capitalize text-white blue-bg rounded px-2 py-1 text-xs font-medium mr-1" target="_blank">View</a>
                                 <a :href="url + '/' + mode + '/page/edit/' + page.id" class="capitalize text-white blue-bg rounded px-2 py-1 text-xs font-medium mr-1" target="_blank">Edit</a>
                                 <a href="#" @click.prevent="deletePage(page.id)" class="capitalize text-white bg-red-500 rounded px-2 py-1 text-xs font-medium">Delete</a>
                             </td>

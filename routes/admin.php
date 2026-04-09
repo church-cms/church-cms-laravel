@@ -886,13 +886,15 @@ use Illuminate\Support\Facades\Route;
     Route::post( '/page/upload', 'PagesController@storeImage' );
 
     Route::get( '/page/showList/{id}', 'PagesController@showList' );
-    Route::get( '/page/show/{id}', 'PagesController@show' );
 
     Route::get( '/page/editList/{id}', 'PagesController@editList' );
     Route::get( '/page/edit/{id}', 'PagesController@edit' );
     Route::post( '/page/edit/{id}', 'PagesController@update' );
 
     Route::delete( '/page/delete/{id}', 'PagesController@destroy' );
+
+    Route::get( '/page/versions/{id}', 'PagesController@versions' );
+    Route::post( '/page/revert/{id}/{versionId}', 'PagesController@revertVersion' );
 
     Route::post( '/page/follow/{id}', 'PageDetailsController@follow' );
     Route::post( '/page/like/{id}', 'PageDetailsController@like' );

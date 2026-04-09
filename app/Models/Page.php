@@ -57,6 +57,11 @@ class Page extends Model
     protected $fillable = [
         'church_id', 'category_id', 'page_name', 'slug', 'description', 'cover_image', 'created_by', 'status',
         'menu_text', 'menu_order', 'meta_title', 'meta_description', 'meta_keywords', 'og_image',
+        'content', 'layout_template',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
     ];
 
     /**
@@ -89,6 +94,11 @@ class Page extends Model
     public function pageAttachment()
     {
     	return $this->hasMany('\App\Models\PageAttachment','page_id','id');
+    }
+
+    public function versions()
+    {
+        return $this->hasMany('\App\Models\PageVersion', 'page_id');
     }
 
     public function getCoverImagePathAttribute()
