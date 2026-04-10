@@ -76,7 +76,7 @@ class QuoteUpdateRequest extends FormRequest
         {
             if(request('image') != null)
             {
-                $rules['image']  = 'nullable|mimes:jpg,jpeg,png';
+                $rules['image']  = 'nullable|mimes:jpg,jpeg,png,webp';
             }
         }
         elseif (request('tab') == 'text') 
@@ -96,7 +96,7 @@ class QuoteUpdateRequest extends FormRequest
         return[
             //
             'image.required'                    =>  'Image Is Required',
-            'image.mimes'                       =>  'Choose jpg,jpeg,png file',
+            'image.mimes'                       =>  'Choose jpg,jpeg,png,webp file',
 
             'text.required'                     =>  'Text Required',
             'text.check_text'                   =>  'Enter Valid Text',

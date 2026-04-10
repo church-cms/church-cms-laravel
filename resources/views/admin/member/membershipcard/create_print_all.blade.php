@@ -36,38 +36,7 @@
         <!-- Front Side -->
     <div class="card">
       <!-- Logo + QR Row -->
-      {{--<table style="width: 100%; padding: 10px 20px">
-        <tr>
-          <td style="text-align: left">
-
-             @if($user->userprofile->AvatarPath)
-          <img
-            class="w-32 h-32 border-4 border-white"
-            src="{{ $user->userprofile->AvatarPath}}"
-            alt="Profile Picture" style="height: 120px; margin: 0"
-          />
-          @else
-          <img
-            class="w-32 h-32 border-4 border-white"
-            src="{{ url('images/default-user.png') }}"
-            alt="Profile Picture" style="height: 120px; margin: 0">
-
-          @endif
-            <!-- <img style="height: 120px; margin: 0" src="{{ url('images/logo.png') }}" /> -->
-          </td>
-          <td style="">
-
-
-              
-           <!--  <div class="qr">
-              <img
-                src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=example.com"
-                style="width: 120px; height: auto"
-              />
-            </div> -->
-          </td>
-        </tr>
-      </table>--}}
+     
 
       <!-- Logo + QR Row -->
       <table style="width: 100%; padding-right: 0; padding-left: 0;">
@@ -109,7 +78,7 @@ $to = [0, 0, 255];
                                     @endphp
 
 
-              <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
+             <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
     ->eye('circle')
     ->color(0, 0, 0)  
     ->margin(1)

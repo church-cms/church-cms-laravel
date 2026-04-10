@@ -101,7 +101,7 @@ class SubAdminAddRequest extends FormRequest
             'state_id'          =>  'required',
             'city_id'           =>  'required',
             'pincode'           =>  'required|numeric|digits:6',
-            'avatar'            =>  'required|mimes:jpg,jpeg,png',
+            'avatar'            =>  'required|mimes:jpg,jpeg,png,webp',
             'notes'             =>  'nullable|check_notes',
         ];
 

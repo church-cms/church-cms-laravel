@@ -69,7 +69,7 @@ class PreacherUpdateRequest extends FormRequest
 
         if(request('avatar')!= '')
         {
-            $rules['avatar']='nullable|mimes:jpg,jpeg,png,bmp';
+            $rules['avatar']='nullable|mimes:jpg,jpeg,png,bmp,webp';
         }
 
         return $rules;
@@ -93,7 +93,7 @@ class PreacherUpdateRequest extends FormRequest
             'facebook_id.check_unique_facebook_id'  =>  'Facebook ID Already In Use. Enter Different Facebook ID',
 
             'avatar.required'                       =>  'Avatar Is Required',
-            'avatar.mimes'                          =>  'Choose jpg or png File',
+            'avatar.mimes'                          =>  'Choose jpg or png or webp File',
         ];
     }
 }

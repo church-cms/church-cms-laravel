@@ -54,6 +54,8 @@
         <tr>
           <td style="text-align: left">
 
+
+
              @if($user->userprofile->AvatarPath)
           <img
             class="w-32 h-32 border-4 border-white"
@@ -98,28 +100,16 @@ $to = [0, 0, 255];
         <tr style="padding-right:10px;">
           <td style="padding-right:10px;">
 
-             @if($user->userprofile->AvatarPath)
-          <img
-            class="w-32 h-32 border-4 border-white"
-            src="{{ $user->userprofile->AvatarPath}}"
-            alt="Profile Picture" style="height: 120px; margin: 0"
-          />
-          @else
-          <img
-            class="w-32 h-32 border-4 border-white"
-            src="{{ url('images/default-user.png') }}"
-            alt="Profile Picture" style="height: 120px; margin: 0">
-          @endif
+             <img src="{{ $user->avatar_src }}" style="height: 120px;margin: 0">
+
+
             <!-- <img style="height: 120px; margin: 0" src="{{ url('images/logo.png') }}" /> -->
           </td>
 
          <td style="padding-right: 10px;">
-        @if (Auth::user()->ChurchLogo['meta_value'] != '-')
-                    <img src="{{ Auth::user()->ChurchLogoPath }}" style="height:55px;"  class="w-32 h-32 border-4 border-white" alt="Logo" style="height: 120px; margin: 0">
-                
-        @else
-        <img src="{{ asset('images/church_cms_logo.jpg') }}" style="height:55px;"  class="w-32 h-32 border-4 border-white" alt="Logo" style="height: 120px; margin: 0">
-        @endif
+
+          <img src="{{ $user->church_logo_src }}" style="height: 120px; margin: 0">
+      
       </td>
 
           <td style="">
@@ -131,7 +121,7 @@ $to = [0, 0, 255];
                              $url=url('/admin/attandance/'.$user->name);
                                     @endphp
 
-             <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
+            <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
     ->eye('circle')
     ->color(0, 0, 0)  
     ->margin(1)

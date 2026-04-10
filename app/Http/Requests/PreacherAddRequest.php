@@ -77,7 +77,7 @@ class PreacherAddRequest extends FormRequest
                 'firstname'         =>'required|alpha|max:15',
                 'description'       =>'required|max:100',
                 'facebook_id'       =>'required|checkunique_facebook_id',
-                'avatar'            =>'required|mimes:jpg,jpeg,png,bmp',
+                'avatar'            =>'required|mimes:jpg,jpeg,png,bmp,webp',
         ];
 
 

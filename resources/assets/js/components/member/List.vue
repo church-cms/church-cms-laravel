@@ -23,7 +23,6 @@
             <div class="" v-if="filteredNames.length"></div>
         </div>
         <div>
-            <memberdetails :url="this.url"></memberdetails>
             <portal-target name="memberdetail"></portal-target>
 
             <div class="my-8">
@@ -187,14 +186,12 @@
 
     import { bus } from "../../app";
     import PortalVue from "portal-vue";
-    import memberdetails from './Detail';
     import sendMessage from './sendMessage';
     import datetime from 'vuejs-datetimepicker';
     export default {
         props:['url' , 'searchquery' , 'letter' , 'type' ],
         components:
         {
-            memberdetails,
             sendMessage,
             datetime,
             Loading
@@ -258,8 +255,9 @@
             enableform(val)
             {
                 this.success=null;
-                $('#show-detail').removeClass('hide-menu').addClass('block');
-                bus.$emit("dataMemberName", val);
+
+                window.location.href=this.url+'/admin/member/show/'+val;
+
             },
         
             sortMembers(name)

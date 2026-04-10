@@ -75,7 +75,7 @@ class QuoteAddRequest extends FormRequest
         $rules ['publish_on']  =  'required|check_publish_on|exist_publish_on';
         if(request('tab') == 'images')
         {
-            $rules['image']  = 'required|mimes:jpg,jpeg,png';
+            $rules['image']  = 'required|mimes:jpg,jpeg,png,webp';
         }
         elseif (request('tab') == 'text') 
         {
@@ -94,7 +94,7 @@ class QuoteAddRequest extends FormRequest
         return[
             //
             'image.required'                    =>  'Image Is Required',
-            'image.mimes'                       =>  'Choose jpg,jpeg,png file',
+            'image.mimes'                       =>  'Choose jpg,jpeg,png,webp file',
 
             'text.required'                     =>  'Text Required',
             'text.check_text'                   =>  'Enter Valid Text',

@@ -24,7 +24,6 @@
             <div class="" v-if="filteredNames.length"></div>
         </div>
         <div>
-            <guestdetails :url="this.url"></guestdetails>
             <portal-target name="guestdetail"></portal-target>
             <div class="font-bold text-sm px-3" v-if="letter != '' && Object.keys(this.users).length > 0">{{ letter }} Letter's User</div>
             <div class="my-8">
@@ -186,14 +185,12 @@
     Vue.use(VueFlashMessage);
     import { bus } from "../../app";
     import PortalVue from "portal-vue";
-    import guestdetails from './guestDetail';
     import sendMessage from './sendMessage';
     import datetime from 'vuejs-datetimepicker';
     export default {
         props:['url' , 'searchquery' , 'letter' , 'type'],
         components:
         {
-            guestdetails,
             sendMessage,
             datetime,
             Loading
@@ -257,8 +254,7 @@
             enableform(val)
             {
                 this.success=null;
-                $('#show-guest-detail').removeClass('hide-menu').addClass('block');
-                bus.$emit("dataGuestName", val);
+                window.location.href=this.url+'/admin/guest/show/'+val;
             },
         
             sortMembers(name)

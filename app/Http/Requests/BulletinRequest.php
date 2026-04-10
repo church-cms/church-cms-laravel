@@ -33,7 +33,7 @@ class BulletinRequest extends FormRequest
             //
             'name'          => 'required|max:15|check_name',
             'type'          => 'required',
-            'cover_image'   => 'nullable|mimes:jpg,jpeg,png',
+            'cover_image'   => 'nullable|mimes:jpg,jpeg,png,webp',
             'year'          => 'required',
             'path'          => 'required|mimes:pdf|max:8092',  
         ];
@@ -65,7 +65,7 @@ class BulletinRequest extends FormRequest
             'year.required'         => 'Year is required',
 
             'cover_image.required'  => 'Cover Image is required',
-            'cover_image.mimes'     => 'Choose jpg,jpeg,png file',
+            'cover_image.mimes'     => 'Choose jpg,jpeg,png,webp file',
 
             'path.required'         => 'Bulletin File is required',
             'path.mimes'            => 'Choose a pdf file', 

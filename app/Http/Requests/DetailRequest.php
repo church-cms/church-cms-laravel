@@ -75,7 +75,7 @@ class DetailRequest extends FormRequest
 
         if(request('church_logo')!= '')
         {
-            $rules['church_logo'] = 'nullable|mimes:jpg,jpeg,png';
+            $rules['church_logo'] = 'nullable|mimes:jpg,jpeg,png,webp';
         }
 
         return $rules;
@@ -111,7 +111,7 @@ class DetailRequest extends FormRequest
 
             'website.url'                       =>  'Enter Valid Website',
 
-            'church_logo.mimes'                 =>  'Choose jpg,jpeg,png File',
+            'church_logo.mimes'                 =>  'Choose jpg,jpeg,png,,webp File',
         ];
     }
 }

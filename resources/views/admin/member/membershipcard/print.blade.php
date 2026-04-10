@@ -51,92 +51,12 @@
         <tr style="padding-right:10px;">
           <td style="padding-right:10px;">
 
-
-             @php
-              $toPdfImageSrc = function ($value) {
-                if (! $value) {
-                  return null;
-                }
-
-                if (strpos($value, 'data:') === 0) {
-                  return $value;
-                }
-
-                $localPath = null;
-                $isHttp = strpos($value, 'http://') === 0 || strpos($value, 'https://') === 0;
-
-                if ($isHttp) {
-                  $urlPath = parse_url($value, PHP_URL_PATH);
-                  if ($urlPath) {
-                    $candidate = public_path(ltrim($urlPath, '/'));
-                    if (is_file($candidate) && is_readable($candidate)) {
-                      $localPath = $candidate;
-                    }
-                  }
-                }
-
-                if (! $localPath) {
-                  $trimmed = ltrim((string) $value, '/');
-                  $candidates = [
-                    public_path($trimmed),
-                    storage_path('app/public/' . preg_replace('#^storage/#', '', $trimmed)),
-                  ];
-
-                  foreach ($candidates as $candidate) {
-                    if (is_file($candidate) && is_readable($candidate)) {
-                      $localPath = $candidate;
-                      break;
-                    }
-                  }
-                }
-
-                if ($localPath) {
-                  $ext = strtolower(pathinfo($localPath, PATHINFO_EXTENSION));
-
-                  // DomPDF commonly fails on WEBP; convert it to PNG when GD supports it.
-                  if ($ext === 'webp' && function_exists('imagecreatefromwebp')) {
-                    $img = @imagecreatefromwebp($localPath);
-                    if ($img !== false) {
-                      ob_start();
-                      imagepng($img);
-                      $pngData = ob_get_clean();
-                      imagedestroy($img);
-
-                      if ($pngData !== false) {
-                        return 'data:image/png;base64,' . base64_encode($pngData);
-                      }
-                    }
-                  }
-
-                  $mime = mime_content_type($localPath) ?: 'image/png';
-                  return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($localPath));
-                }
-
-                return $value;
-              };
-
-              $avatarSource = $toPdfImageSrc(optional($user->userprofile)->AvatarPath)
-                ?: $toPdfImageSrc(url('images/default-user.png'));
-
-              $churchLogoPath = Auth::user()->ChurchLogo['meta_value'] != '-'
-                ? Auth::user()->ChurchLogoPath
-                : url('images/church_cms_logo.jpg');
-              $churchLogoSource = $toPdfImageSrc($churchLogoPath);
-            @endphp
-
-             @if($avatarSource)
-          <img
-            class="w-32 h-32 border-4 border-white"
+        
+    <img class="w-32 h-32 border-4 border-white"
             src="{{ $avatarSource }}"
             alt="Profile Picture" style="height: 120px; margin: 0"
           />
-          @else
-          <img
-            class="w-32 h-32 border-4 border-white"
-            src="{{ url('images/default-user.png') }}"
-            alt="Profile Picture" style="height: 120px; margin: 0">
-
-          @endif
+         
             <!-- <img style="height: 120px; margin: 0" src="{{ url('images/logo.png') }}" /> -->
           </td>
 

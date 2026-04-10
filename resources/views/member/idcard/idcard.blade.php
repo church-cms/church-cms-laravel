@@ -38,7 +38,7 @@ $to = [0, 0, 255];
                                     @endphp
 
          
-         <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
+        <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
     ->eye('circle')
     ->color(0, 0, 0)  
     ->margin(1)

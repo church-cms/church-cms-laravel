@@ -133,7 +133,7 @@ class EditUserDetailRequest extends FormRequest
         
         if(request('avatar')!= '')
         {
-            $rules['avatar']='required|mimes:jpg,jpeg,png,bmp';
+            $rules['avatar']='required|mimes:jpg,jpeg,png,bmp,webp';
         }
         return $rules;
     }

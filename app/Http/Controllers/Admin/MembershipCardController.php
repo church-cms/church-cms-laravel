@@ -13,11 +13,11 @@ use Exception;
 use Log;
 use PDF;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-
+use App\Traits\ImageTrait;
 class MembershipCardController extends Controller
 { 
     use LogActivity;
-    use Common;
+    use Common,ImageTrait;
 
     /**
      * Show the form for creating a new resource.
@@ -52,11 +52,25 @@ class MembershipCardController extends Controller
             $array['user']=$user;
             $array['church']=$church;
 
+             $avatarSource = $this->toPdfImageSrc(optional($user->userprofile)->AvatarPath)
+                ?: $toPdfImageSrc(url('images/default-user.png'));
+
+            $churchLogoPath = Auth::user()->ChurchLogo['meta_value'] != '-'
+                ? Auth::user()->ChurchLogoPath
+                : url('images/church_cms_logo.jpg');
+              $churchLogoSource = $this->toPdfImageSrc($churchLogoPath);
+
+            $array['avatarSource']=$avatarSource;
+            $array['churchLogoSource']=$churchLogoSource;
+
             $pdf = PDF::loadView('/admin/member/membershipcard/print', $array);
+
             
             $folder = $church->slug.'/membership_card';
 
             $filename='Membership_Card_'.$user->FullName.'_'.date('Y').'.pdf';
+
+            
 
             $file=$this->putContents($folder.'/'.$filename, $pdf->output());
 
@@ -161,12 +175,30 @@ public function print_new($name)
     public function printAll($usertype)
     {
 
-       
+
         //
         try
         {
             $church=Church::where('id',Auth::user()->church_id)->first(); 
             $users = User::ByChurch($church->id)->ByRole(5)->ByStatus('active')->get()->chunk(2);
+
+
+            foreach ($users as $key => $group) {
+            foreach ($group as $user) {
+
+                // Avatar
+                $user->avatar_src = $this->toPdfImageSrc(
+                    optional($user->userprofile)->AvatarPath
+                ) ?? $this->toPdfImageSrc(url('images/default-user.png'));
+
+                // Church logo
+                $churchLogoPath = auth()->user()->ChurchLogo['meta_value'] != '-'
+                    ? auth()->user()->ChurchLogoPath
+                    : url('images/church_cms_logo.jpg');
+
+                $user->church_logo_src = $this->toPdfImageSrc($churchLogoPath);
+            }
+        }
 
             $array['users']=$users;
             $array['church']=$church;

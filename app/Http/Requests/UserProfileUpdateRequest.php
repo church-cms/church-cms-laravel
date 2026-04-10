@@ -201,7 +201,7 @@ class UserProfileUpdateRequest extends FormRequest
         
         if(request('avatar')!= '')
         {
-            $rules['avatar']='nullable|mimes:jpg,jpeg,png';
+            $rules['avatar']='nullable|mimes:jpg,jpeg,png,webp';
         }
 
         return $rules;
@@ -274,7 +274,7 @@ class UserProfileUpdateRequest extends FormRequest
             'notes.checknotes'                              =>  'Enter Valid Notes',
 
             'avatar.required'                               =>  'Avatar is required',
-            'avatar.mimes'                                  =>  'Choose jpg,jpeg,png file',
+            'avatar.mimes'                                  =>  'Choose jpg,jpeg,png,webp file',
         ];
     }
 }

@@ -167,7 +167,7 @@ class UserProfileAddRequest extends FormRequest
                 'marriage_status'   =>'required',
                 'aadhar_number'     =>'nullable|numeric|digits:12|check_unique_aadhar_number',
                 'notes'             =>'nullable|string|checknotes',
-                'avatar'            =>'required|mimes:jpg,jpeg,png',
+                'avatar'            =>'required|mimes:jpg,jpeg,png,webp',
         ];
 
         if(request('ref_name')!="")
@@ -283,7 +283,7 @@ class UserProfileAddRequest extends FormRequest
             'notes.checknotes'                              =>  'Enter Valid Notes',
 
             'avatar.required'=>'Avatar is required',
-            'avatar.mimes'=>'Choose jpg,jpeg,png file',
+            'avatar.mimes'=>'Choose jpg,jpeg,png,webp file',
         ];
     }
 }
