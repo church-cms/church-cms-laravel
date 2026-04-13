@@ -16,7 +16,7 @@ class CreateBibleVersesTable extends Migration
         Schema::create('bible_verses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('english_verse');
-            $table->text('tamil_verse');
+            $table->text('tamil_verse')->nullable();
             $table->integer('book_id');
             $table->integer('chapter_id');
             $table->integer('verse_id'); 

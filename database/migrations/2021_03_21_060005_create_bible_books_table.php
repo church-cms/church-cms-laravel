@@ -16,7 +16,7 @@ class CreateBibleBooksTable extends Migration
         Schema::create('bible_books', function (Blueprint $table) {
             $table->bigIncrements('book_id');
             $table->string('english_book');
-            $table->string('tamil_book');
+            $table->string('tamil_book')->nullable();
             $table->integer('chapter_count'); 
         });
     }
