@@ -8,16 +8,11 @@
             <span class="mx-3">Add Preacher</span>
         </h1>
         @include('partials.message')
-        <!-- 
-            @if ($count < $subscription->plan->no_of_members) -->
+        
         <form method="POST" action="" enctype="multipart/form-data">
             @csrf
             <create-preacher url="{{ url('/') }}"></create-preacher>
         </form>
-    <!-- @else
-                <a href="{{ url('/pricing') }}"> 
-                    <button type="submit" class="no-underline text-white px-4 my-3 mx-1 flex items-center custom-green py-1 justify-center">Upgrade Plan to Add More Members</button>
-                </a>
-            @endif -->
+    
     </div>
 @endsection

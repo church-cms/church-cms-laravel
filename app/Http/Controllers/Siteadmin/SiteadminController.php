@@ -72,16 +72,16 @@ class SiteadminController extends Controller
     public function show($id)
     {
         //
-        $subscription = Subscription::where('id',$id)->first();
+      
+
         $membercount = User::where('church_id',$subscription->church_id)->ByRole('5')->count();
         $eventcount = Events::where('church_id',$subscription->church_id)->count();
         $gallerycount = Gallery::where('church_id',$subscription->church_id)->count();
         $filecount = File::where('church_id',$subscription->church_id)->count();
 
-        $membership = $subscription->user->userprofile->membership_type;
-        $plan = Plan::where('id',$subscription->plan_id)->get();
 
-        return view("/site_admin/show",['membercount'=>$membercount , 'eventcount'=>$eventcount , 'gallerycount'=>$gallerycount , 'filecount'=>$filecount ,  'subscriptions'=>$subscription , 'membership'=>$membership , 'plan'=>$plan]);//'videocount'=>$videocount ,
+
+        return view("/site_admin/show",['membercount'=>$membercount , 'eventcount'=>$eventcount , 'gallerycount'=>$gallerycount , 'filecount'=>$filecount , 'membership'=>$membership]);//'videocount'=>$videocount ,
     }
 
 

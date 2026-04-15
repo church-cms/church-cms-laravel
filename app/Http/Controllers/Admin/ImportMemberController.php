@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\RegisterUser;
-use App\Models\Subscription;
 use App\Imports\UsersImport;
 use App\Traits\LogActivity;
 use App\Traits\Common;

@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
-use App\Models\Plan;
+
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -17,7 +17,6 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App\Models\User'           => 'App\Policies\UserPolicy',
         'App\Models\Church'         => 'App\Policies\ChurchPolicy',
-        'App\Models\Plan'           => 'App\Policies\PlanPolicy',
         'App\Models\State'          => 'App\Policies\StatePolicy',
         'App\Models\City'           => 'App\Policies\CityPolicy',
         'App\Models\Country'        => 'App\Policies\CountryPolicy',
@@ -27,7 +26,6 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\Userprofile'    => 'App\Policies\UserprofilePolicy',
         'App\Models\Usergroup'      => 'App\Policies\UsergroupPolicy',
         'App\Models\ActivityLog'    => 'App\Policies\ActivityLogPolicy',
-        'App\Models\Subscription'   => 'App\Policies\SubscriptionPolicy',
     ];
 
     /**
@@ -95,18 +93,15 @@ class AuthServiceProvider extends ServiceProvider
             return $user->church_id == $photo->church_id;
         });
 
-        Gate::define('subscription', function ($user, $subscription) {
-            return $user->church_id == $subscription->church_id;
-        });
-
-        Gate::define('payment', function ($user, $id) {
-            $plans = Plan::pluck('id')->toArray();
-            foreach ($plans as $plan)
-            {
-                if($plan == $id)
-                return true;
-            }
-        });
+      
+        // Gate::define('payment', function ($user, $id) {
+        //     $plans = Plan::pluck('id')->toArray();
+        //     foreach ($plans as $plan)
+        //     {
+        //         if($plan == $id)
+        //         return true;
+        //     }
+        // });
 
         Gate::define('prayer', function ($user, $prayer) {
             return $user->church_id == $prayer->church_id;

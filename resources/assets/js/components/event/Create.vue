@@ -223,18 +223,14 @@
             </div>
         </div>
 
-        <div v-if="parseInt(this.count) > parseInt(this.no_of_events)">
-            <a href="/pricing">
-                <button type="submit" class="no-underline text-white  px-4 my-3 mx-1 flex items-center custom-green py-1 justify-center">Upgrade Plan to Add More Events</button>
-            </a>
-        </div>
+        
     </div>
 </template>
 
 <script>
     import datetime from 'vuejs-datetimepicker';
     export default {
-        props:['url','count','no_of_events'],
+        props:['url','count'],
         components: { datetime },
         data() {
             return {

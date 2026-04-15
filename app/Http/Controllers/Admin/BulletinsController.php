@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
 use App\Traits\LogActivity;
 use App\Events\PushEvent;
 use App\Models\Bulletin;
@@ -98,9 +97,7 @@ class BulletinsController extends Controller
     {
         //
         $count = Bulletin::where('church_id',Auth::user()->church_id)->count();
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
-
-        return view('/admin/bulletins/create',['count' => $count , 'subscription' => $subscription]);
+        return view('/admin/bulletins/create',['count' => $count]);
     }
 
     /**
@@ -189,9 +186,8 @@ class BulletinsController extends Controller
     {
         //
         $count = Bulletin::where('church_id',Auth::user()->church_id)->count();
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
-
-        return view('/admin/bulletins/edit',['count' => $count , 'subscription' => $subscription]);
+       
+        return view('/admin/bulletins/edit',['count' => $count]);
     }
 
      public function getdetails($id){

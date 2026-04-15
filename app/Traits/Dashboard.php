@@ -5,7 +5,6 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Cache;
-use App\Models\Subscription;
 use App\Models\Userprofile;
 use App\Models\Attendance;
 use App\Models\MediaFile;
@@ -129,11 +128,7 @@ trait Dashboard
             return Group::where('church_id',$church_id)->count();
         });
 
-        $array['subscription'] = Cache::remember('subscription'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
-            return Subscription::with('user','church')->where('church_id',$church_id)->first();
-        });
-
-        $array['fundlist'] = Cache::remember('fundlist'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
+            $array['fundlist'] = Cache::remember('fundlist'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
             return Fund::where([['church_id',$church_id],['status','deposited']])->orderBy('authorised_at','DESC')->take(5)->get();
         });
 

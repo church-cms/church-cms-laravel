@@ -53,11 +53,16 @@ class ExportMemberController extends Controller
         $users = $this->MemberFilter($request,Auth::user()->church_id,$request->usergroup_id);
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
 
+       //dd($request->usergroup_id);
+ 
         if(count($users) > 0)
         {
-            if($request->usergroup_id === 5)
+            
+            if($request->usergroup_id == 5)
             {
-                $csv->insertOne(['ref_name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','status',]);
+          
+ 
+                $csv->insertOne(['ref_name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','status']);
 
                 foreach($users as $user)
                 {
@@ -86,15 +91,20 @@ class ExportMemberController extends Controller
                         $user->userprofile->marriage_start_date,
                         $user->userprofile->relation,
                         $user->userprofile->notes,
-                        $user->userprofile->status,
+                        $user->userprofile->status
                     ]);
                 }
+
+             
                 $csv->output('CS Member Export'.date('_d_m_Y_H_i_s').'.csv');
                 $message=('Member Details Exported Successfully');
                 $log = LOGNAME_EXPORT_MEMBER;
             }
-            elseif ($request->usergroup_id === 4)
+            elseif ($request->usergroup_id == 4)
             {
+
+                
+
                 $csv->insertOne(['firstname','lastname','birth_firstname','birth_lastname','aadhar_number','date_of_birth','mobile_no','email','gender','profession','sub_occupation','address','country','state','city','pincode','notes','status']);
 
                 foreach($users as $user)
@@ -131,7 +141,7 @@ class ExportMemberController extends Controller
             $csv->insertOne(['No Records Found']);
             $csv->output('CS Member Export'.date('_d_m_Y_H_i_s').'.csv');
         }
-
+          
         $ip= $this->getRequestIP();
         $this->doActivityLog(
             Auth::user(),

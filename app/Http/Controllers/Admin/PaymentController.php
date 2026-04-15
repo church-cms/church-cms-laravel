@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use App\Traits\PaymentProcess;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
+
 use App\Traits\LogActivity;
 use App\Traits\Common;
-use App\Models\Plan;
+
 use Exception;
 use Log;
 
@@ -41,38 +41,38 @@ class PaymentController extends Controller
     public function index($id)
     {
         //
-        if(Gate::allows('payment',$id))
-        {
-            $subscription = Subscription::with('plan')->where('user_id',Auth::user()->id)->first();
-            if($subscription->status === 'pending')
-            {
-                $plan       =   Plan::where('id',$id)->first();
-                $key        =   "dyTv15Mu";
-                $txnid      =   "Txn12345678";
-                $amount     =   $plan->amount;
-                $pinfo      =   "Subscription_Amount";
-                $fname      =   $subscription->user->FullName;
-                $email      =   $subscription->user->email;
-                $mobile     =   $subscription->user->mobile_no;
-                $udf5       =   "BOLT_KIT_PHP7";
-                $udf1       =   $plan->id;
-                $salt       =   "kbwgdh7TaL";
-                $surl       =   url('/admin/payment/response');
-                $url        =   url('/admin/payment/index');
+        // if(Gate::allows('payment',$id))
+        // {
+        //     $subscription = Subscription::with('plan')->where('user_id',Auth::user()->id)->first();
+        //     if($subscription->status === 'pending')
+        //     {
+        //         $plan       =   Plan::where('id',$id)->first();
+        //         $key        =   "dyTv15Mu";
+        //         $txnid      =   "Txn12345678";
+        //         $amount     =   $plan->amount;
+        //         $pinfo      =   "Subscription_Amount";
+        //         $fname      =   $subscription->user->FullName;
+        //         $email      =   $subscription->user->email;
+        //         $mobile     =   $subscription->user->mobile_no;
+        //         $udf5       =   "BOLT_KIT_PHP7";
+        //         $udf1       =   $plan->id;
+        //         $salt       =   "kbwgdh7TaL";
+        //         $surl       =   url('/admin/payment/response');
+        //         $url        =   url('/admin/payment/index');
 
-                $hash       =   hash('sha512', $key.'|'.$txnid.'|'.$amount.'|'.$pinfo.'|'.$fname.'|'.$email.'|'.$udf1.'||||'.$udf5.'||||||'.$salt);
+        //         $hash       =   hash('sha512', $key.'|'.$txnid.'|'.$amount.'|'.$pinfo.'|'.$fname.'|'.$email.'|'.$udf1.'||||'.$udf5.'||||||'.$salt);
 
-                return view('/admin/payment/index',['key'=>$key , 'txnid'=>$txnid , 'amount'=>$amount , 'pinfo'=>$pinfo , 'fname'=>$fname , 'email'=>$email , 'udf5'=>$udf5 , 'salt'=>$salt , 'surl'=>$surl , 'url'=>$url , 'mobile'=>$mobile , 'hash' => $hash , 'subscription' => $subscription , 'udf1' => $udf1]);
-            }
-            else
-            {
-                return view('/admin/payment/success',['subscription' => $subscription]);
-            }
-        }
-        else
-        {
-            abort(403);
-        }
+        //         return view('/admin/payment/index',['key'=>$key , 'txnid'=>$txnid , 'amount'=>$amount , 'pinfo'=>$pinfo , 'fname'=>$fname , 'email'=>$email , 'udf5'=>$udf5 , 'salt'=>$salt , 'surl'=>$surl , 'url'=>$url , 'mobile'=>$mobile , 'hash' => $hash , 'subscription' => $subscription , 'udf1' => $udf1]);
+        //     }
+        //     else
+        //     {
+        //         return view('/admin/payment/success',['subscription' => $subscription]);
+        //     }
+        // }
+        // else
+        // {
+        //     abort(403);
+        // }
     }
 
     /**
@@ -118,9 +118,9 @@ class PaymentController extends Controller
      */
     public function Subscription()
     {
-        $subscription       = Subscription::where('status','expired')->get();
-        $subscription_list  = $subscription->take(5);
-        $subscriptions      = SubscriptionResource::collection($subscription_list);
+        // $subscription       = Subscription::where('status','expired')->get();
+        // $subscription_list  = $subscription->take(5);
+        $subscriptions      = $subscription
 
         return $subscriptions;
     }

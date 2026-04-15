@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder {
          $this->call( CitiesTableSeeder::class );
         $this->call( PermissionTableSeeder::class );
         $this->call( GroupCategoryTableSeeder::class );
-        $this->call( PlansTableSeeder::class );
         $this->call( MailTemplatesSeeder::class );
         $this->call( SmsTemplatesTableSeeder::class );
         $this->call( KeywordsTableSeeder::class );
@@ -32,7 +31,6 @@ class DatabaseSeeder extends Seeder {
         //test ----- hide to remove seeded members -----
          $this->call( ChurchDetailTableSeeder::class );
         //test
-         $this->call( SubscriptionsTableSeeder::class );
         $this->call(BibleTableSeeder::class);
         //$this->call(BibleVerseTableSeeder::class);
         //test ----- hide to remove seeded members -----

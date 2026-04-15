@@ -7,7 +7,6 @@ use App\Events\VerificationMailEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RegisterUser;
-use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
@@ -49,11 +48,11 @@ class MemberAddController extends Controller
         //
         $ref_name = request('ref_name')?request('ref_name'):'';
         $count    = User::ByRole(5)->ByChurch(Auth::user()->church_id)->count();
-        $subscription = Subscription::with('user','church')->where('church_id',Auth::user()->church_id)->first();
+        
         $membership_start_date = Carbon::now()->format('Y-m-d');
 
 
-        return view('/admin/member/create',['ref_name' => $ref_name , 'membership_start_date' => $membership_start_date  ,'count' => $count , 'subscription' => $subscription]);
+        return view('/admin/member/create',['ref_name' => $ref_name , 'membership_start_date' => $membership_start_date  ,'count' => $count ]);
         //  'membership_end_date'=>$membership_end_date
     }
 

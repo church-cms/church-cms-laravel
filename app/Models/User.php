@@ -185,10 +185,7 @@ class User extends Authenticatable
         return $this->hasMany('App\Models\Notes','entity_id','id');
     }
 
-    public function subscription()
-    {
-        return $this->hasMany('App\Models\Subscription','user_id','id');
-    }
+   
 
     public function fund()
     {

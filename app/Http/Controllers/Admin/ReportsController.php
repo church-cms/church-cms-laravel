@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Imports\SummaryImport;
 use App\Exports\UsersExport;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
 use App\Traits\LogActivity;
 use App\Models\Userprofile;
 use App\Models\Reminder;
@@ -61,13 +60,13 @@ class ReportsController extends Controller
     public function index()
     {
         //
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->get();
-        foreach($subscriptions as $subscription)
-        {
-            $plan = Plan::where('id',$subscription->plan_id)->get();
-        }
+        // $subscription = Subscription::where('church_id',Auth::user()->church_id)->get();
+        // foreach($subscriptions as $subscription)
+        // {
+        //     $plan = Plan::where('id',$subscription->plan_id)->get();
+        // }
 
-        return view("/admin/reports/index",['subscriptions'=>$subscription , 'plan'=>$plan]);
+        // return view("/admin/reports/index",['subscriptions'=>$subscription , 'plan'=>$plan]);
     }
 
     /**
@@ -81,8 +80,8 @@ class ReportsController extends Controller
         $start  = date("Y-m-d",strtotime($request->from_date));
         $end    = date("Y-m-d",strtotime($request->to_date));
 
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->Date($start,$end)->get();
 
+       $subscription=array();
         return view('/admin/reports/filter',['subscriptions'=>$subscription]);
     }
 
@@ -95,7 +94,7 @@ class ReportsController extends Controller
     public function show($id)
     {
         //
-        $subscription = Subscription::where('id',$id)->first();
+        $subscription=array();
         if(Gate::allows('subscription',$subscription))
         {
             return view("/admin/reports/show",['subscriptions'=>$subscription]);
@@ -236,7 +235,7 @@ class ReportsController extends Controller
 
         if(count($userprofiles) > 0)
         {
-            $csv->insertOne(['ref_name','name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','avatar','status','payment_status','payment_done_on','subscription_end_date','amount','plan_name','plan_cycle(in days)']);
+            $csv->insertOne(['ref_name','name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','avatar','status']);
 
             foreach($userprofiles as $userprofile)
             {
@@ -268,13 +267,8 @@ class ReportsController extends Controller
                     $userprofile->relation,
                     $userprofile->notes,
                     url($userprofile->avatar),
-                    $userprofile->status,
-                    $userprofile->user->subscription['0']['status'],
-                    $payment_date,
-                    $userprofile->user->subscription['0']['end_date'],
-                    $userprofile->user->subscription['0']['payment_details']['amount'],
-                    ucwords($userprofile->user->subscription['0']['plan']['name']),
-                    $userprofile->user->subscription['0']['plan']['cycle'],
+                    $userprofile->status
+                    
                 ]);
             }
         }

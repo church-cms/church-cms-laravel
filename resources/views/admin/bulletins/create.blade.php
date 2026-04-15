@@ -8,7 +8,7 @@
             </a>
             <span class="mx-3">Bulletin</span>
         </h1>
-        <create-bulletin count="{{ $count }}" no_of_bulletins="{{ $subscription->plan->no_of_bulletins }}">
+        <create-bulletin count="{{ $count }}" >
         </create-bulletin>
     </div>
 @endsection

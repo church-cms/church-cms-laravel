@@ -25,7 +25,7 @@
     </div>
     @include('partials.message')
     <div class="bg-white flex flex-wrap px-2 my-3">
-        @if ($count < $subscription->plan->no_of_folders)
+      
             <div class="w-full lg:w-1/6 md:w-1/2 px-2 my-5">
                 <a href="{{ url('/admin/gallery/create') }}" id="add">
                     <div class="border border-dashed border-gray-300 flex items-center h-40">
@@ -38,13 +38,7 @@
                     </p>
                 </div>
             </div>
-        @else
-            <a href="{{ url('/pricing') }}">
-                <button type="submit"
-                    class="no-underline text-white  px-4 my-3 mx-1 flex items-center custom-green py-1 justify-center">Upgrade
-                    Plan to Add More Folders</button>
-            </a>
-        @endif
+       
 
         @foreach ($gallery as $gallery)
             <div class="w-full lg:w-1/4 md:w-1/2 px-2 my-5">

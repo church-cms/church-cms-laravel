@@ -14,9 +14,7 @@
 
         <div class="py-2">Payment is Successfull !!!!</div>
 
-        <div class="tw-form-group w-1/2">
-            <p class="font-semibold text-base text-gray-700 capitalize">Status : {{ ucwords($subscription->status) }}</p>
-        </div>
+        
     </div>
 
 @endsection

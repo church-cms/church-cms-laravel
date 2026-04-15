@@ -6,7 +6,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
-use App\Models\Subscription;
+
 use App\Traits\RegisterUser;
 use App\Models\Country;
 use App\Models\State;
@@ -25,15 +25,15 @@ class UsersImport implements ToCollection , WithHeadingRow
         {
             $church_id = Auth::user()->church_id;
             $user_count = User::ByRole(5)->ByChurch($church_id)->count();
-            $subscription = Subscription::where('church_id',$church_id)->first();
-            $count = $subscription->plan->no_of_members - $user_count;
+            
+            $count =$user_count;
 
             if( (count($rows)>0) && (count($rows)<=($count)) )
             {
                 $church_id = Auth::user()->church_id;
                 $user_count = User::ByRole(5)->ByChurch($church_id)->count();
-                $subscription = Subscription::where('church_id',$church_id)->first();
-                $count = $subscription->plan->no_of_members - $user_count;
+                
+                $count = $user_count;
 
                 if( (count($rows)>0) && (count($rows)<=($count)) )
                 {

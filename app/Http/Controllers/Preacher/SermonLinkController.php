@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Events\SermonLinkEvent;
-use App\Models\Subscription;
 use App\Mail\SermonLinkMail;
 use App\Traits\LogActivity;
 use App\Models\SermonLink;

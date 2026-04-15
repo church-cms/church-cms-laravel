@@ -20,14 +20,13 @@ use App\Mail\EmailVerification;
 use App\Models\PermissionUser;
 use App\Rules\ValidRecaptcha;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
 use Illuminate\Support\Str;
 use App\Models\Userprofile;
 use App\Models\Permission;
 use App\Models\Church;
 use App\Models\State;
 use App\Models\Country;
-use App\Models\Plan;
+
 
 /**
  * RegisterController
@@ -168,17 +167,6 @@ class RegisterController extends Controller
             $userprofile->updated_at        = Carbon::now();
 
             $userprofile->save();
-
-            $subscription = new Subscription;
-
-            $subscription->church_id     =  $church->id;
-            $subscription->user_id       =  $user->id;
-            $subscription->plan_id       =  1;
-            $subscription->status        =  "pending";
-            $subscription->created_at    =  Carbon::now();
-            $subscription->updated_at    =  Carbon::now();
-
-            $subscription->save();
 
             $permissions = Permission::get();
             foreach($permissions as $permission)

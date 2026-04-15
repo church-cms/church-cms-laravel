@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Plan;
 
 /**
  * PricingController
@@ -22,7 +21,7 @@ class PricingController extends Controller
     public function create()
     {
         //
-        $plan = Plan::get();
+        $plan =array();
         return view('/pricing',['plans' => $plan]);
     }
 }

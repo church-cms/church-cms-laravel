@@ -18,7 +18,6 @@ use App\Events\CalendarEvent;
 use App\Events\ReminderEvent;
 use App\Traits\EventProcess;
 use App\Models\EventGallery;
-use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Models\Attendance;
@@ -56,8 +55,7 @@ class EventsController extends Controller
     {
         $events = Events::where('church_id',Auth::user()->church_id)->get();
         $count  = $events->count();
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
-
+        
         $events = $events->map(function( $event, $key) {
             $eventData = [
                 'id'        =>  $event->id,
@@ -70,7 +68,7 @@ class EventsController extends Controller
         });
         $events = json_encode($events);
 
-        return view('admin.events.index',['events'=>$events , 'count'=>$count , 'subscription'=>$subscription]);
+        return view('admin.events.index',['events'=>$events , 'count'=>$count]);
     }
 
     /**dd

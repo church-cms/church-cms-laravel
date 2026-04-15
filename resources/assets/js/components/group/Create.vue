@@ -1,7 +1,7 @@
 <template>
     <div class="shadow border px-4">
         <div class="group" >
-        <!-- <div class="group" v-if="parseInt(this.count)<=parseInt(this.no_of_groups)"> -->
+      
             <div v-if="this.success!=null" class="alert alert-success" id="success-alert">{{this.success}}</div>
             <div class="my-5">
                 <div class="">
@@ -75,17 +75,13 @@
             </div>
         </div>
 
-       <!--  <div v-if="parseInt(this.count) > parseInt(this.no_of_groups)">
-            <a href="/pricing"> 
-                <button type="submit" class="no-underline text-white  px-4 my-3 mx-1 flex items-center custom-green py-1 justify-center">Upgrade Plan to Add More Groups</button>
-            </a>
-        </div> -->
+    
     </div>
 </template>
 
 <script>
     export default {
-    props:['id','count','no_of_groups'],
+    props:['id','count'],
       data(){
         return{
             group:[],

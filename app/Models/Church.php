@@ -94,12 +94,7 @@ class Church extends Model
         return $this->hasMany('App\Models\Event','church_id','id');
     }
 
-    public function subscription()
-    {
-        return $this->hasMany('App\Models\Subscription','church_id','id');
-    }
-
-     public function reminder()
+    public function reminder()
     {
         return $this->hasMany('App\Models\Reminder','church_id','id');
     }

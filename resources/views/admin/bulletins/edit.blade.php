@@ -8,7 +8,7 @@
             </a>
             <span class="mx-3">Bulletin</span>
         </h1>
-        <edit-bulletin count="{{ $count }}" no_of_bulletins="{{ $subscription->plan->no_of_bulletins }}" id="{{request('id')}}">
+        <edit-bulletin count="{{ $count }}" id="{{request('id')}}">
         </edit-bulletin>
     </div>
 @endsection

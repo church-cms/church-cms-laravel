@@ -12,7 +12,6 @@ use App\Traits\SendMessageProcess;
 use App\Models\PermissionUser;
 use App\Models\GroupCategory;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
 use App\Traits\LogActivity;
 use App\Models\GroupLink;
 use App\Models\SendMail;
@@ -58,9 +57,9 @@ class GroupsController extends Controller
             }
         }
         $groups = $groups->get();
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
+       
 
-        return view('/admin/groups/index',['groups' => $groups , 'subscription' => $subscription]);
+        return view('/admin/groups/index',['groups' => $groups ]);
     }
 
     public function getData()
@@ -81,9 +80,8 @@ class GroupsController extends Controller
     {
         //
         $count = Group::where('church_id',Auth::user()->church_id)->count();
-        $subscription = Subscription::where([['user_id',Auth::id()],['church_id',Auth::user()->church_id]])->first();
 
-        return view('/admin/groups/create',['count' => $count , 'subscription' => $subscription]);
+        return view('/admin/groups/create',['count' => $count ]);
     }
 
     /**

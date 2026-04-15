@@ -19,10 +19,6 @@ class Kernel extends ConsoleKernel
             \App\Console\Commands\Test\CheckEnv::class,
             \App\Console\Commands\Test\CheckTest::class,
             \App\Console\Commands\Test\CheckPushNotification::class,
-
-        //
-            \App\Console\Commands\CheckSubscription::class,
-            \App\Console\Commands\CheckSubscriptionExpired::class,
             \App\Console\Commands\CheckMail::class,
             \App\Console\Commands\CheckSms::class,
             \App\Console\Commands\CheckBirthday::class,

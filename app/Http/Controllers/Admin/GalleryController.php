@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
 use App\Traits\LogActivity;
 use App\Events\PushEvent;
 use App\Models\Gallery;
@@ -42,7 +41,7 @@ class GalleryController extends Controller
     {
         $gallery = Gallery::with('photos')->where('church_id',Auth::user()->church_id);
         $count = Gallery::with('photos')->where('church_id',Auth::user()->church_id)->count();
-        $subscription = Subscription::with('user','church')->where('church_id',Auth::user()->church_id)->first();
+       
 
         $query = $request->get('search');
         if($query != null)
@@ -54,7 +53,7 @@ class GalleryController extends Controller
 
         //dd($gallery);
 
-        return view('admin.gallery.index',['count' => $count , 'subscription' => $subscription , 'gallery' => $gallery]);
+        return view('admin.gallery.index',['count' => $count , 'gallery' => $gallery]);
     }
 
     public function create()

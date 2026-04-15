@@ -7,7 +7,6 @@ use App\Events\VerificationMailEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RegisterUser;
-use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
@@ -47,7 +46,6 @@ class GuestAddController extends Controller
         //
         $ref_name = request('ref_name')?request('ref_name'):'';
         $count    = User::ByRole(5)->ByChurch(Auth::user()->church_id)->count();
-        $subscription = Subscription::with('user','church')->where('church_id',Auth::user()->church_id)->first();
 
         return view('/admin/guest/create',['ref_name' => $ref_name , 'count' => $count , 'subscription' => $subscription]);
     }

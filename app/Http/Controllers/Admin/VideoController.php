@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Traits\SendPushNotification;
 use App\Http\Requests\VideoRequest;
 use Illuminate\Http\Request;
-use App\Models\Subscription;
 use App\Traits\LogActivity;
 use App\Events\PushEvent;
 use App\Models\MediaFile;
@@ -43,9 +42,9 @@ class VideoController extends Controller
     {
         $video = MediaFile::where('church_id',Auth::user()->church_id)->get();
         $count = MediaFile::where('church_id',Auth::user()->church_id)->count();
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
+       
 
-        return view('/admin/mediafiles/video/create',['videos'=>$video , 'count'=>$count , 'subscription'=>$subscription]);
+        return view('/admin/mediafiles/video/create',['videos'=>$video , 'count'=>$count]);
     }
 
     /**

@@ -10,7 +10,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\MemberProcess;
 use App\Traits\RegisterUser;
-use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Models\Userprofile;
@@ -76,9 +75,8 @@ class PreacherController extends Controller
     {
         //
         $count    = User::ByRole(6)->ByChurch(Auth::user()->church_id)->count();
-        $subscription = Subscription::with('user','church')->where('church_id',Auth::user()->church_id)->first();
-
-        return view('/admin/preacher/create',['count'=>$count , 'subscription'=>$subscription]);
+       
+        return view('/admin/preacher/create',['count'=>$count]);
     }
 
 

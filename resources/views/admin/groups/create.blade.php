@@ -11,7 +11,7 @@
         </h1>
         @include('partials.message')
         <div class="bg-white shadow ">
-            <create-group count="{{ $count }}" no_of_groups="{{ $subscription->plan->no_of_groups }}">
+            <create-group count="{{ $count }}">
             </create-group>
         </div>
     </div>

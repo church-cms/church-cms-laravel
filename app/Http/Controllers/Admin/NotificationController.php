@@ -116,20 +116,26 @@ class NotificationController extends Controller
               	$i=0;
              	foreach ($notifications as $notification)
                 {
-                    $val='';
-                    if((count($notification->data)>0) && (isset($notification->data['data'])))
-                    {
-                        if(count($notification->data['data']) > 1)
-                        {
-                            $val = $notification->data['data']['data'];
-                            $type = $notification->data['data']['type'];
-                        }
-                        else
-                        {
-                            $val = $notification->data['data'];
-                            $type = null;
-                        }
-                    }
+
+                        $val = '';
+              $type = null;
+        // Ensure data is array
+                   $data = is_array($notification->data)
+            ? $notification->data
+            : json_decode($notification->data, true);
+
+        // Check valid array
+        if (is_array($data) && isset($data['data'])) {
+
+            // If nested array exists
+            if (is_array($data['data']) && count($data['data']) > 1) {
+                $val  = $data['data']['data'] ?? '';
+                $type = $data['data']['type'] ?? null;
+            } else {
+                $val  = $data['data'];
+                $type = null;
+            }
+          }
                     $array['list'][$i]['notification_id']=$notification['id'];
                     $array['list'][$i]['data']=$val;
                     $array['list'][$i]['type']=$type;
