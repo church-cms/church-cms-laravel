@@ -6,8 +6,17 @@
 /**
  * Check if a command exists in system PATH
  */
+// function commandExists($cmd) {
+//     $return = shell_exec(sprintf("which %s 2>/dev/null", escapeshellarg($cmd)));
+//     return !empty($return);
+// }
+
 function commandExists($cmd) {
-    $return = shell_exec(sprintf("which %s 2>/dev/null", escapeshellarg($cmd)));
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $return = shell_exec("where $cmd");
+    } else {
+        $return = shell_exec("which $cmd");
+    }
     return !empty($return);
 }
 
