@@ -192,32 +192,34 @@
                 this.show = false;
             },
 
-            deleteQuote(id) 
-            {
-                var thisswal = this;
-                swal({
-                    title: 'Are you sure',
-                    text: 'Do you want to delete this Quote ?',
-                    icon: "info",
-                    buttons: [
-                        'No',
-                        'Yes'
-                    ],
-                    dangerMode: true,
-                }).then(function(isConfirm) {
-                    if (isConfirm) 
-                    {
-                        axios.get(thisswal.url+ '/admin/quote/delete/'+ id).then(response => {
-                            thisswal.success = response.data.success;
-                            window.location.reload();
-                        }); 
-                    }
-                    else 
-                    {
-                        swal("Cancelled");
-                    }
-                });
-            },
+     deleteQuote(id) 
+      {
+    var thisswal = this;
+    swal({
+        title: 'Are you sure',
+        text: 'Do you want to delete this Quote ?',
+        icon: "info",
+        buttons: ['No', 'Yes'],
+        dangerMode: true,
+    }).then(function(isConfirm) {
+        if (isConfirm) 
+        {
+            axios.delete(thisswal.url + '/admin/quote/delete/' + id, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => {
+                thisswal.success = response.data.success;
+                window.location.reload();
+            }); 
+        }
+        else 
+        {
+            swal("Cancelled");
+        }
+    });
+  },
 
             submitForm(id)
             {
