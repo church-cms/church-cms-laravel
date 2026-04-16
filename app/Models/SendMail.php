@@ -48,7 +48,7 @@ class SendMail extends Model
      * @var array
      */
     protected $fillable = [
-        'church_id' , 'user_id' , 'entity_id' , 'entity_name' , 'from_address' , 'mode' , 'from' , 'to' , 'subject' , 'message' , 'attachments' , 'status' , 'type' , 'message_id' , 'read_at' , 'executed_at' , 'is_executed' , 'fired_at' , 'read_status'
+        'church_id' , 'user_id' , 'entity_id' , 'entity_name' , 'from_address' , 'mode' , 'from' , 'to' , 'subject' , 'message' , 'attachments' , 'status' , 'type' , 'message_id' , 'read_at' , 'executed_at' , 'is_executed' , 'fired_at' , 'read_status','batch_id'
     ];
 
     /**

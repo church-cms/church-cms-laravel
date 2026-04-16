@@ -453,6 +453,7 @@ use Illuminate\Support\Facades\Route;
 
         //message
         Route::get('/messages', 'SendMessageController@index');
+        Route::get('/message/{batch_id}', 'SendMessageController@batchindex');
         Route::get('/message/show/{id}', 'SendMessageController@show');
         Route::post('/member/sendMessage/{name}','SendMessageController@store');
         Route::post('/member/sendMessageToAll', 'SendMessageController@memberstore');

@@ -20,7 +20,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 /**
  * SendMessageController
  *
@@ -48,8 +49,35 @@ class SendMessageController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        $messages = SendMail::where([['church_id',Auth::user()->church_id],['entity_id',null],['entity_name',null]])->orderBy('executed_at','desc');
+
+
+       $sub = SendMail::selectRaw('MAX(id) as id')
+        ->where([
+            ['church_id', Auth::user()->church_id],
+            ['entity_id', null],
+            ['entity_name', null]
+        ])
+        ->when($request->mode != '', function ($q) use ($request) {
+            $q->where('mode', $request->mode);
+        })
+        ->groupBy('batch_id');
+
+       $messages = SendMail::whereIn('id', $sub)
+        ->orderBy('executed_at', 'desc')
+        ->paginate(20);
+
+
+        //dd($messages);
+
+        return view('/admin/messages/index',['messages' => $messages]);
+    }
+
+
+    public function batchindex($batch_id)
+    {
+
+
+       $messages = SendMail::where([['batch_id',$batch_id]])->orderBy('executed_at','desc');
 
         if($request->mode!= '')
         {
@@ -58,8 +86,11 @@ class SendMessageController extends Controller
 
         $messages = $messages->paginate(20);
 
-        return view('/admin/messages/index',['messages' => $messages]);
+
+        return view('/admin/messages/batch-index',['messages' => $messages]);
     }
+
+
 
     /**
      * Display a listing of the resource.
@@ -96,10 +127,13 @@ class SendMessageController extends Controller
     public function store(SendMailRequest $request,$name)
     {
         //
+
+       // dd($request);
         try
         {
+            $batch_id=(string) Str::uuid();
             $user = User::where('name',$name)->first();
-            $this->sendMessage($request , Auth::user()->church_id , Auth::user()->email , $user , Auth::user());
+            $this->sendMessage($request , Auth::user()->church_id , Auth::user()->email , $user , Auth::user(),$batch_id);
 
             $res['success'] = 'Message Sent Successfully';
             return $res;

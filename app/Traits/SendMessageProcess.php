@@ -16,7 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
-
+use Illuminate\Support\Str;
 /**
  * Trait for sending messages and notifications
  *
@@ -47,7 +47,7 @@ trait SendMessageProcess
      *
      * @return void
      */
-    public function sendMessage(object $data, int $church_id, string $admin_email, User $user, object $admin): array|null {
+    public function sendMessage(object $data, int $church_id, string $admin_email, User $user, object $admin,string $batch_id): array|null {
         try {
             $sendmail = new SendMail;
 
@@ -55,6 +55,7 @@ trait SendMessageProcess
             $sendmail->user_id       = $user->id;
             $sendmail->mode          = $data->mode;
             $sendmail->from          = $admin_email;
+             $sendmail->batch_id = $batch_id;
             if($data->entity_id != null)
             {
                 $sendmail->entity_id = $data->entity_id;

@@ -9,7 +9,7 @@ use App\Traits\SendMessageProcess;
 use App\Traits\LogActivity;
 use App\Traits\Common;
 use App\Models\User;
-
+use Illuminate\Support\Str;
 class SendMessageAllEventListener 
 {
     use SendMessageProcess;
@@ -36,11 +36,15 @@ class SendMessageAllEventListener
     {
        // dump($event->data);
         //
+
+        $batch_id=(string) Str::uuid();
         foreach($event->data->selected as $user_id)
         {
+
+
            // dump($user_id);
             $user = User::where([['church_id',$event->church_id],['id',$user_id]])->first();
-            $send = $this->sendMessage($event->data , $event->church_id , $event->admin_email , $user , $event->admin);
+            $send = $this->sendMessage($event->data , $event->church_id , $event->admin_email , $user , $event->admin,$batch_id);
         }
 
         /*for($i = 0 ; $i < $event->data->count ; $i++)
