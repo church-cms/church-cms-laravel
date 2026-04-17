@@ -23,23 +23,22 @@ define('LARAVEL_START', microtime(true));
 */
 
 $basePath = dirname(__DIR__);
-$storagePath = $basePath . '/storage';
 
-// Check if installation is complete
-$isInstalled = file_exists($storagePath . '/installed');
+// Check if installer folder exists inside public
+$installerExists = is_dir(__DIR__ . '/installer');
 
-// Allow access to installer
+// Current URL path
 $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $isInstallerRequest = strpos($currentPath, '/installer') === 0;
 
-// If not installed and not accessing installer, redirect to installer
-if (!$isInstalled && !$isInstallerRequest) {
-    header('Location: /installer/');
+// 👉 If installer folder exists → force installer
+if ($installerExists && !$isInstallerRequest) {
+    header('Location: /installer');
     exit;
 }
 
-// If installed and accessing installer, redirect away
-if ($isInstalled && $isInstallerRequest) {
+// 👉 If installer folder NOT exists → block installer and go login
+if (!$installerExists && $isInstallerRequest) {
     header('Location: /login');
     exit;
 }
