@@ -16,6 +16,7 @@
         "botman/botman": "^2.6",
         "botman/driver-web": "^1.5",
         "brozot/laravel-fcm": "^1.0",
+        "darkaonline/l5-swagger": "^8.6",
         "google/cloud-language": "^0.31",
         "google/cloud-storage": "^1.42",
         "guzzlehttp/guzzle": "^7.4",
@@ -34,7 +35,7 @@
         "spatie/laravel-activitylog": "^4.2",
         "spatie/laravel-medialibrary": "^10.0",
         "spatie/laravel-sitemap": "^6.0",
-        "tijsverkoyen/css-to-inline-styles": "^2.2",
+        "tijsverkoyen/css-to-inline-styles": "^2.4",
         "titasgailius/search-relations": "^1.0",
         "twilio/sdk": "^6.9"
     },

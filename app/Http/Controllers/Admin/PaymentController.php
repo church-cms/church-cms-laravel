@@ -120,8 +120,8 @@ class PaymentController extends Controller
     {
         // $subscription       = Subscription::where('status','expired')->get();
         // $subscription_list  = $subscription->take(5);
-        $subscriptions      = $subscription
+      /*  $subscriptions      = $subscription
 
-        return $subscriptions;
+        return $subscriptions;*/
     }
 }
