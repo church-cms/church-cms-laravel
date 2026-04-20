@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Church;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use App\Models\ChurchDetail;
 class ChurchDetailTableSeeder extends Seeder
 {
     /**
@@ -18,6 +19,13 @@ class ChurchDetailTableSeeder extends Seeder
         foreach ($churchs as $church) 
         {
             $admin = User::where([['church_id',$church->id],['usergroup_id',3]])->first();
+
+        $detail=ChurchDetail::where('church_id',$church->id)->get();
+
+           if(count($detail)>0){
+             ChurchDetail::where('church_id',$church->id)->delete();
+           }
+
           	DB::table('church_details')->Insert([
             	'church_id'    	=> $church->id,
             	'meta_key'      => 'church_logo',
@@ -121,6 +129,57 @@ class ChurchDetailTableSeeder extends Seeder
             	'created_at'    => date("Y-m-d H:i:s"),
             	'updated_at'    => date("Y-m-d H:i:s"),    
           	]);
+
+            DB::table('church_details')->Insert([
+                'church_id'     => $church->id,
+                'meta_key'      => 'site_title',
+                'meta_value'    => 'church Social',
+                'created_at'    => date("Y-m-d H:i:s"),
+                'updated_at'    => date("Y-m-d H:i:s"),    
+            ]);
+
+            DB::table('church_details')->Insert([
+                'church_id'     => $church->id,
+                'meta_key'      => 'site_description',
+                'meta_value'    => 'Site Description',
+                'created_at'    => date("Y-m-d H:i:s"),
+                'updated_at'    => date("Y-m-d H:i:s"),    
+            ]);
+
+             DB::table('church_details')->Insert([
+                'church_id'     => $church->id,
+                'meta_key'      => 'site_keyword',
+                'meta_value'    => 'Site keyword',
+                'created_at'    => date("Y-m-d H:i:s"),
+                'updated_at'    => date("Y-m-d H:i:s"),    
+            ]);
+
+                DB::table('church_details')->Insert([
+                'church_id'     => $church->id,
+                'meta_key'      => 'favicon',
+                'meta_value'    => '-',
+                'created_at'    => date("Y-m-d H:i:s"),
+                'updated_at'    => date("Y-m-d H:i:s"),    
+            ]);
+
+              DB::table('church_details')->Insert([
+                'church_id'     => $church->id,
+                'meta_key'      => 'header_code',
+                'meta_value'    => 'Header Code',
+                'created_at'    => date("Y-m-d H:i:s"),
+                'updated_at'    => date("Y-m-d H:i:s"),    
+            ]);
+
+            DB::table('church_details')->Insert([
+                'church_id'     => $church->id,
+                'meta_key'      => 'footer_code',
+                'meta_value'    => 'Footer Code',
+                'created_at'    => date("Y-m-d H:i:s"),
+                'updated_at'    => date("Y-m-d H:i:s"),    
+            ]);
+
+
+            
         }
     }
 }

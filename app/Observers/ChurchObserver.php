@@ -21,7 +21,8 @@ class ChurchObserver
         //
         try
         {
-            $keys = ['church_logo' , 'short_summary' , 'long_summary' , 'quotes' , 'phone' , 'email' , 'address' , 'latitude' , 'longitude' , 'website' , 'facebook' , 'twitter' , 'instagram'];
+            $keys = ['church_logo' , 'short_summary' , 'long_summary' , 'quotes' , 'phone' , 'email' , 'address' , 'latitude' , 'longitude' , 'website' , 'facebook' , 'twitter' , 'instagram','site_title','site_description','site_keyword','favicon'];
+
             foreach ($keys as $key) 
             {
                 $detail = ChurchDetail::create([
@@ -30,6 +31,7 @@ class ChurchObserver
                     'meta_value'    =>  "-",
                 ]);
             }
+
         }
         catch(Exception $e)
         {

@@ -12,7 +12,7 @@
 
     @if($isAdmin)
     <li class="py-2 px-3 {{ Request::segment('2') == 'churchdetails' ? 'active' : '' }}">
-        <a href="{{ url('/admin/churchdetails') }}" class="flex items-center whitespace-no-wrap">
+        <a href="{{ url('/admin/churchdetails/edit/'.$user->church->id) }}" class="flex items-center whitespace-no-wrap">
             <img src="{{ url('uploads/icons/church.svg') }}" class="w-4 h-4">
             <span class="mx-3 whitespace-no-wrap">Church Details</span>
         </a>

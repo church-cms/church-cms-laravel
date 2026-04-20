@@ -282,9 +282,6 @@ use Illuminate\Support\Facades\Route;
 
     //church details
     Route::group(['middleware' => ['adminonly']], function() {
-        //index
-        Route::get('/churchdetails', 'ChurchDetailsController@index');
-
         //add
         Route::get('/churchdetails/add', 'ChurchDetailsController@create');
         Route::post('/churchdetails/add', 'ChurchDetailsController@store');

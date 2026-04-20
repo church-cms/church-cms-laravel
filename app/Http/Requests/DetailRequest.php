@@ -70,7 +70,10 @@ class DetailRequest extends FormRequest
             'facebook'      =>  'nullable|check_facebook',
             'twitter'       =>  'nullable|check_twitter',
             'instagram'     =>  'nullable|check_instagram',
-            'website'       =>  'nullable|url'
+            'website'       =>  'nullable|url',
+            'site_title'       => 'required|max:40',
+            'site_description'  =>'nullable|max:150', 
+            'site_keyword'  =>  'nullable|max:40', 
         ];
 
         if(request('church_logo')!= '')
