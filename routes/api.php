@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Testing Purpose start
 
+Route::get('/test', 'Api\TestController@test');
 Route::get('/users', 'Api\TestController@index');
 
 Route::get('/events','Api\TestController@events');

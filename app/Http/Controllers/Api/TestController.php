@@ -13,7 +13,7 @@ use App\Models\Events;
 use App\Models\Photos;
 use App\Models\Sermon;
 use App\Models\User;
-
+use OpenApi\Attributes as OA;
 /**
  * TestController
  *
@@ -215,4 +215,20 @@ class TestController extends Controller
 
         }
     }
+    
+#[OA\Get(
+    path: "/api/test",
+    summary: "Test API",
+    responses: [
+        new OA\Response(
+            response: 200,
+            description: "OK"
+        )
+    ]
+)]
+    public function test()
+    {
+        return response()->json(['message' => 'ok']);
+    }
+
 }

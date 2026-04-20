@@ -173,6 +173,8 @@ return [
          App\Conference\ConferenceServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
+        L5Swagger\L5SwaggerServiceProvider::class,
+
     ],
 
     /*
