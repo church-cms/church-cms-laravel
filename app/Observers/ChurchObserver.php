@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Models\ChurchDetail;
-use Illuminate\Support\Str;
 use App\Models\Church;
 use Exception;
 use Log;
@@ -19,22 +18,17 @@ class ChurchObserver
     public function created(Church $church)
     {
         //
-        try
-        {
-            $keys = ['church_logo' , 'short_summary' , 'long_summary' , 'quotes' , 'phone' , 'email' , 'address' , 'latitude' , 'longitude' , 'website' , 'facebook' , 'twitter' , 'instagram','site_title','site_description','site_keyword','favicon'];
+        try {
+            $keys = ['church_logo', 'short_summary', 'long_summary', 'quotes', 'phone', 'email', 'address', 'latitude', 'longitude', 'website', 'facebook', 'twitter', 'instagram', 'site_title', 'site_description', 'site_keyword', 'favicon','maintenance','register_status','login_status','facebook_title','facebook_description','facebook_url','facebook_image','twitter_title','twitter_description','twitter_image','twitter_url'];
 
-            foreach ($keys as $key) 
-            {
+            foreach ($keys as $key) {
                 $detail = ChurchDetail::create([
                     'church_id'     =>  $church->id,
                     'meta_key'      =>  $key,
                     'meta_value'    =>  "-",
                 ]);
             }
-
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
             //dd($e->getMessage());
         }

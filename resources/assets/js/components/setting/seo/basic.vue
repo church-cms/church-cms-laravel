@@ -3,42 +3,7 @@
 	    <div v-if="this.success!=null" class="alert alert-success" id="success-alert">{{this.success}}</div>
 
         <div class="px-3 py-3 mx-2">
-            <div class="my-3">
-                <div class="">
-                    <div class="w-full lg:w-1/4 md:w-1/4">
-                        <label for="title" class="tw-form-label">SEO Title</label>
-                    </div>
-                    <div class="w-full lg:w-2/5 md:w-3/5 my-2">
-                        <input type="text" name="sitetitle" v-model="sitetitle" id="sitetitle" class="tw-form-control w-full" placeholder="SEO Title">
-                        <span class="text-danger text-xs" v-if="errors.sitetitle">{{ errors.sitetitle[0] }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="my-3">
-                <div class="">
-                    <div class="w-full lg:w-1/4 md:w-1/4">
-                        <label for="site_description" class="tw-form-label">SEO Description</label>
-                    </div>
-                    <div class="w-full lg:w-2/5 md:w-3/5 my-2">
-                        <input type="text" name="site_description" v-model="site_description" id="site_description" class="tw-form-control w-full" placeholder="SEO Description">
-                        <span class="text-danger text-xs" v-if="errors.site_description">{{ errors.site_description[0] }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="my-3">
-                <div class="">
-                    <div class="w-full lg:w-1/4 md:w-1/4">
-                        <label for="site_keyword" class="tw-form-label">Meta Keywords</label>
-                    </div>
-                    <div class="w-full lg:w-2/5 md:w-3/5 my-2">
-                        <input type="text" name="site_keyword" v-model="site_keyword" id="site_keyword" class="tw-form-control w-full" placeholder="Meta Keywords">
-                    </div>
-                    <span class="text-gray-500 text-xs">Separate Each Keyword With A Comma</span>
-                    <span class="text-danger text-xs" v-if="errors.site_keyword">{{ errors.site_keyword[0] }}</span>
-                </div>
-            </div>
+            
 
             <div class="my-3">
                 <div class="">

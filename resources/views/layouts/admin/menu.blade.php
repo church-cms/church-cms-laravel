@@ -122,13 +122,13 @@
                 </a>
             </li>
             <hr>
-            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'generalsettings' ? 'active' : '' }}">
+           <!--  <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'generalsettings' ? 'active' : '' }}">
                 <a href="{{ url('/admin/settings/generalsettings') }}" class="flex items-center">
                     <img src="{{ url('uploads/icons/settings.svg') }}" class="w-4 h-4"
                         style="filter: brightness(0) invert(1);">
                     <span class="mx-3 whitespace-no-wrap">General Settings</span>
                 </a>
-            </li>
+            </li> -->
             <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'maintenancesettings' ? 'active' : '' }}">
                 <a href="{{ url('/admin/settings/maintenancesettings') }}" class="flex items-center">
                     <img src="{{ url('uploads/icons/maintenance.svg') }}" class="w-4 h-4"

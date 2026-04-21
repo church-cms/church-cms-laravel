@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Laravel\Dusk\DuskServiceProvider; // Importing DuskServiceProvider class
+
 use App\Observers\UserprofileObserver;
 use App\Observers\MediaFileObserver;
 use App\Observers\BulletinObserver;
@@ -33,7 +33,6 @@ use App\Models\MailQueue;
 use App\Models\Userprofile;
 use App\Models\MediaFile;
 use App\Models\Bulletin;
-use App\Models\Setting;
 use App\Models\Gallery;
 use App\Models\Events;
 use App\Models\Church;
@@ -81,7 +80,7 @@ class AppServiceProvider extends ServiceProvider
         if (!\App::runningInConsole() && count(Schema::getColumnListing('settings'))) {
             $church = Church::first();
 
-            $settings = ChurchDetail::where('church_id', $church->id)->whereIn('meta_key', ['site_title', 'site_description', 'site_keyword', 'favicon', 'church_logo'])->get();
+            $settings = ChurchDetail::where('church_id', $church->id)->whereIn('meta_key', ['site_title', 'site_description', 'site_keyword', 'favicon', 'church_logo', 'maintenance', 'login_status', 'register_status','header_code','footer_code', 'facebook_title','facebook_description','facebook_url','facebook_image','twitter_title','twitter_description','twitter_image','twitter_url'])->get();
 
             //$settings = Setting::all();
 
@@ -90,11 +89,11 @@ class AppServiceProvider extends ServiceProvider
 
                 if ($setting->meta_key == 'church_logo') {
                     $key = 'logo';
-                    Config::set('settings.login_status', 1);
+                    //Config::set('settings.login_status', 1);
                 }
                 //Config::set( 'settings.'.$key, $setting->meta_value );
 
-                Config::set('settings.'.$key, $setting->meta_value);
+                Config::set('settings.' . $key, $setting->meta_value);
             }
         }
     }

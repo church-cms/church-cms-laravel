@@ -1,7 +1,7 @@
 <form method="POST" action="{{ url('/admin/settings/seodetail') }}" enctype="multipart/form-data">
     @csrf
     <div class="px-3 py-3 mx-2">
-        <div class="my-3 py-1 px-2">
+        {{--<div class="my-3 py-1 px-2">
             <div class="">
                 <div class="w-full lg:w-1/4 md:w-1/4">
                     <label for="title" class="tw-form-label">SEO Title</label>
@@ -44,7 +44,7 @@
                         class="text-danger text-xs text-red-500 py-1 font-semibold">{{ $errors->first('site_keyword') }}</span>
                 </div>
             </div>
-        </div>
+        </div>--}}
 
         <div class="my-3 py-1 px-2">
             <div class="">
