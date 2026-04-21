@@ -47,9 +47,10 @@ class SeoDetailController extends Controller
         //
         $array = [];
 
-        $array['basic']['sitetitle']                = \config::get('settings.sitetitle');
-        $array['basic']['site_description']         = \config::get('settings.site_description');
-        $array['basic']['site_keyword']             = \config::get('settings.site_keyword');
+        // $array['basic']['sitetitle']                = \config::get('settings.sitetitle');
+        // $array['basic']['site_description']         = \config::get('settings.site_description');
+        // $array['basic']['site_keyword']             = \config::get('settings.site_keyword');
+        
         $array['basic']['header_code']              = \config::get('settings.header_code');
         $array['basic']['footer_code']              = \config::get('settings.footer_code');
 
