@@ -10,9 +10,7 @@ use Illuminate\Http\Request;
 use App\Traits\NotesProcess;
 use App\Traits\LogActivity;
 use App\Traits\Common;
-use App\Models\Events;
 use App\Models\Notes;
-use App\Models\User;
 use Exception;
 use Log;
 

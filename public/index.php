@@ -4,6 +4,7 @@
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: *');
 header('Access-Control-Allow-Headers: *');*/
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
@@ -32,10 +33,10 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $isInstallerRequest = strpos($currentPath, '/installer') === 0;
 
 // 👉 If installer folder exists → force installer
-if ($installerExists && !$isInstallerRequest) {
-    header('Location: /installer');
-    exit;
-}
+// if ($installerExists && !$isInstallerRequest) {
+//     header('Location: /installer');
+//     exit;
+// }
 
 // 👉 If installer folder NOT exists → block installer and go login
 if (!$installerExists && $isInstallerRequest) {
@@ -55,7 +56,7 @@ if (!$installerExists && $isInstallerRequest) {
 |
 */
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +70,7 @@ require __DIR__.'/../vendor/autoload.php';
 |
 */
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
 /*
 |--------------------------------------------------------------------------

@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\PageCategory;
 use App\Traits\LogActivity;
-use App\Helpers\SiteHelper;
 use App\Traits\Common;
-use App\Models\User;
 use Exception;
 use Log;
 

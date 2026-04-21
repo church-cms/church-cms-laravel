@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Resources\AnniversaryUser as AnniversaryUserResource;
-use App\Http\Resources\Anniversary as AnniversaryResource;
 use App\Http\Resources\Birthday as BirthdayResource;
 use App\Http\Requests\BirthdayReminderRequest;
 use Illuminate\Support\Facades\Auth;

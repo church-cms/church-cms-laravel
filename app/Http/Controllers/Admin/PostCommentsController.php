@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-//use App\Events\Notification\SingleNotificationEvent;
 use App\Http\Requests\PostCommentEditRequest;
 use App\Http\Requests\PostCommentAddRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\LogActivity;
-use App\Helpers\SiteHelper;
 use App\Models\PostComment;
 use App\Traits\Common;
 use App\Models\Post;
-use App\Models\User;
 use Exception;
 use Log;
 

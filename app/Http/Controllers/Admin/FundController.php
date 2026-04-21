@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\FundRequest;
 use Illuminate\Http\Request;
 use App\Traits\LogActivity;
-use App\Models\Permission;
 use App\Traits\Common;
 use App\Models\Fund;
 use App\Models\User;

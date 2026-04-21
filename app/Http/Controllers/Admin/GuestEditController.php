@@ -6,7 +6,6 @@ use App\Http\Requests\GuestUpdateRequest;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Traits\MemberProcess;
 use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
 use App\Models\Userprofile;

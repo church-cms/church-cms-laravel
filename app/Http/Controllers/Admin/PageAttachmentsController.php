@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\PageAttachment;
 use Illuminate\Http\Request;
 use App\Traits\LogActivity;
-use App\Helpers\SiteHelper;
 use App\Traits\Common;
 use App\Models\Page;
 use Exception;

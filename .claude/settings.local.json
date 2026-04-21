@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"function.*Request \\\\$\\\\|Attendance::\\\\|new Attendance\" c:/laragon/www/church-cms-new/app/Http/Controllers/Admin/AttendancesController.php)",
+      "Bash(grep -n \"\\(Request \\\\$\\\\|Attendance \" c:/laragon/www/church-cms-new/app/Http/Controllers/Admin/AttendancesController.php)"
+    ]
+  }
+}

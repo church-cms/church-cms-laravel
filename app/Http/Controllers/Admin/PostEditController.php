@@ -6,9 +6,7 @@ use App\Http\Requests\PostAttachmentRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PostRequest;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
-use App\Helpers\SiteHelper;
 use App\Traits\Common;
 use App\Models\Post;
 use Exception;
@@ -40,10 +38,9 @@ class PostEditController extends Controller
     public function editList($id)
     {
         //
-        $post = Post::where('id',$id)->first();
+        $post = Post::where('id', $id)->first();
 
-        if($post->created_by === Auth::id())
-        {
+        if ($post->created_by === Auth::id()) {
             $array = [];
 
             $array['title']             = $post->title;
@@ -57,22 +54,17 @@ class PostEditController extends Controller
             {
             	$array['visible_for']   = '';
             }*/
-            $array['post_created_at']   = date('d-m-Y H:i:s',strtotime($post->post_created_at));
+            $array['post_created_at']   = date('d-m-Y H:i:s', strtotime($post->post_created_at));
             $array['is_posted']         = $post->is_posted;
-            if($post->is_posted === 1)
-            {
+            if ($post->is_posted === 1) {
                 $array['post_later'] = 0;
-            }
-            else
-            {
+            } else {
                 $array['post_later'] = 1;
             }
             $array['attachment']        = $post->AttachmentPath;
 
             return $array;
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
@@ -86,17 +78,14 @@ class PostEditController extends Controller
     public function edit($id)
     {
         //
-        $post = Post::where('id',$id)->first();
+        $post = Post::where('id', $id)->first();
 
-        if($post->created_by === Auth::id())
-        {
+        if ($post->created_by === Auth::id()) {
             $entity_id      = Auth::id();
             $entity_name    = 'App\Models\User';
 
-            return view('/admin/post/edit',[ 'post' => $post , 'entity_id' => $entity_id , 'entity_name' => $entity_name ]);
-        }
-        else
-        {
+            return view('/admin/post/edit', ['post' => $post, 'entity_id' => $entity_id, 'entity_name' => $entity_name]);
+        } else {
             abort(403);
         }
     }
@@ -111,20 +100,16 @@ class PostEditController extends Controller
     public function update(PostRequest $request, $id)
     {
         //
-        try
-        {
-            $post = Post::where('id',$id)->first();
+        try {
+            $post = Post::where('id', $id)->first();
 
             $post->title            = $request->title;
             $post->description      = $request->description;
 
-            if($request->post_later === 'true')
-            {
-                $post->post_created_at = date('Y-m-d H:i:s',strtotime($request->posted_at));
+            if ($request->post_later === 'true') {
+                $post->post_created_at = date('Y-m-d H:i:s', strtotime($request->posted_at));
                 $post->status  = 'pending';
-            }
-            else
-            {
+            } else {
                 $post->post_created_at = date('Y-m-d H:i:s');
                 $post->posted_at = date('Y-m-d H:i:s');
                 $post->is_posted = 1;
@@ -133,24 +118,21 @@ class PostEditController extends Controller
 
             $post->save();
 
-            $message = trans('messages.update_success_msg',['module' => 'Post']);
+            $message = trans('messages.update_success_msg', ['module' => 'Post']);
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $post,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_POST,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -160,20 +142,17 @@ class PostEditController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function editAttachment(PostAttachmentRequest $request,$id)
+    public function editAttachment(PostAttachmentRequest $request, $id)
     {
         //
-        try
-        {
-            $post = Post::where('id',$id)->first();
-            if($request->attachment_count > 0)
-            {
+        try {
+            $post = Post::where('id', $id)->first();
+            if ($request->attachment_count > 0) {
                 $post->attachment_file = null;
                 $post->save();
                 $initial_path = [];
-                for($j = 0 ; $j < $request->attachment_count ; $j++)
-                {
-                    $attachment = 'attachment'.$j;
+                for ($j = 0; $j < $request->attachment_count; $j++) {
+                    $attachment = 'attachment' . $j;
                     $initial_path[$j] = $request->$attachment;
                 }
                 $post->attachment_file = $initial_path;
@@ -182,23 +161,18 @@ class PostEditController extends Controller
 
             $files = $request->file;
 
-            if(count($files) > 0)
-            {
-                $i = $request->count+1;
+            if (count($files) > 0) {
+                $i = $request->count + 1;
                 $path = [];
-                foreach($files as $file)
-                {
-                    $path[$i] = $this->uploadFile(Auth::user()->church_id.'/posts/'.$id,$file);
+                foreach ($files as $file) {
+                    $path[$i] = $this->uploadFile(Auth::user()->church_id . '/posts/' . $id, $file);
                     $i++;
                 }
-                $post->attachment_file = array_merge($post->attachment_file,$path);
+                $post->attachment_file = array_merge($post->attachment_file, $path);
                 $post->save();
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }
