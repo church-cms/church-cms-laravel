@@ -4,7 +4,6 @@ namespace App\Http\Controllers\WebBuilder;
 
 use App\Http\Controllers\Controller;
 use App\Models\Page;
-use App\Models\PageCategory;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -12,13 +11,13 @@ class PageController extends Controller
     private function navData(): array
     {
         $allPages = Page::with('pageCategory')
-                        ->where('pages.status', 1)
-                        ->join('page_categories', 'pages.category_id', '=', 'page_categories.id')
-                        ->orderBy('page_categories.sort_order')
-                        ->orderBy('pages.menu_order')
-                        ->orderBy('pages.page_name')
-                        ->select('pages.*')
-                        ->get();
+            ->where('pages.status', 1)
+            ->join('page_categories', 'pages.category_id', '=', 'page_categories.id')
+            ->orderBy('page_categories.sort_order')
+            ->orderBy('pages.menu_order')
+            ->orderBy('pages.page_name')
+            ->select('pages.*')
+            ->get();
 
         $grouped = $allPages->groupBy(fn($p) => optional($p->pageCategory)->name ?? 'General');
 

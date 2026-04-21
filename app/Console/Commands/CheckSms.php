@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Traits\SmsProcess;
 use App\Models\Reminder;
-use App\Models\Events;
 use App\Models\Church;
 use Exception;
 use log;
@@ -14,7 +13,7 @@ class CheckSms extends Command
 {
 
     use SmsProcess;
-   
+
 
     /**
      * The name and signature of the console command.
@@ -35,8 +34,8 @@ class CheckSms extends Command
      *
      * @return void
      */
-  
-    
+
+
     public function __construct()
     {
         parent::__construct();
@@ -49,42 +48,31 @@ class CheckSms extends Command
      */
     public function handle()
     {
-    
-        try
-        {
+
+        try {
             $now       = date('Y-m-d');
-            $queuelist = Reminder::where([['queue_status','=','queue'],['via','=','sms']])->where('executed_at','=',$now)->get();
+            $queuelist = Reminder::where([['queue_status', '=', 'queue'], ['via', '=', 'sms']])->where('executed_at', '=', $now)->get();
 
-            foreach($queuelist as $queue)
-            {  
+            foreach ($queuelist as $queue) {
                 $church = Church::IsActive($queue->church_id)->exists();
-                if($church == TRUE)
-                {
-                    if(env('SMS_STATUS') == 'on')
-                    {
-                        $update['queue_status']='deliver';
-                        Reminder::where('id',$queue->id)->update($update);
+                if ($church == TRUE) {
+                    if (env('SMS_STATUS') == 'on') {
+                        $update['queue_status'] = 'deliver';
+                        Reminder::where('id', $queue->id)->update($update);
 
-                        if($queue->entity_name=="App\\Models\\Events")
-                        {  
-                            $this->sendSmsNotification($queue->to,$queue->data['date'],$queue->data['location']);
-                        }
-                        elseif($queue->entity_name == "App\\Models\\GroupLink")
-                        {
-                            $this->sendUserNotifyGroup($queue->to,$queue->data['message']);
+                        if ($queue->entity_name == "App\\Models\\Events") {
+                            $this->sendSmsNotification($queue->to, $queue->data['date'], $queue->data['location']);
+                        } elseif ($queue->entity_name == "App\\Models\\GroupLink") {
+                            $this->sendUserNotifyGroup($queue->to, $queue->data['message']);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     return FALSE;
                 }
-            }      
-        }
-        catch(Exception $e)
-        {
+            }
+        } catch (Exception $e) {
             Log::info($e->getMessage());
             //dd($e->getMessage());
         }
-    }      
+    }
 }

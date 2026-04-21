@@ -3,7 +3,6 @@
 namespace app\Traits;
 
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\ThrottlesLogins;
 use App\Traits\RedirectsUsers;

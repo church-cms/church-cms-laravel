@@ -2,11 +2,8 @@
 
 namespace App\Traits;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\Authentication;
-use App\Models\Smstemplate;
 use App\Traits\MSG91;
-use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
@@ -25,7 +22,7 @@ trait AuthenticationProcess
 {
     use MSG91;
 
-   /* public function createAuthentication($user,$request)
+    /* public function createAuthentication($user,$request)
     {
         try
         {
@@ -74,12 +71,10 @@ trait AuthenticationProcess
         }
     }*/
 
-     public function createAuthentication($user,$request)
+    public function createAuthentication($user, $request)
     {
-        try
-        {
-            if( $user->mobile_no !=null )
-            {
+        try {
+            if ($user->mobile_no != null) {
                 $otp = rand(100000, 999999);
                 $expiry = Carbon::now()->addMinutes(5);
                 //$expiry = Carbon::now()->addDay(1); //for test
@@ -91,23 +86,18 @@ trait AuthenticationProcess
                 $authentication->token      =   $otp;
                 $authentication->status     =   0;
                 $authentication->expires_on =   $expiry;
-                if($request != '')
-                {
+                if ($request != '') {
                     $authentication->ip_address = $request->ip();
-                }
-                else
-                {
+                } else {
                     $authentication->ip_address = \Request::ip();
                 }
                 $authentication->save();
 
-                $this->getOTP($otp,$user->mobile_no);
+                $this->getOTP($otp, $user->mobile_no);
 
-                \Session::put('successmessage',trans('messages.otp_success_msg'));
+                \Session::put('successmessage', trans('messages.otp_success_msg'));
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
         }
     }

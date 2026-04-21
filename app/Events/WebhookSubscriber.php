@@ -3,7 +3,6 @@
 namespace App\Events;
 
 use App\Webhooks\Events\WebhookEvent;
-use App\Webhooks\Models\WebhookOwner;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 

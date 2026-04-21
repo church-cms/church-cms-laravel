@@ -57,10 +57,10 @@ class SeoDetailAdvancedRequest extends FormRequest
         $rules =  [
             'facebook_title'        =>  'nullable|check_facebook_title|max:25',
             'facebook_description'  =>  'nullable|check_facebook_description|max:100',
-            'facebook_url'          =>  'nullable|check_facebook_url',
+            'facebook_url'          =>  'nullable',
             'twitter_title'         =>  'nullable|check_twitter_title|max:25', 
             'twitter_description'   =>  'nullable|check_twitter_description|max:100', 
-            'twitter_url'           =>  'nullable|check_twitter_url', 
+            'twitter_url'           =>  'nullable', 
         ];
 
         if($request->facebook_image != null)

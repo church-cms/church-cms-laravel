@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\AfterSubscriptionExpiredEvent;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AfterSubscriptionExpiredMail;
 

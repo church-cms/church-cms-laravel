@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 
 class Prayer extends Model
 {
@@ -57,7 +56,7 @@ class Prayer extends Model
     protected $casts = [
         'approved_at'     => 'datetime',
         'rejected_at'     => 'datetime',
-        'should_delete_at'=> 'datetime',
+        'should_delete_at' => 'datetime',
         'expires_at'      => 'datetime',
         'pinned_at'       => 'datetime',
         'answered_at'     => 'datetime',
@@ -238,26 +237,40 @@ class Prayer extends Model
     public function getStatusBadgeColorAttribute()
     {
         switch ($this->status) {
-            case self::STATUS_PENDING:     return 'yellow';
-            case self::STATUS_ACTIVE:      return 'green';
-            case self::STATUS_ANSWERED:    return 'blue';
-            case self::STATUS_ENDED:       return 'gray';
-            case self::STATUS_REJECTED:    return 'red';
-            case self::STATUS_UNPUBLISHED: return 'gray';
-            default:                       return 'gray';
+            case self::STATUS_PENDING:
+                return 'yellow';
+            case self::STATUS_ACTIVE:
+                return 'green';
+            case self::STATUS_ANSWERED:
+                return 'blue';
+            case self::STATUS_ENDED:
+                return 'gray';
+            case self::STATUS_REJECTED:
+                return 'red';
+            case self::STATUS_UNPUBLISHED:
+                return 'gray';
+            default:
+                return 'gray';
         }
     }
 
     public function getStatusLabelAttribute()
     {
         switch ($this->status) {
-            case self::STATUS_PENDING:     return 'Pending Review';
-            case self::STATUS_ACTIVE:      return 'Active';
-            case self::STATUS_ANSWERED:    return 'Answered';
-            case self::STATUS_ENDED:       return 'Ended';
-            case self::STATUS_REJECTED:    return 'Rejected';
-            case self::STATUS_UNPUBLISHED: return 'Unpublished';
-            default:                       return ucfirst(strtolower($this->status));
+            case self::STATUS_PENDING:
+                return 'Pending Review';
+            case self::STATUS_ACTIVE:
+                return 'Active';
+            case self::STATUS_ANSWERED:
+                return 'Answered';
+            case self::STATUS_ENDED:
+                return 'Ended';
+            case self::STATUS_REJECTED:
+                return 'Rejected';
+            case self::STATUS_UNPUBLISHED:
+                return 'Unpublished';
+            default:
+                return ucfirst(strtolower($this->status));
         }
     }
 

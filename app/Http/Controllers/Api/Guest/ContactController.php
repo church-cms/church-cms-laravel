@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Api\Guest;
 
 use App\Http\Requests\Api\Guest\ContactRequest;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Mail\ContactMail;
 use App\Models\Contact;
 use App\Traits\Common;
 use App\Models\User;
@@ -25,8 +22,7 @@ class ContactController extends Controller
      */
     public function store(ContactRequest $request)
     {
-        try
-        {
+        try {
             $contact = new Contact;
 
             $contact->church_id             = $request->church_id;
@@ -47,18 +43,13 @@ class ContactController extends Controller
 
             $user = User::ByRole(3)->first();
 
-            if(env('MAIL_STATUS') === 'on')
-            {
-
+            if (env('MAIL_STATUS') === 'on') {
             }
 
-            if($contact != null)
-            {
+            if ($contact != null) {
                 $success = true;
                 $message = 'Contact Submitted Successfully';
-            }
-            else
-            {
+            } else {
                 $success = false;
             }
 
@@ -66,11 +57,8 @@ class ContactController extends Controller
                 'status'    =>  $success,
                 'message'   =>  $message,
             ], 200);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

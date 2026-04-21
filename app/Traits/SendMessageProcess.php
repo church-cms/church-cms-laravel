@@ -7,16 +7,12 @@ namespace App\Traits;
 use App\Events\Notification\SingleNotificationEvent;
 use App\Events\SendMessageEvent;
 use App\Events\SinglePushEvent;
-use App\Traits\LogActivity;
-use App\Helpers\SiteHelper;
 use App\Traits\SmsProcess;
 use App\Models\SendMail;
-use App\Traits\Common;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
-use Illuminate\Support\Str;
 /**
  * Trait for sending messages and notifications
  *

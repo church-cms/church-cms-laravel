@@ -3,11 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\SermonEvent;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SermonMail;
-use App\Models\Sermon;
 use App\Models\User;
 
 class SermonEventListener implements ShouldQueue

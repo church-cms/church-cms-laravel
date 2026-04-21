@@ -2,7 +2,26 @@
   "permissions": {
     "allow": [
       "Bash(grep -n \"function.*Request \\\\$\\\\|Attendance::\\\\|new Attendance\" c:/laragon/www/church-cms-new/app/Http/Controllers/Admin/AttendancesController.php)",
-      "Bash(grep -n \"\\(Request \\\\$\\\\|Attendance \" c:/laragon/www/church-cms-new/app/Http/Controllers/Admin/AttendancesController.php)"
+      "Bash(grep -n \"\\(Request \\\\$\\\\|Attendance \" c:/laragon/www/church-cms-new/app/Http/Controllers/Admin/AttendancesController.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/__TRACKED_VAR__)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Contracts\\\\\\\\Queue\\\\\\\\ShouldQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/__TRACKED_VAR__)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/Notification/PushNotificationEventListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Contracts\\\\\\\\Queue\\\\\\\\ShouldQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/Notification/PushNotificationEventListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/Notification/SingleNotificationEventListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Contracts\\\\\\\\Queue\\\\\\\\ShouldQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/Notification/SingleNotificationEventListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/Notification/PrayerNotificationEventListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/CalendarEventListener.php)",
+      "Bash(sed -i '/^use App\\\\\\\\Models\\\\\\\\Events;$/d' c:/laragon/www/church-cms-new/app/Listeners/CalendarEventListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/CampaignEmailDeleteListener.php)",
+      "Bash(sed -i '/^use App\\\\\\\\Models\\\\\\\\CampaignEmail;$/d' c:/laragon/www/church-cms-new/app/Listeners/CampaignEmailDeleteListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/CampaignEmailListener.php)",
+      "Bash(sed -i '/^use App\\\\\\\\Models\\\\\\\\CampaignEmail;$/d' c:/laragon/www/church-cms-new/app/Listeners/CampaignEmailListener.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/EmailLinkClicked.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Contracts\\\\\\\\Queue\\\\\\\\ShouldQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/EmailLinkClicked.php)",
+      "Bash(sed -i '/^use App\\\\\\\\Models\\\\\\\\MailQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/EmailLinkClicked.php)",
+      "Bash(sed -i '/^use Illuminate\\\\\\\\Queue\\\\\\\\InteractsWithQueue;$/d' c:/laragon/www/church-cms-new/app/Listeners/PushEventListener.php)",
+      "Bash(php -r ' *)",
+      "Bash(xargs grep *)"
     ]
   }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -19,14 +18,13 @@ class LoggedInMail extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    protected $user ;
- 
-   
-    
+    protected $user;
+
+
+
     public function __construct(User $user)
     {
-        $this->user=$user;
-       
+        $this->user = $user;
     }
 
     /**
@@ -36,19 +34,18 @@ class LoggedInMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        
-        $template = Mailtemplate::where([['name','login'],['status','active']])->first();
+
+        $template = Mailtemplate::where([['name', 'login'], ['status', 'active']])->first();
         $subject =  $template->subject;
         $mail_content = $template->mail_content;
-     
-        $mail_content = str_replace(":name",$this->user->FullName,$mail_content);
-      
-     
-            return $this->markdown('emails.mailcontent')
-                        ->subject($subject)
-                        ->with([
-                            'content' => $mail_content,
-                            ]);
-        
+
+        $mail_content = str_replace(":name", $this->user->FullName, $mail_content);
+
+
+        return $this->markdown('emails.mailcontent')
+            ->subject($subject)
+            ->with([
+                'content' => $mail_content,
+            ]);
     }
 }

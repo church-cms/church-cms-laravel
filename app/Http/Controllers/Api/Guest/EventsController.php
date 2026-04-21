@@ -5,22 +5,22 @@ namespace App\Http\Controllers\Api\Guest;
 use App\Http\Resources\API\Guest\Events as EventResource;
 use App\Http\Controllers\Controller;
 use App\Models\Events;
-use Carbon\Carbon;
+
 
 class EventsController extends Controller
 {
     public function index($church_id)
     {
-        $events = Events::where('church_id',$church_id)->get();
+        $events = Events::where('church_id', $church_id)->get();
 
         $events = EventResource::collection($events);
 
         return $events;
     }
 
-    public function show($church_id,$id)
+    public function show($church_id, $id)
     {
-        $event = Events::where([['church_id',$church_id],['id',$id]])->first();
+        $event = Events::where([['church_id', $church_id], ['id', $id]])->first();
 
         return [
             'id'            =>  $event->id,

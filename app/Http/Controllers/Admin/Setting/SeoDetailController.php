@@ -11,7 +11,8 @@ use Illuminate\Http\Request;
 use App\Traits\Common;
 use Exception;
 use Log;
-
+use App\Models\ChurchDetail;
+use Config;
 /**
  * SeoDetailController
  *
@@ -77,9 +78,9 @@ class SeoDetailController extends Controller
         //
         try
         {
-            $this->updatesettings('sitetitle',$request->sitetitle);
-            $this->updatesettings('site_description',$request->site_description);
-            $this->updatesettings('site_keyword',$request->site_keyword);
+            // $this->updatesettings('sitetitle',$request->sitetitle);
+            // $this->updatesettings('site_description',$request->site_description);
+            // $this->updatesettings('site_keyword',$request->site_keyword);
             $this->updatesettings('header_code',$request->header_code);
             $this->updatesettings('footer_code',$request->footer_code);
 

@@ -4,8 +4,6 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Input;
-use App\Models\Userprofile;
 use App\Models\User;
 
 class EditUserDetailRequest extends FormRequest

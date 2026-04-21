@@ -8,9 +8,7 @@ use App\Http\Resources\API\City as CityResource;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Http\Requests\RegisterStepOneRequest;
 use App\Http\Requests\RegisterStepTwoRequest;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Events\Registered;
-use App\Http\Requests\RegisterRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +16,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Mail\EmailVerification;
 use App\Models\PermissionUser;
-use App\Rules\ValidRecaptcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Userprofile;
@@ -74,8 +71,8 @@ class RegisterController extends Controller
         $state = StateResource::collection($state);
         $city = City::get();
         $city = CityResource::collection($city)->groupby('state_id');
-        $country =Country::where('status',1)->get();
-        $countrylist =CountryResource::collection($country)->keyBy('short_name');
+        $country = Country::where('status', 1)->get();
+        $countrylist = CountryResource::collection($country)->keyBy('short_name');
 
         $array = [];
 
@@ -123,8 +120,7 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         \DB::beginTransaction();
-        try
-        {
+        try {
             $church = new Church;
 
             $church->name          = $data['church_name'];
@@ -133,7 +129,7 @@ class RegisterController extends Controller
             $church->city_id       = $data['city_id'];
             $church->state_id      = $data['state_id'];
             $church->pincode       = $data['pincode'];
-            $church->slug          = Str::slug($data['church_name'],'-');
+            $church->slug          = Str::slug($data['church_name'], '-');
             $church->status        = 1;
             $church->created_at    = Carbon::now();
             $church->updated_at    = Carbon::now();
@@ -169,8 +165,7 @@ class RegisterController extends Controller
             $userprofile->save();
 
             $permissions = Permission::get();
-            foreach($permissions as $permission)
-            {
+            foreach ($permissions as $permission) {
                 $permissionuser = new PermissionUser;
 
                 $permissionuser->permission_id = $permission->id;
@@ -181,20 +176,16 @@ class RegisterController extends Controller
 
                 $permissionuser->save();
             }
-            if(env('MAIL_STATUS') === 'on')
-            {
+            if (env('MAIL_STATUS') === 'on') {
                 Mail::to($user->email)->queue(new EmailVerification($user));
             }
 
             \DB::commit();
 
             return $user;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             \DB::rollBack();
             Log::info($e->getMessage());
-
         }
     }
 
@@ -215,28 +206,21 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request)//RegisterRequest
+    public function register(Request $request) //RegisterRequest
     {
         //
-        try
-        {
-            if(request('g-recaptcha-response'))
-            {
+        try {
+            if (request('g-recaptcha-response')) {
                 event(new Registered($user = $this->create($request->all())));
 
                 $this->guard()->login($user);
 
                 return $this->registered($request, $user) ?: redirect($this->redirectPath());
+            } else {
+                return redirect()->back()->with('failmessage', 'Captcha Is Required');
             }
-            else
-            {
-                return redirect()->back()->with('failmessage','Captcha Is Required');
-            }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 

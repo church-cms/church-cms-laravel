@@ -50,9 +50,9 @@ class SeoDetailBasicRequest extends FormRequest
         });
 
         return [
-            'sitetitle'         =>  'required|check_sitetitle|max:25',
-            'site_description'  =>  'required|check_site_description|max:100',
-            'site_keyword'      =>  'required|check_site_keyword',
+            // 'sitetitle'         =>  'required|check_sitetitle|max:25',
+            // 'site_description'  =>  'required|check_site_description|max:100',
+            // 'site_keyword'      =>  'required|check_site_keyword',
             'header_code'       =>  'required|check_header_code',
             'footer_code'       =>  'required|check_footer_code', 
         ];

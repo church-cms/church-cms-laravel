@@ -7,7 +7,6 @@ use App\Http\Requests\Api\Guest\FeedbackRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\FeedbackMessage;
-use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use App\Models\Feedback;
 use App\Traits\Common;
@@ -31,11 +30,9 @@ class FeedbackController extends Controller
         $categoryList = SiteHelper::getFeedbackCategoryList();
 
         return response()->json([
-                        'status'            => 'success',
-                        'data'              => $categoryList,
-                    ], 200);
-
-
+            'status'            => 'success',
+            'data'              => $categoryList,
+        ], 200);
     }
 
     /**
@@ -46,8 +43,8 @@ class FeedbackController extends Controller
     public function index()
     {
         //
-        $user = User::where('id',Auth::id())->first();
-        $feedback = Feedback::where('user_id',$user->id)->get();
+        $user = User::where('id', Auth::id())->first();
+        $feedback = Feedback::where('user_id', $user->id)->get();
 
         $feedback = FeedbackResource::collection($feedback);
 
@@ -63,25 +60,22 @@ class FeedbackController extends Controller
     public function store(FeedbackRequest $request)
     {
         //
-        try
-        {
+        try {
 
-        $admin = User::where('church_id',$request->church_id)->ByRole(3)->first();
-        $user = User::where([['church_id',$request->church_id],['mobile_no',$request->mobile_no]])->first();
+            $admin = User::where('church_id', $request->church_id)->ByRole(3)->first();
+            $user = User::where([['church_id', $request->church_id], ['mobile_no', $request->mobile_no]])->first();
 
             $feedback = new Feedback;
 
             $feedback->church_id = $request->church_id;
-            if($user){
-            $feedback->user_id  = $user->id;
-            }
-            else{
-            $feedback->mobile_no=$request->mobile_no;
+            if ($user) {
+                $feedback->user_id  = $user->id;
+            } else {
+                $feedback->mobile_no = $request->mobile_no;
             }
             $feedback->admin_id = $admin->id;
 
-            if($feedback->save())
-            {
+            if ($feedback->save()) {
                 $feedbackMessage = new FeedbackMessage;
 
                 $feedbackMessage->message       = $request->message;
@@ -103,32 +97,22 @@ class FeedbackController extends Controller
                     $feedbackMessage->file = $path;
                 }*/
 
-                if($feedbackMessage->save())
-                {
-                    $success=true;
+                if ($feedbackMessage->save()) {
+                    $success = true;
                     $res = 'Feedback Sent Successfully';
-
-                }
-                else
-                {
-                    $success=false;
+                } else {
+                    $success = false;
                     $res = 'Failed To Send Feedback';
-
                 }
-            }
-            else
-            {
-                $success=false;
+            } else {
+                $success = false;
                 $res = 'Failed To Send Feedback';
-
             }
             return response()->json([
-                        'success'=>$success,
-                        'message'=> $res,
-                    ], 200);
-        }
-        catch(Exception $e)
-        {
+                'success' => $success,
+                'message' => $res,
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
         }
     }

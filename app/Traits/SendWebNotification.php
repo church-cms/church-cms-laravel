@@ -1,10 +1,9 @@
 <?php
+
 namespace App\Traits;
 
 use App\Events\Notification\SingleNotificationEvent;
 use App\Models\User;
-use Exception;
-use Log;
 
 /**
  * Trait SendWebNotification
@@ -19,23 +18,24 @@ use Log;
 trait SendWebNotification
 
 {
-   /**
-    * Add a notification for a user.
-    *
-    * Triggers a notification event that broadcasts to the user in real-time
-    * through websocket connections.
-    *
-    * @param array $data The notification data containing message and other details
-    * @param \App\Models\User $user The user to send the notification to
-    *
-    * @return void
-    */
-   public function addNotification(array $data, User $user): void {
-       $array = [];
+    /**
+     * Add a notification for a user.
+     *
+     * Triggers a notification event that broadcasts to the user in real-time
+     * through websocket connections.
+     *
+     * @param array $data The notification data containing message and other details
+     * @param \App\Models\User $user The user to send the notification to
+     *
+     * @return void
+     */
+    public function addNotification(array $data, User $user): void
+    {
+        $array = [];
 
-       $array['user']     = $user;
-       $array['details']  = $data['message'];
+        $array['user']     = $user;
+        $array['details']  = $data['message'];
 
-       event(new SingleNotificationEvent($array));
-   }
+        event(new SingleNotificationEvent($array));
+    }
 }

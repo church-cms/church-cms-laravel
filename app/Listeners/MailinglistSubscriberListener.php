@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use App\Events\MailinglistSubscriberEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Traits\EmailQueueProcess;
 
 class MailinglistSubscriberListener implements ShouldQueue

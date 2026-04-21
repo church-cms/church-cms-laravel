@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Api\Angular;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use Exception;
+
 
 class SeoDetailController extends Controller
 {
@@ -36,15 +34,15 @@ class SeoDetailController extends Controller
     {
         //
         $array = [];
-        
+
         $array['advanced']['facebook_title']        = \config::get('settings.facebook_title');
         $array['advanced']['facebook_description']  = \config::get('settings.facebook_description');
         $array['advanced']['facebook_url']          = \config::get('settings.facebook_url');
-        $array['advanced']['facebook_image']        = \config::get('settings.facebook_image') === null ? null:$this->getFilePath(\config::get('settings.facebook_image'));
+        $array['advanced']['facebook_image']        = \config::get('settings.facebook_image') === null ? null : $this->getFilePath(\config::get('settings.facebook_image'));
         $array['advanced']['twitter_title']         = \config::get('settings.twitter_title');
         $array['advanced']['twitter_description']   = \config::get('settings.twitter_description');
         $array['advanced']['twitter_url']           = \config::get('settings.twitter_url');
-        $array['advanced']['twitter_image']         = \config::get('settings.twitter_image') === null ? null:$this->getFilePath(\config::get('settings.twitter_image'));
+        $array['advanced']['twitter_image']         = \config::get('settings.twitter_image') === null ? null : $this->getFilePath(\config::get('settings.twitter_image'));
 
         return $array;
     }

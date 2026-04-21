@@ -2,10 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Userprofile;
-use App\Models\User;
 
 class SubAdminUpdateRequest extends FormRequest
 {

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Passport\Passport;
+
 
 
 class AuthServiceProvider extends ServiceProvider
@@ -93,7 +93,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->church_id == $photo->church_id;
         });
 
-      
+
         // Gate::define('payment', function ($user, $id) {
         //     $plans = Plan::pluck('id')->toArray();
         //     foreach ($plans as $plan)

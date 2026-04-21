@@ -2,14 +2,8 @@
 
 namespace App\Http\Controllers\Siteadmin;
 
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactMail;
-//use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
-use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Bus\Queueable;
-use Config;
 
 /**
  * ContactController

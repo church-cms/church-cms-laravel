@@ -5,7 +5,6 @@ namespace App\Listeners\Notification;
 use App\Events\Notification\PrayerNotificationEvent;
 use App\Notifications\NewMessageNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Models\User;
 use Notification;
 

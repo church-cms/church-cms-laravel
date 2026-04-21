@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\SinglePushEvent;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Traits\SendPushNotification;
 use App\Models\User;
 

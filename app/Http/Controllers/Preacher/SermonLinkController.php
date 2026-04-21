@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Events\SermonLinkEvent;
-use App\Mail\SermonLinkMail;
 use App\Traits\LogActivity;
 use App\Models\SermonLink;
 use App\Models\Sermon;
@@ -39,16 +38,13 @@ class SermonLinkController extends Controller
      */
     public function create($sermons_id)
     {
-        $sermon_id=Sermon::where('id',$sermons_id)->first();
+        $sermon_id = Sermon::where('id', $sermons_id)->first();
 
-        if(Gate::allows('sermon',$sermon_id))
-        {
-            $sermon=SermonLink::with('church','user','sermons')->where([['church_id',Auth::user()->church_id],['sermons_id',$sermons_id]])->paginate(5);
+        if (Gate::allows('sermon', $sermon_id)) {
+            $sermon = SermonLink::with('church', 'user', 'sermons')->where([['church_id', Auth::user()->church_id], ['sermons_id', $sermons_id]])->paginate(5);
 
-            return view('/preacher/sermonlink/create',['sermons'=>$sermon],['sermon_id'=>$sermon_id]);
-        }
-        else
-        {
+            return view('/preacher/sermonlink/create', ['sermons' => $sermon], ['sermon_id' => $sermon_id]);
+        } else {
             abort(403);
         }
     }
@@ -59,78 +55,70 @@ class SermonLinkController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SermonLinkRequest $request,$sermons_id)
+    public function store(SermonLinkRequest $request, $sermons_id)
     {
-        try
-        {
-            $sermon=new SermonLink;
+        try {
+            $sermon = new SermonLink;
 
             $sermon->church_id  = Auth::user()->church_id;
             $sermon->user_id    = Auth::id();
             $sermon->sermons_id = $sermons_id;
             $sermon->title      = $request->title;
-            $sermon->date       = date('Y-m-d',strtotime($request->date));
+            $sermon->date       = date('Y-m-d', strtotime($request->date));
             $sermon->video_link = $request->video_link ?: null;
             $sermon->audio_link = $request->audio_link ?: null;
 
             if ($request->hasFile('pdf_link')) {
-                $path = $this->uploadFile('/uploads/sermons/documents'.'/'.Auth::user()->church_id, $request->file('pdf_link'));
+                $path = $this->uploadFile('/uploads/sermons/documents' . '/' . Auth::user()->church_id, $request->file('pdf_link'));
                 $sermon->pdf_link = $path;
             }
 
             $sermon->save();
-            if(env('MAIL_STATUS') === 'on')
-            {
+            if (env('MAIL_STATUS') === 'on') {
                 event(new SermonLinkEvent($sermon));
             }
 
             $message = 'Series Uploaded Successfully';
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $sermon,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_SERMONLINK,
                 $message
             );
 
-            $res['success']=$message;
+            $res['success'] = $message;
             return $res;
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
-    public function getDownload(Request $request,$id)
+    public function getDownload(Request $request, $id)
     {
         //PDF file is stored under project/public/download/info.pdf
         $sermon = SermonLink::where('id', $id)->first();
 
-        if(Gate::allows('sermon',$sermon))
-        {
-            $path=public_path('/'.$sermon->url);
-            $file=pathinfo($path);
+        if (Gate::allows('sermon', $sermon)) {
+            $path = public_path('/' . $sermon->url);
+            $file = pathinfo($path);
 
             $extension = $file['extension'];
 
             $headers = [
-                'Content-Type: application/'.$extension,
+                'Content-Type: application/' . $extension,
             ];
 
-            return Response::download($path, 'filename.'.$extension, $headers);
-        }
-        else
-        {
+            return Response::download($path, 'filename.' . $extension, $headers);
+        } else {
             abort(403);
         }
     }
 
     public function edit($id)
     {
-        $sermon=SermonLink::where('id',$id)->get();
+        $sermon = SermonLink::where('id', $id)->get();
         $sermon = EditSermonLinkResource::collection($sermon);
 
         return $sermon;
@@ -143,64 +131,56 @@ class SermonLinkController extends Controller
 
     public function update(SermonLinkUpdateRequest $request, $id)
     {
-        try
-        {
-            $links = SermonLink::where('id',$id)->first();
+        try {
+            $links = SermonLink::where('id', $id)->first();
 
             $links->title      = $request->title;
-            $links->date       = date('Y-m-d',strtotime($request->date));
+            $links->date       = date('Y-m-d', strtotime($request->date));
             $links->video_link = $request->video_link ?: null;
             $links->audio_link = $request->audio_link ?: null;
 
             if ($request->hasFile('pdf_link')) {
-                $path = $this->uploadFile('/uploads/sermons/documents'.'/'.Auth::user()->church_id, $request->file('pdf_link'));
+                $path = $this->uploadFile('/uploads/sermons/documents' . '/' . Auth::user()->church_id, $request->file('pdf_link'));
                 $links->pdf_link = $path;
             }
             $links->save();
 
             $message = "Series Updated Successfully";
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $links,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_SERMONLINK,
                 $message
             );
 
-            $res['success']='Series Updated Successfully';
+            $res['success'] = 'Series Updated Successfully';
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function destroy($id)
     {
-        try
-        {
+        try {
             $sermon = SermonLink::findOrFail($id);
             $sermon->delete();
 
             $message = "Sermonlink deleted";
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $sermon,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DELETE_SERMONLINK,
                 $message
             );
 
             return redirect()->back()->with(['successmessage' => 'Sermonlink deleted']);
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

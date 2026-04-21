@@ -3,12 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\SendMessageEvent;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMessageMail;
 use App\Models\SendMail;
-use Carbon\Carbon;
 
 class SendMessageEventListener implements ShouldQueue
 {

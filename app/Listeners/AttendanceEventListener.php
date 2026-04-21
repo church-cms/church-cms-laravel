@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\AttendanceEvent;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Traits\AttendanceProcess;
 use App\Models\User;

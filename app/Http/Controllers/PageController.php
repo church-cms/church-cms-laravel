@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\Page;
 use App\Models\Faq;
 
@@ -25,62 +24,47 @@ class PageController extends Controller
      */
     public function news()
     {
-        return view('pages.news.newspage', [
-            ]);
+        return view('pages.news.newspage', []);
     }
 
-     public function privacy()
+    public function privacy()
     {
-           if(!is_null(\Session::get('locale')))
-       {
-           $lang = \Session::get('locale');
-       }
-       else
-       {
-           $lang = "en";
-       }
+        if (!is_null(\Session::get('locale'))) {
+            $lang = \Session::get('locale');
+        } else {
+            $lang = "en";
+        }
 
-        $pages  = Page::where([['language', $lang],['slug','=','policy']])->first();
+        $pages  = Page::where([['language', $lang], ['slug', '=', 'policy']])->first();
 
-         if(count( $pages )>0)
-       {
+        if (count($pages) > 0) {
 
-        return view('pages.privacy.privacypage',[
+            return view('pages.privacy.privacypage', [
                 'pages' => $pages
-        ]);
-
-           }
-       else
-       {
-           abort(403);
-       }
+            ]);
+        } else {
+            abort(403);
+        }
     }
 
-     public function terms()
+    public function terms()
     {
-           if(!is_null(\Session::get('locale')))
-       {
-           $lang = \Session::get('locale');
-       }
-       else
-       {
-           $lang = "en";
-       }
+        if (!is_null(\Session::get('locale'))) {
+            $lang = \Session::get('locale');
+        } else {
+            $lang = "en";
+        }
 
-        $terms  = Page::where([['language', $lang],['slug','=','terms-condition']])->first();
+        $terms  = Page::where([['language', $lang], ['slug', '=', 'terms-condition']])->first();
 
-         if(count( $terms )>0)
-       {
+        if (count($terms) > 0) {
 
-        return view('pages.privacy.termspage',[
+            return view('pages.privacy.termspage', [
                 'terms' => $terms
-        ]);
-
-           }
-       else
-       {
-           abort(403);
-       }
+            ]);
+        } else {
+            abort(403);
+        }
     }
 
 
@@ -88,10 +72,10 @@ class PageController extends Controller
 
     public function getNews($slug)
     {
-        $news  = News::where([['active', '=', '1'],['slug',$slug]])->first();
+        $news  = News::where([['active', '=', '1'], ['slug', $slug]])->first();
         return view('pages.news.newsdetails', [
-                'news' => $news,
-            ]);
+            'news' => $news,
+        ]);
     }
 
     /**
@@ -101,19 +85,16 @@ class PageController extends Controller
     public function faq()
     {
 
-        if(!is_null(\Session::get('locale')))
-        {
+        if (!is_null(\Session::get('locale'))) {
             $lang = \Session::get('locale');
-        }
-        else
-        {
+        } else {
             $lang = "en";
         }
 
-        $faq  = Faq::where([['active', 1],['language', $lang]])->orderBy('order', 'ASC')->paginate(\Config::get('settings.pagecount'));
+        $faq  = Faq::where([['active', 1], ['language', $lang]])->orderBy('order', 'ASC')->paginate(\Config::get('settings.pagecount'));
         return view('faq.faqpage', [
-                'faq' => $faq,
-            ]);
+            'faq' => $faq,
+        ]);
     }
 
 
@@ -126,11 +107,11 @@ class PageController extends Controller
     public function teamProfile()
     {
         $team = Team::where([['status', 'active'], ['team_member', 'projectteam']])->orderBy('order', 'ASC')->paginate(5);
-        return view('pages.teamprofile',[
+        return view('pages.teamprofile', [
             'team' => $team,
-            ]);
+        ]);
     }
-      /**
+    /**
      * Show a single page based on slug
      *
      * @param string $slug
@@ -138,29 +119,21 @@ class PageController extends Controller
      */
     public function show($slug)
     {
-        if(!is_null(\Session::get('locale')))
-        {
+        if (!is_null(\Session::get('locale'))) {
             $lang = \Session::get('locale');
-        }
-        else
-        {
+        } else {
             $lang = "en";
         }
-        $pagedetails  = Page::where([['active', 1],['language', $lang],['slug', '=', $slug]])->first();
+        $pagedetails  = Page::where([['active', 1], ['language', $lang], ['slug', '=', $slug]])->first();
 
-        if(count( $pagedetails )>0)
-        {
-          return view('pages.custompages', [
+        if (count($pagedetails) > 0) {
+            return view('pages.custompages', [
                 'pagedetails' => $pagedetails,
                 'slug' => $slug,
                 'lang' => $lang,
             ]);
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
-
-
 }

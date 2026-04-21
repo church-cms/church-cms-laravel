@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Api\Angular;
 
 use App\Http\Requests\ContactRequest;
-use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Mail\ContactMail;
 use App\Models\Contact;
 use App\Traits\Common;
 use App\Models\Church;
@@ -24,11 +21,10 @@ class ContactController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContactRequest $request,$slug)
+    public function store(ContactRequest $request, $slug)
     {
-        try
-        {
-            $church = Church::where('slug','=',$slug)->first();
+        try {
+            $church = Church::where('slug', '=', $slug)->first();
 
             $contact = new Contact;
 
@@ -50,18 +46,13 @@ class ContactController extends Controller
 
             $user = User::ByRole(3)->first();
 
-            if(env('MAIL_STATUS') === 'on')
-            {
-
+            if (env('MAIL_STATUS') === 'on') {
             }
 
-            if($contact != null)
-            {
+            if ($contact != null) {
                 $success = true;
                 $message = 'Contact Submitted Successfully';
-            }
-            else
-            {
+            } else {
                 $success = false;
             }
 
@@ -69,11 +60,8 @@ class ContactController extends Controller
                 'status'    =>  $success,
                 'message'   =>  $message,
             ], 200);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

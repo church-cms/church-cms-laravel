@@ -39,10 +39,15 @@ class Widget extends Model
      * @var array
      */
     protected $fillable = [
-        'church_id' ,'slug' , 'content' , 'created_by' , 'updated_by'
+        'church_id',
+        'slug',
+        'content',
+        'created_by',
+        'updated_by'
     ];
 
-    public function userInfo(){
-        return $this->hasOne('App\Models\User','id','created_by');
+    public function userInfo()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'created_by');
     }
 }

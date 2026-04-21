@@ -3,12 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\ReminderEvent;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Mail;
 use App\Traits\ReminderProcess;
 use App\Models\User;
-use App\Models\Events;
 
 
 class ReminderEventListener implements ShouldQueue

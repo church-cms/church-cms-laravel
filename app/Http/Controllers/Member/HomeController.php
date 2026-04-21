@@ -6,8 +6,7 @@ use App\Http\Controllers\Admin\MemberController as AdminMemberController;
 use App\Http\Resources\UserDetail as UserDetailResource;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use PDF;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 class HomeController extends Controller
 {
     public function __construct()
@@ -43,4 +42,3 @@ class HomeController extends Controller
         return response()->json($tree->familytree($name));
     }
 }
-

@@ -3,12 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\CalendarEvent;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CalendarMail;
 use App\Models\User;
-use App\Models\Events;
 
 
 class CalendarEventListener implements ShouldQueue

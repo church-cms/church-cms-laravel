@@ -13,7 +13,6 @@ use App\Traits\Common;
 //use App\Models\Video;
 use App\Models\File;
 use App\Models\User;
-use App\Models\Plan;
 use Exception;
 
 /**
@@ -39,7 +38,7 @@ class SiteadminController extends Controller
     {
         //
         $subscription = Subscription::get();
-        return view("/site_admin/index",['subscriptions'=>$subscription]);
+        return view("/site_admin/index", ['subscriptions' => $subscription]);
     }
 
     /**
@@ -72,16 +71,16 @@ class SiteadminController extends Controller
     public function show($id)
     {
         //
-      
-
-        $membercount = User::where('church_id',$subscription->church_id)->ByRole('5')->count();
-        $eventcount = Events::where('church_id',$subscription->church_id)->count();
-        $gallerycount = Gallery::where('church_id',$subscription->church_id)->count();
-        $filecount = File::where('church_id',$subscription->church_id)->count();
 
 
+        $membercount = User::where('church_id', $subscription->church_id)->ByRole('5')->count();
+        $eventcount = Events::where('church_id', $subscription->church_id)->count();
+        $gallerycount = Gallery::where('church_id', $subscription->church_id)->count();
+        $filecount = File::where('church_id', $subscription->church_id)->count();
 
-        return view("/site_admin/show",['membercount'=>$membercount , 'eventcount'=>$eventcount , 'gallerycount'=>$gallerycount , 'filecount'=>$filecount , 'membership'=>$membership]);//'videocount'=>$videocount ,
+
+
+        return view("/site_admin/show", ['membercount' => $membercount, 'eventcount' => $eventcount, 'gallerycount' => $gallerycount, 'filecount' => $filecount, 'membership' => $membership]); //'videocount'=>$videocount ,
     }
 
 
@@ -94,9 +93,9 @@ class SiteadminController extends Controller
     public function showSubscription($id)
     {
         //
-        $subscription = Subscription::where('id',$id)->first();
+        $subscription = Subscription::where('id', $id)->first();
 
-        return view("/site_admin/subscription_detail",['subscriptions'=>$subscription]);
+        return view("/site_admin/subscription_detail", ['subscriptions' => $subscription]);
     }
 
     /**
@@ -120,34 +119,29 @@ class SiteadminController extends Controller
     public function update(Request $request, $id)
     {
         //
-        try
-        {
-            $subscription = Subscription::where('id',$id)->first();
+        try {
+            $subscription = Subscription::where('id', $id)->first();
             $userprofile = Userprofile::where('user_id', $subscription->user_id)->first();
 
             $userprofile->membership_type = $request->membership_type;
 
             $userprofile->save();
 
-            $message=('User Membership Status Updated Successfully');
-            $log_name='Changed_Membership_Status';
-            $ip= $this->getRequestIP();
+            $message = ('User Membership Status Updated Successfully');
+            $log_name = 'Changed_Membership_Status';
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $userprofile,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 $log_name,
                 $message
-                );
+            );
 
-            \Session::put('successmessage','User Membership Status Updated Successfully');
+            \Session::put('successmessage', 'User Membership Status Updated Successfully');
             return redirect()->back();
+        } catch (Exception $e) {
         }
-        catch(Exception $e)
-        {
-
-        }
-
     }
 
     /**

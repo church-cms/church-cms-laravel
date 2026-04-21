@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use jdavidbakr\MailTracker\Events\ComplaintMessageEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class EmailComplaint
 {

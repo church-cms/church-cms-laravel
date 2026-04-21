@@ -4,9 +4,7 @@ namespace App\Listeners;
 
 use App\Events\SubscriberDeleteEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Traits\EmailQueueProcess;
-use App\Models\Subscribers;
 
 class SubscriberDeleteListener implements ShouldQueue
 {

@@ -43,24 +43,49 @@ class MaintenanceController extends Controller
         //
         try
         {
-            if($request->maintenance===1)
-            {
+            if(isset($request->maintenance)){
+
+                if($request->maintenance==1)
+               {
                 $maintenance=$request->maintenance;
+              }
+            }else{
+               $maintenance=0;
             }
-            if($request->register===1)
+
+            if(isset($request->register)){
+            
+            if($request->register==1)
             {
                 $register=$request->register;
             }
-            if($request->login_status===1)
+          } else{
+             $register=0;
+         }
+         if(isset($request->login_status)){
+             if($request->login_status==1)
             {
                 $login_status=$request->login_status;
             }
+          }else{
+             $login_status=0;
+         }
+
+            //dd($request);
 
             $this->updatesettings('maintenance',$maintenance);
-            $this->updatesettings('register',$register);
+
+
+            $this->updatesettings('register_status',$register);
+
+
             $this->updatesettings('login_status',$login_status);
 
-            return redirect()->back();
+            $message = 'MaintenanceSetting Updated Successfully';
+
+
+            return redirect('/admin/settings/maintenancesettings')->with(['successmessage' => $message]);
+
         }
         catch(Exception $e)
         {

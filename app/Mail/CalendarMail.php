@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\Events;
 use App\Models\Mailtemplate;
 
 class CalendarMail extends Mailable implements ShouldQueue
@@ -22,9 +21,8 @@ class CalendarMail extends Mailable implements ShouldQueue
      */
     public function __construct($events)
     {
-        
-       $this->events=$events;
 
+        $this->events = $events;
     }
 
     /**
@@ -36,21 +34,21 @@ class CalendarMail extends Mailable implements ShouldQueue
     {
 
 
-        $template = Mailtemplate::where([['name','calendar_event'],['status','active']])->first();
+        $template = Mailtemplate::where([['name', 'calendar_event'], ['status', 'active']])->first();
         $subject =  $template->subject;
         $mail_content = $template->mail_content;
 
-        
-        $mail_content = str_replace(":title",$this->events->title,$mail_content);
-        $mail_content = str_replace(":location",$this->events->location,$mail_content);
-        $mail_content = str_replace(":category",$this->events->category,$mail_content);
-        $mail_content = str_replace(":start_date",$this->events->start_date,$mail_content);
-        $mail_content = str_replace(":end_date",$this->events->end_date,$mail_content);
-       
+
+        $mail_content = str_replace(":title", $this->events->title, $mail_content);
+        $mail_content = str_replace(":location", $this->events->location, $mail_content);
+        $mail_content = str_replace(":category", $this->events->category, $mail_content);
+        $mail_content = str_replace(":start_date", $this->events->start_date, $mail_content);
+        $mail_content = str_replace(":end_date", $this->events->end_date, $mail_content);
+
         return $this->markdown('emails.mailcontent')
-                    ->subject($subject)
-                    ->with([
-                        'content' => $mail_content,
-                        ]);
+            ->subject($subject)
+            ->with([
+                'content' => $mail_content,
+            ]);
     }
 }

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Hash;
-use Lang;
 
 class ChangePasswordRequest extends FormRequest
 {

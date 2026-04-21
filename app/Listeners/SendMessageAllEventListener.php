@@ -2,8 +2,6 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use App\Events\SendMessageAllEvent;
 use App\Traits\SendMessageProcess;
 use App\Traits\LogActivity;

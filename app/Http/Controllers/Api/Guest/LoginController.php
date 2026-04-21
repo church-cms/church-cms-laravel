@@ -13,7 +13,6 @@ use App\Traits\LogActivity;
 use App\Traits\Common;
 use App\Models\Church;
 use App\Models\User;
-use App\Token;
 use Exception;
 use Log;
 
@@ -34,19 +33,16 @@ class LoginController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        try
-        {
-            if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')]) )
-            {
+        try {
+            if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')])) {
                 $user = Auth::user();
 
                 $userprofile = Userprofile::where('user_id', $user->id)->first();
-                if ($userprofile->status === 'active')
-                {
+                if ($userprofile->status === 'active') {
                     $token = $user->createToken("churchcms")->plainTextToken;
 
 
-                    $user = User::where([['id',$user->id],['church_id',$user->church_id]])->first();
+                    $user = User::where([['id', $user->id], ['church_id', $user->church_id]])->first();
 
                     $user->platform_token = $request->platform_token;
 
@@ -64,24 +60,19 @@ class LoginController extends Controller
                     ], $this->successStatus);
                 }
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function logout(Request $request)
     {
-        try
-        {
-            if (Auth::check())
-            {
+        try {
+            if (Auth::check()) {
                 Auth()->user()->tokens()->delete();
             }
 
-            $user = User::where('id',Auth::id())->first();
+            $user = User::where('id', Auth::id())->first();
 
             $user->platform_token  = NULL;
 
@@ -90,12 +81,9 @@ class LoginController extends Controller
             return response()->json([
                 'success'   =>  true,
                 'message'   =>  'Logged out successfully'
-            ],200);
-        }
-        catch(Exception $e)
-        {
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -124,19 +112,18 @@ class LoginController extends Controller
     public function store(GuestAddRequest $request)
     {
         //
-        try
-        {
-            $church = Church::where('id',$request->church_id)->first();
+        try {
+            $church = Church::where('id', $request->church_id)->first();
             $path = '';
-            $user = $this->createGuest($request , $church->id , $path , 5);
+            $user = $this->createGuest($request, $church->id, $path, 5);
 
             $message = 'Guest Added Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $user,
                 1,
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_GUEST,
                 $message
             );
@@ -145,12 +132,9 @@ class LoginController extends Controller
                 'success'   =>  true,
                 'message'   =>  'You Are Added To This Church Successfully',
                 'user_id'   =>  $user->id,
-            ],200);
-        }
-        catch(Exception $e)
-        {
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

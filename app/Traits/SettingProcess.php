@@ -1,7 +1,7 @@
 <?php
 namespace App\Traits;
 
-use App\Models\Setting;
+use App\Models\ChurchDetail;
 use Exception;
 use Log;
 
@@ -30,8 +30,8 @@ trait SettingProcess
      */
     public function updatesettings(string $key, string $value): ?object {
         try {
-            $setting = Setting::where('key', $key)->first();
-            $setting->value = $value;
+            $setting = ChurchDetail::where('meta_key', $key)->first();
+            $setting->meta_value = $value;
             $setting->save();
 
             return $setting;

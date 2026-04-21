@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\TestEvent;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Invite;
 use App\Mail\InvitesMail;

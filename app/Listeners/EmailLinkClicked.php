@@ -3,9 +3,6 @@
 namespace App\Listeners;
 
 use jdavidbakr\MailTracker\Events\LinkClickedEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use App\Models\MailQueue;
 class EmailLinkClicked
 {
     /**

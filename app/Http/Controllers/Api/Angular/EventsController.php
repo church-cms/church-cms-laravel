@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api\Angular;
 
 use App\Http\Resources\API\Angular\ShowEvent as ShowEventResource;
-use App\Http\Resources\API\Events as EventsResource;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Events;
 use App\Models\Church;
@@ -15,9 +13,9 @@ class EventsController extends Controller
 
     public function showEvents($slug)
     {
-        $church = Church::where('slug','=',$slug)->first();
+        $church = Church::where('slug', '=', $slug)->first();
 
-        $events = Events::where('church_id',$church->id)->get();
+        $events = Events::where('church_id', $church->id)->get();
         $events = ShowEventResource::collection($events);
 
         return $events;
@@ -25,12 +23,12 @@ class EventsController extends Controller
 
     public function showUpcomingEventsMonthly($slug)
     {
-        $church = Church::where('slug','=',$slug)->first();
+        $church = Church::where('slug', '=', $slug)->first();
 
         /*$events = Events::where([['church_id',$church->id],['end_date','>=',Carbon::now()]])->orderBy('start_date',ASC)->get()->groupBy([function($event) {
                 return Carbon::parse($event->start_date)->format('M Y'); 
             }]);*/
-        $events = Events::where([['church_id',$church->id],['end_date','>=',Carbon::now()]])->orderBy('start_date',ASC)->take(10)->get();
+        $events = Events::where([['church_id', $church->id], ['end_date', '>=', Carbon::now()]])->orderBy('start_date', ASC)->take(10)->get();
         $events = ShowEventResource::collection($events);
 
         return $events;
@@ -38,22 +36,22 @@ class EventsController extends Controller
 
     public function showPastEventsMonthly($slug)
     {
-        $church = Church::where('slug','=',$slug)->first();
+        $church = Church::where('slug', '=', $slug)->first();
 
         /*$events = Events::where([['church_id',$church->id],['end_date','<',Carbon::now()]])->orderBy('start_date',DESC)->get()->groupBy([function($event) {
                 return Carbon::parse($event->start_date)->format('M Y'); 
             }]);*/
-        $events = Events::where([['church_id',$church->id],['end_date','<',Carbon::now()]])->orderBy('start_date',DESC)->take(5)->get();
-        $events= ShowEventResource::collection($events);
+        $events = Events::where([['church_id', $church->id], ['end_date', '<', Carbon::now()]])->orderBy('start_date', DESC)->take(5)->get();
+        $events = ShowEventResource::collection($events);
 
         return $events;
     }
 
-    public function showById($slug,$id)
+    public function showById($slug, $id)
     {
-        $church = Church::where('slug','=',$slug)->first();
+        $church = Church::where('slug', '=', $slug)->first();
 
-        $event = Events::where([['church_id',$church->id],['id',$id]])->first();
+        $event = Events::where([['church_id', $church->id], ['id', $id]])->first();
 
         $array = [];
 
@@ -76,16 +74,16 @@ class EventsController extends Controller
 
     public function showLatestEvents($slug)
     {
-        $church = Church::where('slug','=',$slug)->first();
-        $events = Events::where('church_id',$church->id)->take(3)->latest('start_date')->get();
-        $events= ShowEventResource::collection($events);
+        $church = Church::where('slug', '=', $slug)->first();
+        $events = Events::where('church_id', $church->id)->take(3)->latest('start_date')->get();
+        $events = ShowEventResource::collection($events);
         return $events;
     }
 
-    public function getEventDetail($slug,$id)
+    public function getEventDetail($slug, $id)
     {
-        $church = Church::where('slug','=',$slug)->first();
-        $icodetail= Events::where([['church_id',$church->id],['id',$id]])->first();
-        return new ShowEventResource($icodetail); 
+        $church = Church::where('slug', '=', $slug)->first();
+        $icodetail = Events::where([['church_id', $church->id], ['id', $id]])->first();
+        return new ShowEventResource($icodetail);
     }
 }

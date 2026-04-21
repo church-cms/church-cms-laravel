@@ -6,7 +6,6 @@ use App\Events\Notification\SingleNotificationEvent;
 use App\Http\Requests\GuestFundRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
 use App\Traits\Common;
@@ -21,13 +20,12 @@ class FundController extends Controller
 
     public function store(GuestFundRequest $request)
     {
-        try
-        {
+        try {
             $fund = new Fund;
 
             $fund->church_id        = $request->church_id;
 
-            $array =[];
+            $array = [];
 
             $fund->membership       = 'guest';
 
@@ -44,34 +42,31 @@ class FundController extends Controller
 
             $fund->save();
 
-            $message= 'Fund Requested Successfully';
+            $message = 'Fund Requested Successfully';
 
-             $array = [];
-             $admin = SiteHelper::getAdmin($fund->church_id);
-             $array['user']     =$admin;
-             $array['details']  = 'New Fund Request Received';
+            $array = [];
+            $admin = SiteHelper::getAdmin($fund->church_id);
+            $array['user']     = $admin;
+            $array['details']  = 'New Fund Request Received';
 
-             event(new SingleNotificationEvent($array));
+            event(new SingleNotificationEvent($array));
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $fund,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_FUND,
                 $message
             );
 
-            $res['success']=$message;
+            $res['success'] = $message;
 
-             return response()->json([
+            return response()->json([
                 'status'    =>  true,
                 'message'   =>  $message,
             ], 200);
-
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
         }
     }
