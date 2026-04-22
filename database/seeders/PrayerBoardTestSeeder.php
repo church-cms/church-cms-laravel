@@ -143,7 +143,7 @@ class PrayerBoardTestSeeder extends Seeder
 
         $this->command->table(
             ['Status', 'Count'],
-            collect($created)->map(fn ($count, $status) => [strtoupper($status), $count])->values()->all()
+            collect($created)->map(fn($count, $status) => [strtoupper($status), $count])->values()->all()
         );
 
         $total = array_sum($created);

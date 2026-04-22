@@ -1,14 +1,14 @@
 <?php
+
 /**
  * Trait for processing common
  */
+
 namespace App\Traits;
 
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Userprofile;
-use App\Models\Plan;
-use Carbon\Carbon;
 use Exception;
 use Log;
 
@@ -39,7 +39,8 @@ trait PaymentProcess
      *
      * @return void
      */
-    public function CreatePayment(object $data, int $user_id, int $church_id, object $payment): mixed {
+    public function CreatePayment(object $data, int $user_id, int $church_id, object $payment): mixed
+    {
         \DB::beginTransaction();
         try {
             if (($data->status == 'success') && ($payment->status == 'pending')) {
@@ -69,17 +70,15 @@ trait PaymentProcess
                 //                             );
                 // $payment->end_date = Carbon::parse($data->addedon)->addDays($plan->cycle);
 
-                $userprofile = Userprofile::where([['user_id',$user_id],['church_id',$church_id]])->first();
-                $now=date('Y-m-d');
+                $userprofile = Userprofile::where([['user_id', $user_id], ['church_id', $church_id]])->first();
+                $now = date('Y-m-d');
 
                 $userprofile->membership_type = "member";
-                $userprofile->membership_start_date = date('Y-m-d',strtotime($data->addedon));
+                $userprofile->membership_start_date = date('Y-m-d', strtotime($data->addedon));
                 //$userprofile->membership_end_date = date('Y-m-d',strtotime($now.'+'.$plan->cycle.' days'));
 
                 $userprofile->save();
-            }
-            elseif( ($data->status == 'success') && ($payment->status == 'expired') )
-            {
+            } elseif (($data->status == 'success') && ($payment->status == 'expired')) {
                 // $payment = new Subscription;
 
                 // $plan = Plan::where('id', $data->udf1)->first();
@@ -111,11 +110,11 @@ trait PaymentProcess
                 //                             );
                 // $payment->end_date = Carbon::parse($data->addedon)->addDays($plan->cycle);
 
-                $userprofile = Userprofile::where([['user_id',$user_id],['church_id',$church_id]])->first();
-                $now=date('Y-m-d');
+                $userprofile = Userprofile::where([['user_id', $user_id], ['church_id', $church_id]])->first();
+                $now = date('Y-m-d');
 
                 $userprofile->membership_type = "member";
-                $userprofile->membership_start_date = date('Y-m-d',strtotime($data->addedon));
+                $userprofile->membership_start_date = date('Y-m-d', strtotime($data->addedon));
                 //$userprofile->membership_end_date = date('Y-m-d',strtotime($now.'+'.$plan->cycle.' days'));
 
                 $userprofile->save();
@@ -125,9 +124,7 @@ trait PaymentProcess
 
             \DB::commit();
             return $payment;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             \DB::rollBack();
             Log::info($e->getMessage());
         }

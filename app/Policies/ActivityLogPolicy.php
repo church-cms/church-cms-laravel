@@ -9,7 +9,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class ActivityLogPolicy
 {
     use HandlesAuthorization;
-    
+
     /**
      * Determine whether the user can view any activity logs.
      *

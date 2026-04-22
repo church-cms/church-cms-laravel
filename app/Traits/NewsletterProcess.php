@@ -1,12 +1,14 @@
 <?php
+
 /**
  * Trait for processing NewsletterProcess
  */
+
 namespace App\Traits;
 
-use App\Traits\LogActivity;
+
 use App\Models\NewsLetter;
-use App\Traits\Common;
+
 use App\Models\User;
 use Exception;
 use Log;
@@ -34,28 +36,22 @@ trait NewsletterProcess
      */
     public function subscribeNewsletter(array $data, int $church_id, User $user, User $admin): array
     {
-        try
-        {
-            $user = User::where('name',$user->name)->first();
-            $newsletter = NewsLetter::where('email',$user->email)->first();
+        try {
+            $user = User::where('name', $user->name)->first();
+            $newsletter = NewsLetter::where('email', $user->email)->first();
 
-            if($newsletter != null)
-            {
-                if($newsletter->status == 0)
-                {
+            if ($newsletter != null) {
+                if ($newsletter->status == 0) {
                     $status = 1;
                 }
-                if($newsletter->status == 1)
-                {
+                if ($newsletter->status == 1) {
                     $status = 0;
                 }
 
                 $newsletter->status = $status;
 
                 $newsletter->save();
-            }
-            else
-            {
+            } else {
                 $newsletter = new NewsLetter;
 
                 $newsletter->church_id  = $church_id;
@@ -68,20 +64,18 @@ trait NewsletterProcess
 
             $message = 'NewsLetter Status Updated Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $newsletter,
                 $admin,
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_CHANGE_NEWSLETTER_STATUS,
                 $message,
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
         }
     }

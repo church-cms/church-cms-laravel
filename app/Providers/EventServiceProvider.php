@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -20,7 +19,7 @@ class EventServiceProvider extends ServiceProvider
         'Illuminate\Auth\Events\Login' => [
             'App\Listeners\LogSuccessfulLogin',
         ],
-        
+
         'App\Events\TestEvent' => [
             'App\Listeners\TestEventListener',
         ],
@@ -48,7 +47,7 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\ReminderEvent' => [
             'App\Listeners\ReminderEventListener',
         ],
-        
+
         'App\Events\SendMessageEvent' => [
             'App\Listeners\SendMessageEventListener',
         ],
@@ -119,7 +118,7 @@ class EventServiceProvider extends ServiceProvider
 
         'App\Events\MailinglistSubscriberEvent' => [
             'App\Listeners\MailinglistSubscriberListener',
-        ],       
+        ],
 
         'App\Events\CampaignDeleteEvent' => [
             'App\Listeners\CampaignDeleteListener',
@@ -141,21 +140,21 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\EmailLinkClicked',
         ],
 
-    // 'jdavidbakr\MailTracker\Events\EmailDeliveredEvent' => [
-    //     'App\Listeners\EmailDelivered',
-    // ],
+        // 'jdavidbakr\MailTracker\Events\EmailDeliveredEvent' => [
+        //     'App\Listeners\EmailDelivered',
+        // ],
 
-    // 'jdavidbakr\MailTracker\Events\ComplaintMessageEvent' => [
-    //     'App\Listeners\EmailComplaint',
-    // ],
+        // 'jdavidbakr\MailTracker\Events\ComplaintMessageEvent' => [
+        //     'App\Listeners\EmailComplaint',
+        // ],
 
-    // 'jdavidbakr\MailTracker\Events\PermanentBouncedMessageEvent' => [
-    //     'App\Listeners\BouncedEmail',
-    // ],
+        // 'jdavidbakr\MailTracker\Events\PermanentBouncedMessageEvent' => [
+        //     'App\Listeners\BouncedEmail',
+        // ],
 
         'App\Events\SubscriberConfirmEvent' => [
             'App\Listeners\SubscriberConfirmListener',
-        ], 
+        ],
 
         'App\Events\ImportSubscriberEvent' => [
             'App\Listeners\ImportSubscriberListener',
