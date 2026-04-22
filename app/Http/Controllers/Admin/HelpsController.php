@@ -13,9 +13,6 @@ use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Events\PushEvent;
 use App\Traits\Common;
-use App\Models\Help;
-use App\Models\User;
-use Carbon\Carbon;
 use Exception;
 use Log;
 
@@ -49,19 +46,15 @@ class HelpsController extends Controller
     public function list(Request $request, $status)
     {
         //
-        $helps=$this->help->getHelps(Auth::user()->church_id)->where('status',$status);
+        $helps = $this->help->getHelps(Auth::user()->church_id)->where('status', $status);
 
-        if(\Request::getQueryString() != null)
-        {
-            if($request->search != null)
-            {
-                $helps = $helps->where('title','LIKE','%'.$request->search.'%')->orWhere('description','LIKE','%'.$request->search.'%')->orWhereHas('user',function($query) use($request)
-                    {
-                        $query->whereHas('userprofile',function($q) use($request)
-                        {
-                            $q->where('firstname','LIKE','%'.$request->search.'%')->orWhere('lastname','LIKE','%'.$request->search.'%');
-                        });
+        if (\Request::getQueryString() != null) {
+            if ($request->search != null) {
+                $helps = $helps->where('title', 'LIKE', '%' . $request->search . '%')->orWhere('description', 'LIKE', '%' . $request->search . '%')->orWhereHas('user', function ($query) use ($request) {
+                    $query->whereHas('userprofile', function ($q) use ($request) {
+                        $q->where('firstname', 'LIKE', '%' . $request->search . '%')->orWhere('lastname', 'LIKE', '%' . $request->search . '%');
                     });
+                });
             }
         }
         $helps = $helps->get();
@@ -82,7 +75,7 @@ class HelpsController extends Controller
 
         $count = $this->help->getHelps(Auth::user()->church_id)->count();
 
-        return view('/admin/helps/index',['count' => $count]);
+        return view('/admin/helps/index', ['count' => $count]);
     }
 
     /**
@@ -94,14 +87,11 @@ class HelpsController extends Controller
     public function show($id)
     {
         //
-        $help=$this->help->showHelp($id);
+        $help = $this->help->showHelp($id);
 
-        if(Gate::allows('help',$help))
-        {
-            return view('/admin/helps/show',['help'=>$help]);
-        }
-        else
-        {
+        if (Gate::allows('help', $help)) {
+            return view('/admin/helps/show', ['help' => $help]);
+        } else {
             abort(403);
         }
     }
@@ -111,10 +101,9 @@ class HelpsController extends Controller
         //
         $array = [];
 
-        $help=$this->help->showHelp($id);
+        $help = $this->help->showHelp($id);
 
-        if(Gate::allows('help',$help))
-        {
+        if (Gate::allows('help', $help)) {
             $array['id']                = $help->id;
             $array['title']             = $help->title;
             $array['description']       = $help->description;
@@ -124,9 +113,7 @@ class HelpsController extends Controller
             $array['status']            = $help->status;
 
             return $array;
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
@@ -141,14 +128,11 @@ class HelpsController extends Controller
     {
         //
 
-         $help=$this->help->showHelp($id);
+        $help = $this->help->showHelp($id);
 
-        if(Gate::allows('help',$help))
-        {
-            return view('/admin/helps/edit',['help'=>$help]);
-        }
-        else
-        {
+        if (Gate::allows('help', $help)) {
+            return view('/admin/helps/edit', ['help' => $help]);
+        } else {
             abort(403);
         }
     }
@@ -163,8 +147,7 @@ class HelpsController extends Controller
     public function update(HelpUpdateRequest $request, $id)
     {
         //
-        try
-        {
+        try {
             /*$help = Help::where('id',$id)->first();
 
             $help->status = $request->status;
@@ -180,13 +163,13 @@ class HelpsController extends Controller
 
             $help->save();*/
 
-            $help=$this->help->updateHelp($id,$request);
+            $help = $this->help->updateHelp($id, $request);
 
-            $data=[];
+            $data = [];
 
-            $data['church_id']=Auth::user()->church_id;
-            $data['message']='New Help created';
-            $data['type']='help';
+            $data['church_id'] = Auth::user()->church_id;
+            $data['message'] = 'New Help created';
+            $data['type'] = 'help';
 
             event(new PushEvent($data));
 
@@ -198,25 +181,22 @@ class HelpsController extends Controller
 
             event(new PrayerNotificationEvent($array));
 
-            $message=('Help Approved Successfully');
+            $message = ('Help Approved Successfully');
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $help,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_APPROVED_HELP,
                 $message
             );
 
-            $res['message']='Help Status Updated Successfully';
+            $res['message'] = 'Help Status Updated Successfully';
 
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Traits\LogActivity;
 use App\Traits\Common;
-use App\Models\Help;
 use Exception;
 use Log;
 
@@ -53,9 +52,8 @@ class HelpAddController extends Controller
     public function store(HelpAddRequest $request)
     {
         //
-        try
-        {
-            $help=$this->help->createHelp(Auth::user()->church_id,$request);
+        try {
+            $help = $this->help->createHelp(Auth::user()->church_id, $request);
             /*$help = new Help;
 
             $help->church_id        = Auth::user()->church_id;
@@ -70,22 +68,19 @@ class HelpAddController extends Controller
 
             $message = 'Help Added Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $help,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_HELP,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

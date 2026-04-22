@@ -16,8 +16,6 @@ use App\Models\Subscribers;
 use App\Models\MailingList;
 use League\Csv\Writer;
 use App\Traits\Common;
-use App\Models\Email;
-use SplFileObject;
 use Exception;
 use Log;
 
@@ -57,8 +55,7 @@ class SubscribersController extends Controller
 
     public function store(SubscriberAddRequest $request)
     {
-        try
-        {
+        try {
             $subscriber = new Subscribers;
 
             $subscriber->church_id  = Auth::user()->church_id;
@@ -77,18 +74,15 @@ class SubscribersController extends Controller
             $this->doActivityLog(
                 $subscriber,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_SUBSCRIBER,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -101,9 +95,8 @@ class SubscribersController extends Controller
 
     public function update(SubscriberUpdateRequest $request, $id)
     {
-        try
-        {
-            $subscriber = Subscribers::where( 'id', $id )->first();
+        try {
+            $subscriber = Subscribers::where('id', $id)->first();
 
             $subscriber->firstname  = $request->firstname;
             $subscriber->lastname   = $request->lastname;
@@ -120,39 +113,33 @@ class SubscribersController extends Controller
             $this->doActivityLog(
                 $subscriber,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_SUBSCRIBER,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function show($id)
     {
-        $subscriber = Subscribers::where( [['id', $id], ['church_id', Auth::user()->church_id]] )->first();
+        $subscriber = Subscribers::where([['id', $id], ['church_id', Auth::user()->church_id]])->first();
 
-        $mailinglistSubscriber=MailinglistSubscriber::where('subscribers_id',$id)->pluck('mailing_list_id')->toArray();
+        $mailinglistSubscriber = MailinglistSubscriber::where('subscribers_id', $id)->pluck('mailing_list_id')->toArray();
 
-        $maillists=MailingList::whereIn('id',$mailinglistSubscriber)->get();
+        $maillists = MailingList::whereIn('id', $mailinglistSubscriber)->get();
 
-        if($_SERVER['HTTP_REFERER'] != null)
-        {
+        if ($_SERVER['HTTP_REFERER'] != null) {
             $prev_url = $_SERVER['HTTP_REFERER'];
-        }
-        else
-        {
+        } else {
             $prev_url = url('/admin/subscribers');
         }
 
-        return view('/admin/subscriber/show',['subscriber' => $subscriber , 'maillists' => $maillists , 'prev_url' => $prev_url]);
+        return view('/admin/subscriber/show', ['subscriber' => $subscriber, 'maillists' => $maillists, 'prev_url' => $prev_url]);
     }
 
     public function showDetails($id)
@@ -174,17 +161,16 @@ class SubscribersController extends Controller
     }
 
     /**
-    * Remove the specified resource from storage.
-    *
-    * @param  int  $id
-    * @return \Illuminate\Http\Response
-    */
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         //
-        try
-        {
-            $subscriber = Subscribers::where( 'id', $id )->first();
+        try {
+            $subscriber = Subscribers::where('id', $id)->first();
 
             $subscriber->delete();
 
@@ -194,18 +180,15 @@ class SubscribersController extends Controller
             $this->doActivityLog(
                 $subscriber,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DELETE_SUBSCRIBER,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -217,10 +200,9 @@ class SubscribersController extends Controller
 
     public function downloadFormat(Request $request)
     {
-        try
-        {
+        try {
             $csv = Writer::createFromFileObject(new \SplTempFileObject());
-            $csv->insertOne(['firstname','lastname','email','aff','source','active']);
+            $csv->insertOne(['firstname', 'lastname', 'email', 'aff', 'source', 'active']);
 
             $csv->insertOne([
                 '(firstname)',
@@ -232,58 +214,48 @@ class SubscribersController extends Controller
                 'Delete this entire row before importing'
             ]);
 
-            $csv->output('Subscriber Format'.date('_d-m-Y_H:i').'.csv');
+            $csv->output('Subscriber Format' . date('_d-m-Y_H:i') . '.csv');
 
             $message = 'Downloaded Sample Format File Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 Auth::user(),
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DOWNLOAD_SUBSCRIBER_SAMPLE_FORMAT,
                 $message
             );
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function importSubscribers(Request $request)
     {
-        try
-        {
-            Excel::import(new SubscribersImport,$request->file('import_file'));
+        try {
+            Excel::import(new SubscribersImport, $request->file('import_file'));
             $subscriberCount = \Session::get('insertedcount');
 
-            if($subscriberCount > 0)
-            {
-                $message= trans('messages.import_success_msg',['module' => 'Subscribers']);
+            if ($subscriberCount > 0) {
+                $message = trans('messages.import_success_msg', ['module' => 'Subscribers']);
 
-                $ip= $this->getRequestIP();
+                $ip = $this->getRequestIP();
                 $this->doActivityLog(
                     Auth::user(),
                     Auth::user(),
-                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                     LOGNAME_IMPORT_SUBSCRIBER,
                     $message
                 );
-                return back()->with('successmessage',$subscriberCount.' Subscribers Imported Successfully');
-            }
-            else
-            {
-                return back()->with('failmessage','No Subscribers Imported');
+                return back()->with('successmessage', $subscriberCount . ' Subscribers Imported Successfully');
+            } else {
+                return back()->with('failmessage', 'No Subscribers Imported');
             }
             $request->session()->forget('insertedcount');
             //\Session::forget('subscriberCount');
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

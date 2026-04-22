@@ -5,18 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Resources\ActivityLog as ActivityLogResource;
 use App\Http\Resources\UserDetail as UserDetailResource;
 use App\Http\Resources\SendMail as SendMailResource;
-use App\Http\Resources\Group as GroupResource;
-use App\Http\Resources\User as UserResource;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\ActivityLog;
-use App\Models\Userprofile;
 use App\Models\NewsLetter;
-use App\Models\GroupLink;
 use App\Models\SendMail;
-use App\Models\Group;
 use App\Models\User;
 
 /**
@@ -51,15 +44,12 @@ class GuestDetailsController extends Controller
     {
         //
         $user = User::with('userprofile')->where('name', $name)->first();
-        if(Gate::allows('member',$user))
-        {
-            $activitylog = ActivityLog::where('subject_id',$user->userprofile->id)->paginate(5);
+        if (Gate::allows('member', $user)) {
+            $activitylog = ActivityLog::where('subject_id', $user->userprofile->id)->paginate(5);
             $activitylog = ActivityLogResource::collection($activitylog);
 
             return $activitylog;
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
@@ -68,16 +58,13 @@ class GuestDetailsController extends Controller
     {
         //
         $user = User::with('userprofile')->where('name', $name)->first();
-        if(Gate::allows('member',$user))
-        {
-            $messages = SendMail::where('user_id',$user->id)->orderBy('executed_at','DESC')->paginate(5);
+        if (Gate::allows('member', $user)) {
+            $messages = SendMail::where('user_id', $user->id)->orderBy('executed_at', 'DESC')->paginate(5);
 
             $messages = SendMailResource::collection($messages);
 
             return $messages;
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
@@ -85,33 +72,24 @@ class GuestDetailsController extends Controller
     public function show($name)
     {
         //
-       $user = User::with('userprofile')->where('name', $name)->first();
+        $user = User::with('userprofile')->where('name', $name)->first();
 
-        if(Gate::allows('member',$user))
-        {
-            $newsletter = NewsLetter::where('email',$user->email)->first();
-            if($newsletter != null)
-            {
+        if (Gate::allows('member', $user)) {
+            $newsletter = NewsLetter::where('email', $user->email)->first();
+            if ($newsletter != null) {
                 $status = $newsletter->status;
-            }
-            else
-            {
+            } else {
                 $status = 0;
             }
 
-            if($_SERVER['HTTP_REFERER'] != null)
-            {
+            if ($_SERVER['HTTP_REFERER'] != null) {
                 $prev_url = $_SERVER['HTTP_REFERER'];
-            }
-            else
-            {
+            } else {
                 $prev_url = url('/admin/guests');
             }
 
-            return view('/admin/guest/show',['user'=>$user , 'status' => $status , 'prev_url' => $prev_url]);
-        }
-        else
-        {
+            return view('/admin/guest/show', ['user' => $user, 'status' => $status, 'prev_url' => $prev_url]);
+        } else {
             abort(403);
         }
     }

@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Repositories\UserRepositoryInterface;
 use App\Http\Requests\ExitMemberRequest;
-use App\Http\Requests\SendMailRequest;
 use App\Events\VerificationMailEvent;
-use Illuminate\Support\Facades\Cache;
 use App\Traits\ResetPasswordProcess;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
@@ -58,12 +56,11 @@ class UserController extends Controller
     {
         //
         $church_id = Auth::user()->church_id;
-        $members = $this->MemberFilter($request,$church_id,5);
-            if( count($members) > 0)
-            {
-                return $members;
-            }
-            return null;
+        $members = $this->MemberFilter($request, $church_id, 5);
+        if (count($members) > 0) {
+            return $members;
+        }
+        return null;
         //
     }
 
@@ -83,32 +80,28 @@ class UserController extends Controller
     {
 
         $count    = User::ByRole(5)->ByChurch(Auth::user()->church_id)->ByStatus('active')->ByMembershipType('member')->count();
-        $alphabet = request('alphabet')?request('alphabet'):'';
+        $alphabet = request('alphabet') ? request('alphabet') : '';
         $query    = \Request::getQueryString();
-        if(request('date_of_birth') != null)
-        {
+        if (request('date_of_birth') != null) {
             $type = 'date_of_birth';
         }
-        if(request('marriage_status') != null)
-        {
+        if (request('marriage_status') != null) {
             $type = 'marriage_status';
         }
-        if(request('location') != null)
-        {
+        if (request('location') != null) {
             $type = 'location';
         }
 
-        return view('/admin/member/index',['alphabet' => $alphabet , 'query' => $query , 'count' => $count , 'type' => $type]);
+        return view('/admin/member/index', ['alphabet' => $alphabet, 'query' => $query, 'count' => $count, 'type' => $type]);
     }
 
-    public function updateStatus(Request $request,$name)
+    public function updateStatus(Request $request, $name)
     {
-        try
-        {
+        try {
 
             $user = $this->user->getUser($name)->first();
 
-            $userprofile = Userprofile::where('user_id',$user->id)->first();
+            $userprofile = Userprofile::where('user_id', $user->id)->first();
 
             $userprofile->status = $request->status;
 
@@ -116,92 +109,75 @@ class UserController extends Controller
 
             $message = 'Member Status Updated Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $userprofile,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_MEMBER_STATUS,
                 $message
             );
 
             return $message;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
         }
     }
 
     public function resetPassword($id)
     {
-        try
-        {
+        try {
             $user = User::where('id', $id)->first();
-            if(Gate::allows('member',$user))
-            {
+            if (Gate::allows('member', $user)) {
                 $this->resetPasswordToUser($user);
 
-                $message=('Password Reset Mail sent Successfully');
+                $message = ('Password Reset Mail sent Successfully');
 
-                $ip= $this->getRequestIP();
+                $ip = $this->getRequestIP();
                 $this->doActivityLog(
                     $user,
                     Auth::user(),
-                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                     LOGNAME_RESET_PASSWORD,
                     $message
                 );
                 return redirect()->back();
-            }
-            else
-            {
+            } else {
                 abort(403);
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function emailVerification($id)
     {
-        try
-        {
+        try {
             $user = User::where('id', $id)->first();
-            if(Gate::allows('member',$user))
-            {
-                if(env('MAIL_STATUS') === 'on')
-                {
+            if (Gate::allows('member', $user)) {
+                if (env('MAIL_STATUS') === 'on') {
                     event(new VerificationMailEvent($user));
-                    \Session::put('successmessage','Verification code sent Successfully');
+                    \Session::put('successmessage', 'Verification code sent Successfully');
                 }
 
-                $message=('Email Verification code');
+                $message = ('Email Verification code');
 
-                $ip= $this->getRequestIP();
+                $ip = $this->getRequestIP();
                 $this->doActivityLog(
                     Auth::user(),
                     $user,
-                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                     LOGNAME_EMAIL_VERIFICATION,
                     $message
                 );
 
-                \Session::put('failmessage','You cannot send message');
+                \Session::put('failmessage', 'You cannot send message');
                 return redirect()->back();
-            }
-            else
-            {
+            } else {
                 abort(403);
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -213,14 +189,11 @@ class UserController extends Controller
     public function exitCreate($name)
     {
         //
-        $user = User::where('name',$name)->first();
+        $user = User::where('name', $name)->first();
 
-        if(Gate::allows('member',$user))
-        {
-            return view('/admin/member/exit',['user' => $user]);
-        }
-        else
-        {
+        if (Gate::allows('member', $user)) {
+            return view('/admin/member/exit', ['user' => $user]);
+        } else {
             abort(403);
         }
     }
@@ -232,13 +205,12 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function exitStore(ExitMemberRequest $request,$name)
+    public function exitStore(ExitMemberRequest $request, $name)
     {
         //
-        try
-        {
-            $user = User::where('name',$name)->first();
-            $userprofile = Userprofile::where('id',$user->id)->first();
+        try {
+            $user = User::where('name', $name)->first();
+            $userprofile = Userprofile::where('id', $user->id)->first();
 
             $userprofile->membership_end_date = array(
                 'address'   =>  $request->address,
@@ -253,12 +225,10 @@ class UserController extends Controller
 
             $userprofile->save();
 
-            $groupMembers = GroupLink::where('user_id',$user->id)->get();
-            foreach($groupMembers as $groupMember)
-            {
-                $permissions = PermissionUser::where('user_id',$groupMember->user_id)->get();
-                foreach($permissions as $permission)
-                {
+            $groupMembers = GroupLink::where('user_id', $user->id)->get();
+            foreach ($groupMembers as $groupMember) {
+                $permissions = PermissionUser::where('user_id', $groupMember->user_id)->get();
+                foreach ($permissions as $permission) {
                     $permission->delete();
                 }
                 $groupMember->delete();
@@ -266,11 +236,11 @@ class UserController extends Controller
 
             $message = 'Member Exited Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $userprofile,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EXIT_MEMBER,
                 $message
             );
@@ -281,11 +251,8 @@ class UserController extends Controller
             $res['success'] = $message;
 
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -297,32 +264,28 @@ class UserController extends Controller
      */
     public function destroy($name)
     {
-        try
-        {
-            $user = User::with('userprofile')->where('name',$name)->first();
+        try {
+            $user = User::with('userprofile')->where('name', $name)->first();
 
-            $userprofile = Userprofile::where('user_id',$user->id)->first();
+            $userprofile = Userprofile::where('user_id', $user->id)->first();
             $userprofile->delete();
 
             $user->delete();
 
-            $message= 'Member Deleted Successfully';
+            $message = 'Member Deleted Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $user,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DELETE_MEMBER,
                 $message
             );
-            \Session::put('successmessage',$message);
+            \Session::put('successmessage', $message);
             return redirect('/admin/members');
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin\Setting;
 use App\Http\Requests\SettingGeneralRequest;
 use App\Http\Controllers\Controller;
 use App\Traits\SettingProcess;
-use Illuminate\Http\Request;
 use App\Traits\Common;
 use Exception;
 use Log;
@@ -42,38 +41,28 @@ class GeneralController extends Controller
      */
     public function store(SettingGeneralRequest $request)
     {
-        try
-        {
-            $this->updatesettings('sitetitle',$request->sitetitle);
-            $this->updatesettings('sitename',$request->sitename);
+        try {
+            $this->updatesettings('sitetitle', $request->sitetitle);
+            $this->updatesettings('sitename', $request->sitename);
 
-            if (($request->sitelogo)===null)
-            {
-                $this->updatesettings('sitelogo',(\config::get('settings.sitelogo')));
-            }
-            else
-            {
-                $name= $request->sitelogo->getClientOriginalName();
-                $sitelogopath=$this->uploadFile('uploads/settings', $request->sitelogo, $name);
-                $this->updatesettings('sitelogo',$sitelogopath);
+            if (($request->sitelogo) === null) {
+                $this->updatesettings('sitelogo', (\config::get('settings.sitelogo')));
+            } else {
+                $name = $request->sitelogo->getClientOriginalName();
+                $sitelogopath = $this->uploadFile('uploads/settings', $request->sitelogo, $name);
+                $this->updatesettings('sitelogo', $sitelogopath);
             }
 
-            if(($request->favicon)===null)
-            {
-                $this->updatesettings('favicon',(\config::get('settings.favicon')));
-            }
-            else
-            {
-                $name= $request->favicon->getClientOriginalName();
-                $faviconpath=$this->uploadFile('uploads/settings', $request->favicon,$name);
-                $this->updatesettings('favicon',$faviconpath);
+            if (($request->favicon) === null) {
+                $this->updatesettings('favicon', (\config::get('settings.favicon')));
+            } else {
+                $name = $request->favicon->getClientOriginalName();
+                $faviconpath = $this->uploadFile('uploads/settings', $request->favicon, $name);
+                $this->updatesettings('favicon', $faviconpath);
             }
             return redirect()->back();
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

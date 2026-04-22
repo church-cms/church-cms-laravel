@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Traits\SubscriberProcess;
-use App\Models\MaillistSubscriber;
 use App\Events\SubscriberConfirmEvent;
 use App\Traits\EmailQueueProcess;
 use Log;
@@ -30,99 +29,72 @@ use Log;
  */
 class SubscribeController extends Controller
 {
-  use SubscriberProcess,EmailQueueProcess;
+    use SubscriberProcess, EmailQueueProcess;
 
 
     public function create($mailinglist_slug)
     {
 
 
-    	try{
-    	    $mailinglist = MailingList::where('slug','=',$mailinglist_slug)->first();
+        try {
+            $mailinglist = MailingList::where('slug', '=', $mailinglist_slug)->first();
 
-            if(count($mailinglist)>0)
-            {
-                return view('admin.subscriber.create_subscriber',[
-                    'mailinglist'=>$mailinglist,
+            if (count($mailinglist) > 0) {
+                return view('admin.subscriber.create_subscriber', [
+                    'mailinglist' => $mailinglist,
                 ]);
-
-            }
-            else
-            {
+            } else {
                 return view('errors.403');
             }
-
-
-          }
-     catch(Exception $e)
-     {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
-     }
-
-
+        }
     }
 
 
-    public function store(SubscriberRequest $request)//Subscriber
+    public function store(SubscriberRequest $request) //Subscriber
     {
 
-            \DB::beginTransaction();
-     try
-        {
+        \DB::beginTransaction();
+        try {
 
-            $slug=\Request::segment('3');
+            $slug = \Request::segment('3');
 
-            $church_id=Auth::user()->church_id;
+            $church_id = Auth::user()->church_id;
 
-            $this->createSubscriberAttachToMailingList($slug,$request,$church_id);
+            $this->createSubscriberAttachToMailingList($slug, $request, $church_id);
 
             \DB::commit();
             \Session::put('successmessage', 'Subscribed Successfully');
-
-        }
-
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             \DB::rollBack();
-             \Session::put('failmessage', 'Try after sometime');
-           Log::info($e->getMessage());
-
+            \Session::put('failmessage', 'Try after sometime');
+            Log::info($e->getMessage());
         }
-    return Redirect::back();
+        return Redirect::back();
     }
 
     public function confirm(Request $request)
     {
-       $email=$request->email;
-       $subscriber = Subscribers::where('email',$email)->first();
-             if(count($subscriber)>0)
-                  {
-                      if($subscriber->email_verified_at==='')
-                      {
-                             $MailinglistSubscriber=MailinglistSubscriber::where('subscriber_id',$subscriber->id)->first();
+        $email = $request->email;
+        $subscriber = Subscribers::where('email', $email)->first();
+        if (count($subscriber) > 0) {
+            if ($subscriber->email_verified_at === '') {
+                $MailinglistSubscriber = MailinglistSubscriber::where('subscriber_id', $subscriber->id)->first();
 
-                              MailinglistSubscriber::where('subscriber_id',$subscriber->id)->update(['status'=>1]);
-                              $subscriber->email_verified_at=Carbon::now();
-                              $subscriber->is_active=1;
-                              $subscriber->save();
-                              $data=array();
+                MailinglistSubscriber::where('subscriber_id', $subscriber->id)->update(['status' => 1]);
+                $subscriber->email_verified_at = Carbon::now();
+                $subscriber->is_active = 1;
+                $subscriber->save();
+                $data = array();
 
 
-                               event(new SubscriberConfirmEvent($MailinglistSubscriber->mailinglist_id,$MailinglistSubscriber->subscriber_id));
-
-
-                      }
-
-                          return view('admin.subscriber.confirm');
-
-                  }
-            else
-            {
-                return view('errors.403');
+                event(new SubscriberConfirmEvent($MailinglistSubscriber->mailinglist_id, $MailinglistSubscriber->subscriber_id));
             }
+
+            return view('admin.subscriber.confirm');
+        } else {
+            return view('errors.403');
+        }
     }
-
-
-
 }

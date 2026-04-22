@@ -7,15 +7,13 @@ use App\Events\VerificationMailEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\RegisterUser;
-use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
-use App\Models\Userprofile;
 use App\Traits\Common;
 use App\Models\User;
-use Carbon\Carbon;
 use Exception;
 use Cache;
+use Log;
 
 /**
  * GuestAddController
@@ -44,10 +42,10 @@ class GuestAddController extends Controller
     public function create()
     {
         //
-        $ref_name = request('ref_name')?request('ref_name'):'';
+        $ref_name = request('ref_name') ? request('ref_name') : '';
         $count    = User::ByRole(5)->ByChurch(Auth::user()->church_id)->count();
 
-        return view('/admin/guest/create',['ref_name' => $ref_name , 'count' => $count , 'subscription' => $subscription]);
+        return view('/admin/guest/create', ['ref_name' => $ref_name, 'count' => $count, 'subscription' => $subscription]);
     }
 
     /**
@@ -89,54 +87,46 @@ class GuestAddController extends Controller
     public function store(GuestAddRequest $request)
     {
         //
-        try
-        {
+        try {
             $church_id = Auth::user()->church_id;
 
             $file = $request->file('avatar');
-            if($file)
-            {
-                $folder = $church_id.'/guest/avatar';
-                $path   = $this->uploadFile($folder,$file);
-            }
-            else
-            {
+            if ($file) {
+                $folder = $church_id . '/guest/avatar';
+                $path   = $this->uploadFile($folder, $file);
+            } else {
                 $path = '';
             }
-            $user = $this->createGuest($request , $church_id , $path , 5);
+            $user = $this->createGuest($request, $church_id, $path, 5);
 
 
-            $guest_count = 'guestCount'.$church_id;
-            $maleGuestCount = 'maleGuestCount'.$church_id;
-            $femaleGuestCount = 'femaleGuestCount'.$church_id;
-            $recentMember = 'recentMember'.$church_id;
+            $guest_count = 'guestCount' . $church_id;
+            $maleGuestCount = 'maleGuestCount' . $church_id;
+            $femaleGuestCount = 'femaleGuestCount' . $church_id;
+            $recentMember = 'recentMember' . $church_id;
             Cache::forget($guest_count);
             Cache::forget($maleGuestCount);
             Cache::forget($femaleGuestCount);
             Cache::forget($recentMember);
 
-            if( (env('MAIL_STATUS') === "on") && ($user->email != '') )
-            {
+            if ((env('MAIL_STATUS') === "on") && ($user->email != '')) {
                 event(new VerificationMailEvent($user));
             }
 
             $message = 'Guest Added Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $user,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_GUEST,
                 $message
             );
 
-            return redirect()->back()->with('successmessage',$message);
-        }
-        catch(Exception $e)
-        {
+            return redirect()->back()->with('successmessage', $message);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

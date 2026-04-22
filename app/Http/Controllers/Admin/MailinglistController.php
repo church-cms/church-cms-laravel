@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 use App\Models\MailingList;
 use App\Models\Subscribers;
 use App\Traits\LogActivity;
-use App\Models\Events;
 use App\Traits\Common;
 use Exception;
 use Log;
@@ -41,7 +40,7 @@ class MailinglistController extends Controller
 
     public function list()
     {
-        $mailinglists = MailingList::where('church_id',Auth::user()->church_id)->get();
+        $mailinglists = MailingList::where('church_id', Auth::user()->church_id)->get();
 
         return MailinglistResource::collection($mailinglists);
     }
@@ -53,8 +52,7 @@ class MailinglistController extends Controller
 
     public function store(MailingListRequest $request)
     {
-        try
-        {
+        try {
             $mailinglist = new MailingList;
 
             $mailinglist->church_id    = Auth::user()->church_id;
@@ -67,28 +65,25 @@ class MailinglistController extends Controller
 
             $message = 'Mailinglist Created Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $mailinglist,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_MAILINGLIST,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function editList($id)
     {
-        $mailinglist = MailingList::where('id',$id)->first();
+        $mailinglist = MailingList::where('id', $id)->first();
         $array = [];
 
         $array['id']            = $mailinglist->id;
@@ -101,75 +96,68 @@ class MailinglistController extends Controller
 
     public function edit($id)
     {
-        $mailinglist = MailingList::where('id',$id)->first();
+        $mailinglist = MailingList::where('id', $id)->first();
 
-        return view('/admin/mailinglist/edit',['mailinglist' => $mailinglist]);
+        return view('/admin/mailinglist/edit', ['mailinglist' => $mailinglist]);
     }
 
-    public function update(Request $request,$id)//mailinglistUpdate
+    public function update(Request $request, $id) //mailinglistUpdate
     {
-        try
-        {
-        	$mailinglist = MailingList::where('id',$id)->first();
+        try {
+            $mailinglist = MailingList::where('id', $id)->first();
 
             $mailinglist->name          = $request->name;
             $mailinglist->description   = $request->description;
             $mailinglist->is_published  = $request->is_published;
             $mailinglist->slug          = \Str::slug($request->name);
 
-        	$mailinglist->save();
+            $mailinglist->save();
 
             $message = 'Mailinglist Updated Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $mailinglist,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_MAILINGLIST,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function show($id)
     {
-        $mailinglist = MailingList::where([['id',$id],['church_id',Auth::user()->church_id]])->first();
+        $mailinglist = MailingList::where([['id', $id], ['church_id', Auth::user()->church_id]])->first();
 
-        $maillistsubscriber=MailinglistSubscriber::where('mailing_list_id',$id)->pluck('subscribers_id')->toArray();
+        $maillistsubscriber = MailinglistSubscriber::where('mailing_list_id', $id)->pluck('subscribers_id')->toArray();
 
-        $subscribers=Subscribers::whereIn('id',$maillistsubscriber)->paginate(5);
+        $subscribers = Subscribers::whereIn('id', $maillistsubscriber)->paginate(5);
 
-        if($_SERVER['HTTP_REFERER'] != null)
-        {
+        if ($_SERVER['HTTP_REFERER'] != null) {
             $prev_url = $_SERVER['HTTP_REFERER'];
-        }
-        else
-        {
+        } else {
             $prev_url = url('/admin/mailinglists');
         }
 
-        return view('admin.mailinglist.show',['mailinglist' => $mailinglist , 'subscribers' => $subscribers , 'prev_url' => $prev_url]);
+        return view('admin.mailinglist.show', ['mailinglist' => $mailinglist, 'subscribers' => $subscribers, 'prev_url' => $prev_url]);
     }
 
     public function view($id)
     {
-        $mailinglist = MailingList::where('id','!=',$id)->get();
+        $mailinglist = MailingList::where('id', '!=', $id)->get();
 
-        $mailinglist= MailinglistResource::collection($mailinglist);
+        $mailinglist = MailinglistResource::collection($mailinglist);
 
         return $mailinglist;
     }
 
-   /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -178,38 +166,33 @@ class MailinglistController extends Controller
     public function destroy($id)
     {
         //
-        try
-        {
-            $mailinglist = MailingList::where('id',$id)->first();
+        try {
+            $mailinglist = MailingList::where('id', $id)->first();
 
             $mailinglist->delete();
 
             $message = 'Mailinglist Deleted Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $mailinglist,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DELETE_MAILINGLIST,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
-    public function detachsubscriber($subscriber_id,$mailinglist_id)
+    public function detachsubscriber($subscriber_id, $mailinglist_id)
     {
-        try
-        {
-            $maillistsubscriber = MailinglistSubscriber::where('subscribers_id',$subscriber_id)->where('mailing_list_id',$mailinglist_id)->first();
+        try {
+            $maillistsubscriber = MailinglistSubscriber::where('subscribers_id', $subscriber_id)->where('mailing_list_id', $mailinglist_id)->first();
 
             $maillistsubscriber->delete();
 
@@ -219,18 +202,15 @@ class MailinglistController extends Controller
             $this->doActivityLog(
                 $maillistsubscriber,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DELETE_SUBSCRIBER_MAILINGLIST_ATTACHMENT,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch( Exception $e )
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

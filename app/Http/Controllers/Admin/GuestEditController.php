@@ -9,10 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
 use App\Models\Userprofile;
-use App\Models\Country;
 use App\Traits\Common;
-use App\Models\State;
-use App\Models\City;
 use App\Models\User;
 use Exception;
 use Log;
@@ -43,15 +40,15 @@ class GuestEditController extends Controller
     public function editList($name)
     {
         //
-        $user = User::where('name',$name)->first();
-        $userprofile = Userprofile::where('id',$user->id)->first();
+        $user = User::where('name', $name)->first();
+        $userprofile = Userprofile::where('id', $user->id)->first();
 
         $array = [];
 
         $array['firstname']             =   $userprofile->firstname;
         $array['lastname']              =   $userprofile->lastname;
-        $array['aadhar_number']         =   $userprofile->aadhar_number === null ? null:$userprofile->aadhar_number;
-        $array['date_of_birth']         =   $userprofile->date_of_birth === null ? null:date('Y-m-d',strtotime($userprofile->date_of_birth));
+        $array['aadhar_number']         =   $userprofile->aadhar_number === null ? null : $userprofile->aadhar_number;
+        $array['date_of_birth']         =   $userprofile->date_of_birth === null ? null : date('Y-m-d', strtotime($userprofile->date_of_birth));
         $array['gender']                =   $userprofile->gender;
         $array['profession']            =   $userprofile->profession;
         $array['sub_occupation']        =   $userprofile->sub_occupation;
@@ -61,12 +58,12 @@ class GuestEditController extends Controller
         $array['pincode']               =   $userprofile->pincode;
         $array['notes']                 =   $userprofile->notes;
         $array['was_baptized']          =   $userprofile->was_baptized;
-        $array['baptism_date']          =   $userprofile->baptism_date === null ? null:date('Y-m-d',strtotime($userprofile->baptism_date));
+        $array['baptism_date']          =   $userprofile->baptism_date === null ? null : date('Y-m-d', strtotime($userprofile->baptism_date));
 
-        $array['countrylist']       	=   SiteHelper::getCountries();
-        $array['statelist']         	=   SiteHelper::getStates();
-        $array['citylist']          	=   SiteHelper::getCities();
-        $array['occupationlist']    	=   SiteHelper::getOccupationList();
+        $array['countrylist']           =   SiteHelper::getCountries();
+        $array['statelist']             =   SiteHelper::getStates();
+        $array['citylist']              =   SiteHelper::getCities();
+        $array['occupationlist']        =   SiteHelper::getOccupationList();
 
         return response()->json($array);
     }
@@ -81,13 +78,10 @@ class GuestEditController extends Controller
     public function edit($name)
     {
         //
-        $user = User::where('name',$name)->first();
-        if(Gate::allows('member',$user))
-        {
-            return view('/admin/guest/edit',['user' => $user ]);
-        }
-        else
-        {
+        $user = User::where('name', $name)->first();
+        if (Gate::allows('member', $user)) {
+            return view('/admin/guest/edit', ['user' => $user]);
+        } else {
             abort(403);
         }
     }
@@ -98,7 +92,7 @@ class GuestEditController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function validationGuestEdit(GuestUpdateRequest $request,$name)
+    public function validationGuestEdit(GuestUpdateRequest $request, $name)
     {
         //
     }
@@ -110,13 +104,12 @@ class GuestEditController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(GuestUpdateRequest $request,$name)
+    public function update(GuestUpdateRequest $request, $name)
     {
         //
-        try
-        {
-            $user = User::where('name',$name)->first();
-            $userprofile = Userprofile::where('user_id',$user->id)->first();
+        try {
+            $user = User::where('name', $name)->first();
+            $userprofile = Userprofile::where('user_id', $user->id)->first();
 
             $userprofile->firstname             = $request->firstname;
             $userprofile->lastname              = $request->lastname;
@@ -135,24 +128,20 @@ class GuestEditController extends Controller
 
             $userprofile->save();
 
-            $message=('Guest Details Updated Successfully');
+            $message = ('Guest Details Updated Successfully');
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $userprofile,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_GUEST,
                 $message
-                );
-            \Session::put('successmessage','Guest Details Updated Successfully');
+            );
+            \Session::put('successmessage', 'Guest Details Updated Successfully');
             return redirect()->back();
-        }
-
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

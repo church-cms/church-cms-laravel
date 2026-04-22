@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"Request \\\\$\\\\|Userprofile::\\\\|new Userprofile\\\\|Carbon::\" c:/laragon/www/church-cms-new/app/Http/Controllers/Admin/GuestAddController.php)"
+    ]
+  }
+}

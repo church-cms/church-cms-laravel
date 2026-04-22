@@ -12,9 +12,6 @@ use App\Imports\UsersImport;
 use App\Traits\LogActivity;
 use App\Traits\Common;
 use League\Csv\Writer;
-use App\Models\User;
-use SplFileObject;
-use Carbon\Carbon;
 use Exception;
 use Log;
 use DB;
@@ -50,55 +47,47 @@ class ImportMemberController extends Controller
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function importUsers(ImportMemberRequest $request)//ImportMember
+     * @return \Illuminate\Support\Collection
+     */
+    public function importUsers(ImportMemberRequest $request) //ImportMember
     {
         //
-        try
-        {
-            Excel::import(new UsersImport,$request->file('import_file'));
+        try {
+            Excel::import(new UsersImport, $request->file('import_file'));
             $count = \Session::get('count');
 
-          /*  if($count != 0)
+            /*  if($count != 0)
             {
                 return back()->with('failmessage','You can add only '.$count.' Members');
             }*/
 
             $insertedcount = \Session::get('insertedcount');
 
-            if($insertedcount > 0)
-            {
-                $message=('Member Details Imported Successfully');
+            if ($insertedcount > 0) {
+                $message = ('Member Details Imported Successfully');
 
-                $ip= $this->getRequestIP();
+                $ip = $this->getRequestIP();
                 $this->doActivityLog(
                     Auth::user(),
                     Auth::user(),
-                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                     LOGNAME_IMPORT_MEMBER,
                     $message
                 );
-                return back()->with('successmessage',$insertedcount.' Records Inserted successfully.');
+                return back()->with('successmessage', $insertedcount . ' Records Inserted successfully.');
+            } else {
+                return back()->with('failmessage', 'No Records Inserted.');
             }
-            else
-            {
-                return back()->with('failmessage','No Records Inserted.');
-            }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function downloadFormat(Request $request)
     {
-        try
-        {
+        try {
             $csv = Writer::createFromFileObject(new \SplTempFileObject());
-            $csv->insertOne(['ref_name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','occupation','sub-category','address','city','state','country','pincode','mobile_no','email','aadhar_number','membership_type','family','marriage_status','marriage_start_date','relation','notes']);
+            $csv->insertOne(['ref_name', 'firstname', 'lastname', 'birth_firstname', 'birth_lastname', 'gender', 'date_of_birth', 'occupation', 'sub-category', 'address', 'city', 'state', 'country', 'pincode', 'mobile_no', 'email', 'aadhar_number', 'membership_type', 'family', 'marriage_status', 'marriage_start_date', 'relation', 'notes']);
 
             $csv->insertOne([
                 '(reference_name)',
@@ -127,23 +116,20 @@ class ImportMemberController extends Controller
                 'Delete this entire row before importing'
             ]);
 
-            $csv->output('Church Social Add Member Format'.date('_d-m-Y_H:i').'.csv');
+            $csv->output('Church Social Add Member Format' . date('_d-m-Y_H:i') . '.csv');
 
             $message = 'Downloaded Sample Format File Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 Auth::user(),
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DOWNLOAD_SAMPLE_FORMAT,
                 $message
             );
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\VideoSaveRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\SendPushNotification;
@@ -40,11 +39,11 @@ class VideoController extends Controller
      */
     public function create()
     {
-        $video = MediaFile::where('church_id',Auth::user()->church_id)->get();
-        $count = MediaFile::where('church_id',Auth::user()->church_id)->count();
-       
+        $video = MediaFile::where('church_id', Auth::user()->church_id)->get();
+        $count = MediaFile::where('church_id', Auth::user()->church_id)->count();
 
-        return view('/admin/mediafiles/video/create',['videos'=>$video , 'count'=>$count]);
+
+        return view('/admin/mediafiles/video/create', ['videos' => $video, 'count' => $count]);
     }
 
     /**
@@ -55,17 +54,13 @@ class VideoController extends Controller
      */
     public function storeVideo(Request $request)
     {
-        try
-        {
-            $filename   = date('d_m_Y_H_i_s').'_video.mp4';
-            $folder     = '/uploads/video/'.Auth::user()->church_id;
+        try {
+            $filename   = date('d_m_Y_H_i_s') . '_video.mp4';
+            $folder     = '/uploads/video/' . Auth::user()->church_id;
 
-            $path = \Storage::disk('s3')->putFileAs($folder, $request->file,$filename);
-            \Session::put('path',$path);
-        }
-        catch(Exception $e)
-        {
-
+            $path = \Storage::disk('s3')->putFileAs($folder, $request->file, $filename);
+            \Session::put('path', $path);
+        } catch (Exception $e) {
         }
     }
 
@@ -77,8 +72,7 @@ class VideoController extends Controller
      */
     public function store(VideoRequest $request)
     {
-        try
-        {
+        try {
             $video                  = new MediaFile;
 
             $video->church_id       = Auth::user()->church_id;
@@ -86,12 +80,9 @@ class VideoController extends Controller
             $video->name            = $request->input('name');
             $video->description     = $request->input('description');
             $video->type            = $request->video_type;
-            if($request->video_type === 'url')
-            {
+            if ($request->video_type === 'url') {
                 $video->url             = $request->videourl;
-            }
-            else
-            {
+            } else {
                 $video->url = \Session::get('path');
             }
 
@@ -99,7 +90,7 @@ class VideoController extends Controller
 
             \Session::forget('path');
 
-            $data=[];
+            $data = [];
 
             $data['church_id']  =   Auth::user()->church_id;
             $data['message']    =   'New Video Added';
@@ -109,22 +100,19 @@ class VideoController extends Controller
 
             $message = 'Videos Added Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $video,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_VIDEO,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }
