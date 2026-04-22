@@ -6,7 +6,6 @@ use App\Models\Prayer;
 use App\Models\PrayerCategory;
 use App\Models\PrayerParticipant;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

@@ -1,20 +1,19 @@
 <?php
+
 namespace Database\Seeders;
-use App\Models\Events;
-use App\Models\User;
-use Carbon\Carbon;
+
 use Illuminate\Database\Seeder;
 
 class BibleTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-       $sql = "INSERT INTO `bible_books` (`book_id`, `english_book`, `chapter_count`) VALUES
+	/**
+	 * Run the database seeds.
+	 *
+	 * @return void
+	 */
+	public function run()
+	{
+		$sql = "INSERT INTO `bible_books` (`book_id`, `english_book`, `chapter_count`) VALUES
 			(1,	'Genesis',	50),
 			(2,	'Exodus',40),
 			(3,	'Leviticus',27),
@@ -81,6 +80,6 @@ class BibleTableSeeder extends Seeder
 			(64,	'3 John',	1),
 			(65,	'Judas or Jude',	13),
 			(66,	'Revelation',22);";
-			\DB::unprepared($sql);
-    }
+		\DB::unprepared($sql);
+	}
 }
