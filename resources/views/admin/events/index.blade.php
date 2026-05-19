@@ -239,24 +239,101 @@ $isAdmin = auth()->user()->usergroup_id == 3;
             if (!calInited) initCalendar();
         });
 
+
         function initCalendar() {
+
+            // Prevent duplicate initialization
+            if (calInited && cal) {
+                return;
+            }
+
             var fc = window.FullCalendarLib;
-            if (!fc) return;
-            var cal = new fc.Calendar(document.getElementById('event-calendar'), {
-                plugins: [fc.dayGridPlugin, fc.timeGridPlugin, fc.interactionPlugin],
+
+            if (!fc) {
+                console.error('FullCalendar library not loaded');
+                return;
+            }
+
+            var calendarEl = document.getElementById('event-calendar');
+
+            if (!calendarEl) {
+                console.error('Calendar element not found');
+                return;
+            }
+
+            cal = new fc.Calendar(calendarEl, {
+
+                plugins: [
+                    fc.dayGridPlugin,
+                    fc.timeGridPlugin,
+                    fc.interactionPlugin
+                ],
+
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
+
                 initialView: 'dayGridMonth',
-                events: '{{ url(' / admin / events / show ') }}',
+
                 dayMaxEvents: true,
+
+                height: 'auto',
+
+                nowIndicator: true,
+
+                editable: false,
+
+                selectable: false,
+
+                events: {
+                    url: '{{ url("/admin/events/show") }}',
+                    method: 'GET',
+                    failure: function() {
+                        console.log('Event loading failed');
+                    }
+                },
+
+                loading: function(isLoading) {
+
+                    let loader = document.getElementById('calendar-loader');
+
+                    if (!loader) return;
+
+                    if (isLoading) {
+                        loader.classList.remove('hidden');
+                    } else {
+                        loader.classList.add('hidden');
+                    }
+                },
+
                 eventClick: function(info) {
-                    if (window.openEventPopup) window.openEventPopup(info.event.id);
+
+                    info.jsEvent.preventDefault();
+
+                    if (window.openEventPopup) {
+                        window.openEventPopup(info.event.id);
+                    }
+                },
+
+                eventDidMount: function(info) {
+
+                    if (info.event.start) {
+
+                        info.el.setAttribute(
+                            'title',
+                            info.event.title +
+                            ' - ' +
+                            info.event.start.toLocaleString()
+                        );
+                    }
                 }
+
             });
+
             cal.render();
+
             calInited = true;
         }
 
