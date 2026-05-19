@@ -64,6 +64,14 @@ class DummyFamilySeeder extends Seeder
                 ]
             );
 
+        if ($gender == 'male') {
+            $avatar = "uploads/male.png";
+        } elseif ($gender == 'female') {
+            $avatar = "uploads/female.png";
+        } else {
+            $avatar = "uploads/images.jpg";
+        }
+
             // Create profile (idempotent)
             Userprofile::firstOrCreate(
                 ['user_id' => $user->id],
@@ -71,6 +79,7 @@ class DummyFamilySeeder extends Seeder
                     'church_id'             => $churchId,
                     'firstname'             => $firstname,
                     'lastname'              => $lastName,
+                    'avatar'                => $avatar,
                     'gender'                => $gender,
                     'date_of_birth'         => $dob,
                     'relation'              => $relation,

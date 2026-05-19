@@ -156,7 +156,7 @@ $isAdmin = auth()->user()->usergroup_id == 3;
         <table class="w-full text-sm">
             <thead>
                 <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-4 py-3 text-left w-10"></th>
+
                     <th class="px-4 py-3 text-left">Name</th>
                     <th class="px-4 py-3 text-left">Mobile</th>
                     <th class="px-4 py-3 text-left">Email</th>
@@ -176,19 +176,20 @@ $isAdmin = auth()->user()->usergroup_id == 3;
                 $status = $profile->status ?? 'active';
                 @endphp
                 <tr class="hover:bg-gray-50 transition">
-                    <td class="px-4 py-3">
-                        @if($profile && $profile->AvatarPath)
-                        <img src="{{ $profile->AvatarPath }}" alt="{{ $fullName }}"
-                            class="w-9 h-9 rounded-full object-cover">
-                        @else
-                        <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-semibold">
-                            {{ $initials ?: '?' }}
-                        </div>
-                        @endif
-                    </td>
+
                     <td class="px-4 py-3 font-medium text-gray-800">
-                        <a href="{{ url('/admin/guest/show/' . $guest->name) }}"
-                            class="hover:text-blue-600 transition">{{ $fullName }}</a>
+                        <div class="flex items-center gap-2">
+                            @if($profile && $profile->AvatarPath)
+                            <img src="{{ $profile->AvatarPath }}" alt="{{ $fullName }}"
+                                class="w-9 h-9 rounded-full object-cover">
+                            @else
+                            <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-semibold">
+                                {{ $initials ?: '?' }}
+                            </div>
+                            @endif
+                            <a href="{{ url('/admin/guest/show/' . $guest->name) }}"
+                                class="hover:text-blue-600 transition">{{ $fullName }}</a>
+                        </div>
                     </td>
                     <td class="px-4 py-3 text-gray-500">{{ $guest->mobile_no ?: '—' }}</td>
                     <td class="px-4 py-3 text-gray-500 truncate max-w-xs">{{ $guest->email ?: '—' }}</td>

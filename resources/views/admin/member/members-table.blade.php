@@ -35,91 +35,91 @@
         </div>
 
         @if(count($members) > 0)
-            <div class="overflow-x-auto">
-                <table class="w-full border-collapse border border-gray-300 bg-white">
-                    <thead>
-                        <tr class="bg-gray-100">
-                            <th class="border border-gray-300 px-3 py-2 w-12">
-                                <input type="checkbox" class="member-checkbox" value="all" id="checkbox-all">
-                            </th>
-                            <th class="border border-gray-300 px-3 py-2 text-left w-32">Name</th>
-                            <th class="border border-gray-300 px-3 py-2 text-left w-32">Email</th>
-                            <th class="border border-gray-300 px-3 py-2 text-left w-24">Phone</th>
-                            <th class="border border-gray-300 px-3 py-2 text-left w-40">Profession</th>
-                            <th class="border border-gray-300 px-3 py-2 text-left w-28">Location</th>
-                            <th class="border border-gray-300 px-3 py-2 text-left w-20">Status</th>
-                            <th class="border border-gray-300 px-3 py-2 text-center w-16">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="members-table-body">
-                        @foreach($members as $member)
-                            <tr class="member-row hover:bg-gray-50 border-b border-gray-300" data-member-id="{{ $member['id'] }}" data-search-text="{{ strtolower($member['fullname'] . ' ' . $member['email'] . ' ' . ($member['mobile_no'] ?? '')) }}">
-                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                    <input type="checkbox" class="member-checkbox" value="{{ $member['id'] }}">
-                                </td>
-                                <td class="border border-gray-300 px-3 py-2 text-sm">
-                                    <div class="flex items-center gap-2">
-                                        <img src="{{ $member['avatar'] }}" alt="{{ $member['fullname'] }}" class="w-8 h-8 rounded-full flex-shrink-0">
-                                        <a href="{{ url('/admin/member/show/' . $member['name']) }}" class="text-blue-600 hover:underline font-semibold truncate">
-                                            {{ $member['fullname'] }}
-                                        </a>
-                                    </div>
-                                </td>
-                                <td class="border border-gray-300 px-3 py-2 text-sm">{{ $member['email'] }}</td>
-                                <td class="border border-gray-300 px-3 py-2 text-sm">{{ $member['mobile_no'] ?? '-' }}</td>
-                                <td class="border border-gray-300 px-3 py-2 text-sm">
-                                    @if($member['sub_occupation'])
-                                        {{ $member['profession'] }} ({{ $member['sub_occupation'] }})
-                                    @else
-                                        {{ $member['profession'] ?? '-' }}
-                                    @endif
-                                </td>
-                                <td class="border border-gray-300 px-3 py-2 text-sm">{{ $member['state'] ?? '-' }} - {{ $member['city'] ?? '-' }}</td>
-                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                    <span class="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-800">Active</span>
-                                </td>
-                                <td class="border border-gray-300 px-3 py-2 text-center">
-                                    <a href="{{ url('/admin/member/show/' . $member['name']) }}" class="text-blue-600 hover:underline text-xs font-semibold">View</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            @if($paginator && $paginator->lastPage() > 1)
-                <div class="flex justify-between items-center mt-4">
-                    <div class="text-sm text-gray-600">
-                        Showing {{ $paginator->firstItem() }} to {{ $paginator->lastItem() }} of {{ $paginator->total() }} members
-                    </div>
-                    <div class="flex gap-2">
-                        @if($paginator->onFirstPage())
-                            <span class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-400 cursor-not-allowed">Previous</span>
-                        @else
-                            <a href="{{ $paginator->previousPageUrl() }}" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100" onclick="clearSelections();">Previous</a>
-                        @endif
-
-                        @foreach($paginator->getUrlRange(1, $paginator->lastPage()) as $page => $url)
-                            @if($page == $paginator->currentPage())
-                                <span class="px-3 py-1 text-sm border border-blue-500 rounded bg-blue-500 text-white">{{ $page }}</span>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 bg-white">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border border-gray-300 px-3 py-2 w-12">
+                            <input type="checkbox" class="member-checkbox" value="all" id="checkbox-all">
+                        </th>
+                        <th class="border border-gray-300 px-3 py-2 text-left w-32">Name</th>
+                        <th class="border border-gray-300 px-3 py-2 text-left w-32">Email</th>
+                        <th class="border border-gray-300 px-3 py-2 text-left w-24">Phone</th>
+                        <th class="border border-gray-300 px-3 py-2 text-left w-40">Profession</th>
+                        <th class="border border-gray-300 px-3 py-2 text-left w-28">Location</th>
+                        <th class="border border-gray-300 px-3 py-2 text-left w-20">Status</th>
+                        <th class="border border-gray-300 px-3 py-2 text-center w-16">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="members-table-body">
+                    @foreach($members as $member)
+                    <tr class="member-row hover:bg-gray-50 border-b border-gray-300" data-member-id="{{ $member['id'] }}" data-search-text="{{ strtolower($member['fullname'] . ' ' . $member['email'] . ' ' . ($member['mobile_no'] ?? '')) }}">
+                        <td class="border border-gray-300 px-3 py-2 text-center">
+                            <input type="checkbox" class="member-checkbox" value="{{ $member['id'] }}">
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2 text-sm">
+                            <div class="flex items-center gap-2">
+                                <img src="{{ $member['avatar'] }}" alt="{{ $member['fullname'] }}" class="w-8 h-8 rounded-full flex-shrink-0">
+                                <a href="{{ url('/admin/member/show/' . $member['name']) }}" class="text-blue-600 hover:underline font-semibold truncate">
+                                    {{ $member['fullname'] }}
+                                </a>
+                            </div>
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2 text-sm">{{ $member['email'] }}</td>
+                        <td class="border border-gray-300 px-3 py-2 text-sm">{{ $member['mobile_no'] ?? '-' }}</td>
+                        <td class="border border-gray-300 px-3 py-2 text-sm">
+                            @if($member['sub_occupation'])
+                            {{ $member['profession'] }} ({{ $member['sub_occupation'] }})
                             @else
-                                <a href="{{ $url }}" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100" onclick="clearSelections();">{{ $page }}</a>
+                            {{ $member['profession'] ?? '-' }}
                             @endif
-                        @endforeach
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2 text-sm">{{ $member['state'] ?? '-' }} - {{ $member['city'] ?? '-' }}</td>
+                        <td class="border border-gray-300 px-3 py-2 text-center">
+                            <span class="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-800">Active</span>
+                        </td>
+                        <td class="border border-gray-300 px-3 py-2 text-center">
+                            <a href="{{ url('/admin/member/show/' . $member['name']) }}" class="text-blue-600 hover:underline text-xs font-semibold">View</a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
-                        @if($paginator->hasMorePages())
-                            <a href="{{ $paginator->nextPageUrl() }}" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100" onclick="clearSelections();">Next</a>
-                        @else
-                            <span class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-400 cursor-not-allowed">Next</span>
-                        @endif
-                    </div>
-                </div>
-            @endif
-        @else
-            <div class="my-8 text-center text-gray-600 py-8">
-                <p class="text-lg">No members found</p>
+        <!-- Pagination -->
+        @if($paginator && $paginator->lastPage() > 1)
+        <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-gray-600">
+                Showing {{ $paginator->firstItem() }} to {{ $paginator->lastItem() }} of {{ $paginator->total() }} members
             </div>
+            <div class="flex gap-2">
+                @if($paginator->onFirstPage())
+                <span class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-400 cursor-not-allowed">Previous</span>
+                @else
+                <a href="{{ $paginator->previousPageUrl() }}" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100" onclick="clearSelections();">Previous</a>
+                @endif
+
+                @foreach($paginator->getUrlRange(1, $paginator->lastPage()) as $page => $url)
+                @if($page == $paginator->currentPage())
+                <span class="px-3 py-1 text-sm border border-blue-500 rounded bg-blue-500 text-white">{{ $page }}</span>
+                @else
+                <a href="{{ $url }}" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100" onclick="clearSelections();">{{ $page }}</a>
+                @endif
+                @endforeach
+
+                @if($paginator->hasMorePages())
+                <a href="{{ $paginator->nextPageUrl() }}" class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100" onclick="clearSelections();">Next</a>
+                @else
+                <span class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-400 cursor-not-allowed">Next</span>
+                @endif
+            </div>
+        </div>
+        @endif
+        @else
+        <div class="my-8 text-center text-gray-600 py-8">
+            <p class="text-lg">No members found</p>
+        </div>
         @endif
     </div>
 </div>
@@ -451,7 +451,9 @@
                 sendBtn.classList.add('opacity-75', 'cursor-not-allowed');
 
                 axios.post('/admin/member/sendMessageToAll', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 }).then(response => {
                     const successAlert = document.getElementById('success-alert');
                     if (successAlert) {
@@ -525,7 +527,9 @@
                 this.classList.add('opacity-75', 'cursor-not-allowed');
 
                 axios.post('/admin/members/subscribe', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 }).then(response => {
                     const successAlert = document.getElementById('newsletter-success-alert');
                     if (successAlert) {
@@ -533,9 +537,9 @@
                         successAlert.style.display = 'block';
                         successAlert.classList.add('bg-green-100', 'border', 'border-green-400', 'text-green-700', 'px-4', 'py-3', 'rounded', 'mb-4');
                     }
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 1500);
                 }).catch(error => {
                     showNotification('Error subscribing to newsletter. Please try again.', 'error');
                     this.disabled = false;
@@ -556,6 +560,7 @@
             opacity: 0;
             transform: translateY(-20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -567,6 +572,7 @@
             opacity: 0;
             transform: translateX(100px);
         }
+
         to {
             opacity: 1;
             transform: translateX(0);
@@ -578,6 +584,7 @@
             opacity: 1;
             transform: translateX(0);
         }
+
         to {
             opacity: 0;
             transform: translateX(100px);
@@ -761,6 +768,7 @@
             opacity: 0;
             transform: translateY(10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
