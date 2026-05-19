@@ -147,7 +147,9 @@ class Sermon extends Model
     public function getlikevoteAttribute()
     {
         $sermon = $this->userlikevote;
-        if (count($sermon) > '0') {
+      // dd($sermon);
+
+        if ($sermon!=null) {
             if ($sermon->like == '1') {
                 return 1; //liked
             } else {
@@ -166,7 +168,7 @@ class Sermon extends Model
     public function getunlikevoteAttribute()
     {
         $sermon = $this->userunlikevote;
-        if (count($sermon) > '0') {
+        if ($sermon!=null) {
             if ($sermon->unlike == '1') {
                 return 1; //unliked
             } else {

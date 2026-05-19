@@ -175,7 +175,7 @@ Route::group([
 
 	//helps
 
-	Route::get('/help', 'HelpsController@index');
+	Route::get('/helps', 'HelpsController@index');
 
 	Route::get('/helps/user', 'HelpsController@show'); //my helps
 
