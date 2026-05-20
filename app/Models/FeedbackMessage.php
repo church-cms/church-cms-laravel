@@ -98,11 +98,15 @@ class FeedbackMessage extends Model
 
     public function getFilePathAttribute()
     {
-        $count = count($this->file);
+        //$count = count($this->file);
+
+        if($this->file){
+        $count =1;
         for($i=0 ; $i < $count ; $i++)
         {
             $attachment[$i] = $this->getFilePath($this->file[$i]);
         }
         return $attachment;
+      }
     }
 }
