@@ -96,7 +96,7 @@ class VideoController extends Controller
             $data['message']    =   'New Video Added';
             $data['type']       =   'video';
 
-            event(new PushEvent($data));
+            //event(new PushEvent($data));
 
             $message = 'Videos Added Successfully';
 
