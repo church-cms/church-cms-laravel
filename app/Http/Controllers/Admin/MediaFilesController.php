@@ -136,11 +136,15 @@ class MediaFilesController extends Controller
                 $file,
                 Auth::user(),
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
-                LOGNAME_DELETE_FILE,
+                $message,
                 $message
             );
             $res['success'] = $message;
-            return $res;
+
+            return redirect('/admin/mediafiles?type=video&search=&page=1')->with('successmessage',$message);
+
+
+            //return $res;
         }
         catch(Exception $e)
         {
