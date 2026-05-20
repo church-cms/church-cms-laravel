@@ -166,6 +166,8 @@ Route::group([
 	Route::get('/prayer_requests', 'PrayerRequestsController@index');
 
 	Route::get('/prayer_requests/user', 'PrayerRequestsController@show');
+ 
+	Route::get('/prayercategory/list', 'PrayerRequestsController@prayerCategory');
 
 	Route::post('/prayer_requests/create', 'PrayerRequestsController@store');
 

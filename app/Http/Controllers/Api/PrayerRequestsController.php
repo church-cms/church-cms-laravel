@@ -13,7 +13,8 @@ use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use Exception;
 use Log;
-
+use App\Http\Resources\API\PrayerCategory as PrayerCategoryResource;
+use App\Models\PrayerCategory;
 class PrayerRequestsController extends Controller
 {
     /**
@@ -40,8 +41,8 @@ class PrayerRequestsController extends Controller
             $prayer->church_id    = Auth::user()->church_id;
             $prayer->user_id      = Auth::id();
             $prayer->category_id  = $request->category_id;
-            $prayer->text         = $request->text;
-            $prayer->original_text = $request->text;
+            $prayer->text         = $request->title;
+            $prayer->original_text = $request->description;
             $prayer->status       = Prayer::STATUS_PENDING;
             $prayer->save();
 
@@ -75,4 +76,14 @@ class PrayerRequestsController extends Controller
 
         return PrayerRequestUserResource::collection($prayers);
     }
+
+    public function prayerCategory()
+    {
+        $prayercatlist = PrayerCategory::where('is_active', 1)
+            ->orderBy('sort_order','ASC')
+            ->get();
+
+        return PrayerCategoryResource::collection($prayercatlist);
+    }
+
 }
