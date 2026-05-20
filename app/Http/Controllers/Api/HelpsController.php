@@ -15,6 +15,7 @@ use App\Models\Help;
 use Carbon\Carbon;
 use Exception;
 use Log;
+use Illuminate\Http\Request;
 
 /**
  * HelpsController
