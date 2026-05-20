@@ -82,18 +82,18 @@ class FeedbackController extends Controller
                 $feedbackMessage->feedback_id   = $feedback->id;
                 $feedbackMessage->category      = $request->category;
 
-                $i =0;
-                $files = $request->file('files');
-                if(count($files) > 0)
-                {
-                    $path = [];
-                    foreach($files as $file)
-                    {
-                        $path[$i] = $this->uploadFile(Auth::user()->church_id.'/feedbacks/'.$feedback->id,$file);
-                        $i++;
-                    }
-                    $feedbackMessage->file = $path;
-                }
+                // $i =0;
+                // $files = $request->file('files');
+                // if(count($files) > 0)
+                // {
+                //     $path = [];
+                //     foreach($files as $file)
+                //     {
+                //         $path[$i] = $this->uploadFile(Auth::user()->church_id.'/feedbacks/'.$feedback->id,$file);
+                //         $i++;
+                //     }
+                //     $feedbackMessage->file = $path;
+                // }
 
                 if($feedbackMessage->save())
                 {
