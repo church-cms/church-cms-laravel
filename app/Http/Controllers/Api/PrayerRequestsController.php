@@ -41,7 +41,7 @@ class PrayerRequestsController extends Controller
             $prayer->church_id    = Auth::user()->church_id;
             $prayer->user_id      = Auth::id();
             $prayer->category_id  = $request->category_id;
-            $prayer->text         = $request->title;
+            $prayer->text         = $request->description;
             $prayer->original_text = $request->description;
             $prayer->status       = Prayer::STATUS_PENDING;
             $prayer->save();
