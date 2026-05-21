@@ -81,6 +81,7 @@ Route::group(['prefix' => 'member', 'middleware' => ['auth', 'churchmember'], 'n
     Route::get('/show/details/{name}', 'HomeController@showDetails');
     Route::get('/print/{name}', 'MembershipCardController@print');
     Route::get('/mygrouplist', 'MemberController@groupList')->name('member.mygrouplist');
+    Route::get('/mygroup/{group_id}', 'MemberController@groupDetails')->name('member.mygroupdetails');
     Route::delete('/group/remove/{group_id}', 'MemberController@removeGroup')->name('member.group.remove');
     Route::post('/group/sendmessage/{group_id}', 'MemberController@sendGroupMessage')->name('member.group.sendmessage');
 });

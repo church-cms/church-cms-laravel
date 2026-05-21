@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Member;
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SendMailRequest;
 use App\Traits\SendMessageProcess;
@@ -10,6 +9,7 @@ use App\Models\Group;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Models\SendMail;
 
 class MemberController extends Controller
 {
@@ -27,6 +27,27 @@ class MemberController extends Controller
         $group_link = $user->groupLink;
 
         return view('member.mygroup', ['group_link' => $group_link]);
+    }
+
+    public function groupDetails($group_id)
+    {
+        $user = auth()->user();
+
+        $group_link = GroupLink::where([['user_id',$user->id],['group_id',$group_id]])->first();
+
+if($group_link->role=='group_admin'){
+    
+ $messages = SendMail::where([['entity_id',$group_id],['entity_name','App\Models\Group'],['church_id',$group_link->church_id]])
+                                ->orderBy('executed_at','desc')
+                                ->paginate(15);
+}else{
+    $messages = SendMail::where([['entity_id',$group_id],['entity_name','App\Models\Group'],['church_id',$group_link->church_id],['user_id',$user->id]])
+                                ->orderBy('executed_at','desc')
+                                ->paginate(15);
+}
+          
+
+        return view('member.mygroup_details', ['grouplist' => $group_link,'messages'=>$messages]);
     }
 
     /**
