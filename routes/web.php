@@ -62,10 +62,10 @@ Auth::routes();
 
 
 //admin
-Route::group(['prefix' => 'nova-api', 'middleware' => ['auth','nova'] ], function() {
+Route::group(['prefix' => 'nova-api', 'middleware' => ['auth', 'nova']], function () {
     //change password - nova
-    Route::get( '/changepassword', 'ChangePasswordController@ChangePassword' );
-    Route::post( '/changepassword', 'ChangePasswordController@updateChangePassword' );
+    Route::get('/changepassword', 'ChangePasswordController@ChangePassword');
+    Route::post('/changepassword', 'ChangePasswordController@updateChangePassword');
 });
 
 //subscription - nova
@@ -73,13 +73,16 @@ Route::get('/payment/subscription', 'Admin\PaymentController@Subscription');
 
 
 //member
-Route::group(['prefix' => 'member', 'middleware' => ['auth','churchmember'], 'namespace' =>'Member' ], function() {
+Route::group(['prefix' => 'member', 'middleware' => ['auth', 'churchmember'], 'namespace' => 'Member'], function () {
 
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/change-password', 'HomeController@changePassword')->name('member.change-password');
     Route::get('/familytree/{name}', 'HomeController@familytree');
     Route::get('/show/details/{name}', 'HomeController@showDetails');
-    Route::get('/print/{name}','MembershipCardController@print');
+    Route::get('/print/{name}', 'MembershipCardController@print');
+    Route::get('/mygrouplist', 'MemberController@groupList')->name('member.mygrouplist');
+    Route::delete('/group/remove/{group_id}', 'MemberController@removeGroup')->name('member.group.remove');
+    Route::post('/group/sendmessage/{group_id}', 'MemberController@sendGroupMessage')->name('member.group.sendmessage');
 });
 
 
@@ -89,10 +92,10 @@ Route::group(['prefix' => 'member', 'middleware' => ['auth','churchmember'], 'na
 //Route::get('/password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
 //Route::post('/password/reset', 'Auth\ResetPasswordController@reset')->name('password.reset');
 
- Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
- Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
- Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
- Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.update');
 
 //Email Verification for Member
 
@@ -102,15 +105,15 @@ Route::get('/emailverification/{token}', 'Auth\EmailVerificationController@email
 
 
 //terms
-Route::get('/terms','AboutController@terms');
+Route::get('/terms', 'AboutController@terms');
 
 //contact — now handled by WebBuilder\ContactController (see WebBuilder route group above)
 
 //permissions
 
-Route::group(['prefix' => 'admin' , 'middleware' => ['auth'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['auth'], 'namespace' => 'Admin'], function () {
 
-    Route::get('/dashboard','DashboardController@index')->name( 'dashboard' );
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
     Route::get('/dashboard/birthdayUser', 'BirthdayController@birthdayUser');
     Route::get('/dashboard/birthday', 'BirthdayController@birthday');
@@ -139,26 +142,25 @@ Route::group(['prefix' => 'admin' , 'middleware' => ['auth'] , 'namespace' =>'Ad
     Route::post('/links/validateedit/{id}', 'SermonLinkController@validateedit');
     Route::delete('/links/delete/{id}', 'SermonLinkController@destroy');
     Route::get('/links/download/{id}', 'SermonLinkController@getDownload');
-
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-members'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-members'], 'namespace' => 'Admin'], function () {
 
-    Route::get('/members','UserController@index');
-    Route::get('/members/find','UserController@find');
+    Route::get('/members', 'UserController@index');
+    Route::get('/members/find', 'UserController@find');
 
     Route::get('/member/add', ['middleware' => ['permission:create-members'], 'uses' => 'MemberAddController@create']);
     Route::post('/member/add', ['middleware' => ['permission:create-members'], 'uses' => 'MemberAddController@store']);
     Route::post('/member/add/validationUser', ['middleware' => ['permission:create-members'], 'uses' => 'MemberAddController@validationUser']);
     Route::get('/member', ['middleware' => ['permission:create-members'], 'uses' => 'MemberAddController@member']);
 
-    Route::get('/member/view/{name}','MembershipCardController@create');
-        Route::get('/member/print/{name}','MembershipCardController@print');
-        Route::get('/membershipCard/create','MembershipCardController@createAll');
-        Route::get('/membershipCard/download/{usertype}','MembershipCardController@printAll');
+    Route::get('/member/view/{name}', 'MembershipCardController@create');
+    Route::get('/member/print/{name}', 'MembershipCardController@print');
+    Route::get('/membershipCard/create', 'MembershipCardController@createAll');
+    Route::get('/membershipCard/download/{usertype}', 'MembershipCardController@printAll');
 
-    Route::get('/member/show/details/{name}', ['middleware' => ['permission:update-members'], 'uses' =>'MemberController@showdetails']);
-    Route::get('/member/show/activity/{name}', ['middleware' => ['permission:update-members'], 'uses' =>'MemberController@showactivity']);
+    Route::get('/member/show/details/{name}', ['middleware' => ['permission:update-members'], 'uses' => 'MemberController@showdetails']);
+    Route::get('/member/show/activity/{name}', ['middleware' => ['permission:update-members'], 'uses' => 'MemberController@showactivity']);
     Route::get('/member/show/{name}', ['middleware' => ['permission:update-members'], 'uses' => 'MemberController@show']);
 
     Route::get('/member/edit/{firstname}', ['middleware' => ['permission:update-members'], 'uses' => 'MemberEditController@edit']);
@@ -166,10 +168,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-members'] ,
     Route::post('/getnotes', ['middleware' => ['permission:update-members'], 'uses' =>  'NotesController@index']);
     Route::delete('/notes/delete/{id}', ['middleware' => ['permission:update-members'], 'uses' => 'NotesController@delete']);
     Route::get('/notes/edit/{id}', ['middleware' => ['permission:update-members'], 'uses' => 'NotesController@edit']);
-
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-events'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-events'], 'namespace' => 'Admin'], function () {
 
     Route::get('/events', 'EventsController@index');
     Route::get('/events/show', 'EventsController@events');
@@ -194,13 +195,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-events'] , 
 
     Route::get('/events/show/details/{id}', 'EventsController@show');
     Route::get('/events/showdetails/{id}', 'EventsController@showdetails');
-
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-bulletins'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-bulletins'], 'namespace' => 'Admin'], function () {
 
     //Bulletins
-    Route::get('/bulletins','BulletinsController@index');
+    Route::get('/bulletins', 'BulletinsController@index');
 
     Route::get('/bulletin/get', ['middleware' => ['permission:create-bulletins'], 'uses' => 'BulletinsController@getData']);
     Route::get('/bulletin/create', ['middleware' => ['permission:create-bulletins'], 'uses' => 'BulletinsController@create']);
@@ -208,33 +208,31 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-bulletins']
 
 
     Route::get('/bulletin/edit/{id}', ['middleware' => ['permission:create-bulletins'], 'uses' => 'BulletinsController@edit']);
-     Route::get('/bulletin/getdetails/{id}', ['middleware' => ['permission:create-bulletins'], 'uses' => 'BulletinsController@getdetails']);
+    Route::get('/bulletin/getdetails/{id}', ['middleware' => ['permission:create-bulletins'], 'uses' => 'BulletinsController@getdetails']);
 
     Route::post('/bulletin/update/{id}', ['middleware' => ['permission:create-bulletins'], 'uses' => 'BulletinsController@update']);
 
 
 
     Route::get('/bulletin/download/{id}', ['middleware' => ['permission:view-bulletins'], 'uses' => 'BulletinsController@downloadattachments']);
-
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-files'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-files'], 'namespace' => 'Admin'], function () {
 
     Route::get('/videos', ['middleware' => ['permission:view-files'], 'uses' => 'VideoController@create']);
     Route::post('/videos', ['middleware' => ['permission:create-files'], 'uses' => 'VideoController@store']);
-
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-groups'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-groups'], 'namespace' => 'Admin'], function () {
 
-    Route::get('/groups','GroupsController@index');
+    Route::get('/groups', 'GroupsController@index');
 
-    Route::get('/group/get', ['middleware' => ['permission:create-groups'], 'uses' =>'GroupsController@getData']);
-    Route::get('/group/create', ['middleware' => ['permission:create-groups'], 'uses' =>'GroupsController@create']);
-    Route::post('/group/create', ['middleware' => ['permission:create-groups'], 'uses' =>'GroupsController@store']);
+    Route::get('/group/get', ['middleware' => ['permission:create-groups'], 'uses' => 'GroupsController@getData']);
+    Route::get('/group/create', ['middleware' => ['permission:create-groups'], 'uses' => 'GroupsController@create']);
+    Route::post('/group/create', ['middleware' => ['permission:create-groups'], 'uses' => 'GroupsController@store']);
 
-    Route::get('/group/show/{id}', ['middleware' => ['permission:read-groups'], 'uses' =>'GroupsController@show']);
-    Route::delete('/group/delete/{id}', ['middleware' => ['permission:delete-groups'], 'uses' =>'GroupsController@destroy']);
+    Route::get('/group/show/{id}', ['middleware' => ['permission:read-groups'], 'uses' => 'GroupsController@show']);
+    Route::delete('/group/delete/{id}', ['middleware' => ['permission:delete-groups'], 'uses' => 'GroupsController@destroy']);
 
     Route::get('/group/showMember', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@index']);
     Route::get('/group/addMember/{group_id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@create']);
@@ -242,10 +240,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-groups'] , 
     Route::delete('/group/removeMember/{id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@destroy']);
     Route::get('/group/editMember/{id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@edit']);
     Route::post('/group/editMember/{id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@update']);
-
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-gallery'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-gallery'], 'namespace' => 'Admin'], function () {
 
     Route::get('/gallery', 'GalleryController@index');
 
@@ -259,20 +256,18 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-gallery'] ,
     Route::get('/gallery/details/{id}', ['middleware' => ['permission:update-gallery'], 'uses' => 'GalleryController@showdetails']);
     Route::post('gallery/upload/photos/{gallery_id}', ['middleware' => ['permission:update-gallery'], 'uses' => 'PhotosController@store']);
     Route::get('gallery/display/photos/{gallery_id}', ['middleware' => ['permission:update-gallery'], 'uses' => 'PhotosController@showdetails']);
-
 });
 
 
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-quotes'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-quotes'], 'namespace' => 'Admin'], function () {
 
     Route::get('/quote/add', ['middleware' => ['permission:create-quotes'], 'uses' => 'QuotesController@create']);
     Route::post('/quote/add', ['middleware' => ['permission:create-quotes'], 'uses' => 'QuotesController@store']);
-
 });
 
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-funds'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-funds'], 'namespace' => 'Admin'], function () {
 
     Route::get('/funds', ['middleware' => ['permission:create-funds'], 'uses' => 'FundController@index']);
     Route::post('/funds', ['middleware' => ['permission:create-funds'], 'uses' => 'FundController@store']);
@@ -280,24 +275,22 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-funds'] , '
     Route::get('/funds/edit/{id}', ['middleware' => ['permission:update-funds'], 'uses' => 'FundController@edit']);
     Route::get('/funds/create/{id}', ['middleware' => ['permission:update-funds'], 'uses' => 'FundController@create']);
     Route::post('funds/update/{id}', ['middleware' => ['permission:update-funds'], 'uses' => 'FundController@update']);
-
 });
 
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-reports'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-reports'], 'namespace' => 'Admin'], function () {
 
     Route::get('/reports', ['middleware' => ['permission:read-reports'], 'uses' => 'ReportsController@report']);
 
-    Route::get('/report/birthday', ['middleware' => ['permission:view-reports'], 'uses' =>'ReportsController@exportBirthday']);
-    Route::get('/report/anniversary', ['middleware' => ['permission:view-reports'], 'uses' =>'ReportsController@exportAnniversary']);
-    Route::get('/report/activeMembers', ['middleware' => ['permission:view-reports'], 'uses' =>'ReportsController@exportActiveMembers']);
-    Route::get('/report/guestMembers', ['middleware' => ['permission:view-reports'], 'uses' =>'ReportsController@exportGuestMembers']);
-    Route::get('/report/suspendedMembers', ['middleware' => ['permission:view-reports'], 'uses' =>'ReportsController@exportSuspendedMembers']);
+    Route::get('/report/birthday', ['middleware' => ['permission:view-reports'], 'uses' => 'ReportsController@exportBirthday']);
+    Route::get('/report/anniversary', ['middleware' => ['permission:view-reports'], 'uses' => 'ReportsController@exportAnniversary']);
+    Route::get('/report/activeMembers', ['middleware' => ['permission:view-reports'], 'uses' => 'ReportsController@exportActiveMembers']);
+    Route::get('/report/guestMembers', ['middleware' => ['permission:view-reports'], 'uses' => 'ReportsController@exportGuestMembers']);
+    Route::get('/report/suspendedMembers', ['middleware' => ['permission:view-reports'], 'uses' => 'ReportsController@exportSuspendedMembers']);
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-payments'] , 'namespace' =>'Admin' ], function() {
+Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-payments'], 'namespace' => 'Admin'], function () {
 
-    Route::get('/payment/index/{id}', ['middleware' => ['permission:create-payments'], 'uses' =>'PaymentController@index']);
-    Route::post('/payment/response', ['middleware' => ['permission:create-payments'], 'uses' =>'PaymentController@response']);
+    Route::get('/payment/index/{id}', ['middleware' => ['permission:create-payments'], 'uses' => 'PaymentController@index']);
+    Route::post('/payment/response', ['middleware' => ['permission:create-payments'], 'uses' => 'PaymentController@response']);
 });
-
