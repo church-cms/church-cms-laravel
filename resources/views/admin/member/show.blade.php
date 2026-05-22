@@ -396,7 +396,7 @@
                         </tbody>
                     </table>
                 </div>
-                @if($messages->hasPages())
+                @if($messages)
                 <div class="px-4 py-3">{{ $messages->appends(request()->except('msg_page'))->links() }}</div>
                 @endif
             </div>
