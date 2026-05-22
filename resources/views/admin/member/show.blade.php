@@ -29,17 +29,23 @@
                 {{-- Edit / Delete --}}
                 <div class="flex gap-2">
                     <a href="{{ url('/admin/member/edit/' . $user->name) }}"
-                        class="inline-flex items-center gap-1 text-xs font-medium text-white blue-bg rounded-lg px-3 py-1.5">
-                        <img src="{{ url('uploads/icons/profile-edit.svg') }}" class="w-3 h-3">
+                        class="inline-flex items-center justify-center gap-1.5 w-20 h-8 text-xs font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition">
+                        <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
                         Edit
                     </a>
-                    <form action="{{ url('/admin/member/delete', ['name' => $user->name]) }}" method="POST"
-                        class="inline-flex" id="delete">
+                    <form action="{{ url('/admin/member/delete', ['name' => $user->name]) }}"
+                        method="POST" id="delete" class="flex m-0 p-0">
                         @csrf
                         @method('delete')
                         <button type="submit"
-                            class="inline-flex items-center gap-1 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg px-3 py-1.5">
-                            <img src="{{ url('uploads/icons/p-delete.svg') }}" class="w-3 h-3">
+                            class="inline-flex items-center justify-center gap-1.5 w-24 h-8 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition">
+                            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a1 1 0 00-1-1h-4a1 1 0 00-1 1H5" />
+                            </svg>
                             Delete
                         </button>
                     </form>
@@ -188,19 +194,218 @@
     {{-- ══════════════════════════════════════════════ --}}
 
     <div class="w-full">
-        <div class="bg-white shadow my-5">
-            <profile-tab url="{{ url('/') }}" entity_id="{{ $user->id }}"
-                church_id="{{ $user->church_id }}" name="{{ $user->name }}" mode="member"
-                type="{{ $user->userprofile->membership_type }}"></profile-tab>
 
+        {{-- ══════════════════════════════════
+             PROFILE TABS  (pure Blade)
+        ══════════════════════════════════ --}}
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6 overflow-hidden">
 
+            {{-- Tab nav --}}
+            <div class="flex gap-0 border-b border-gray-200 overflow-x-auto">
+                @php
+                $tabs = [
+                ['id'=>'myprofile', 'label'=>'My Profile'],
+                ['id'=>'timeline', 'label'=>'Timeline'],
+                ['id'=>'family', 'label'=>'Family'],
+                ['id'=>'groups', 'label'=>'Assigned Groups'],
+                ['id'=>'messages', 'label'=>'Messages'],
+                ['id'=>'notes', 'label'=>'Notes'],
+                ];
+                @endphp
+                @foreach($tabs as $i => $tab)
+                <button
+                    data-tab="{{ $tab['id'] }}"
+                    onclick="switchTab(this.dataset.tab)"
+                    id="tab-btn-{{ $tab['id'] }}"
+                    class="tab-btn px-5 py-3 text-xs font-medium whitespace-nowrap border-b-2 transition {{ $i === 0 ? 'active-tab' : 'inactive-tab' }}">
+                    {{ $tab['label'] }}
+                </button>
+                @endforeach
+            </div>
 
+            {{-- ── Tab 1 : My Profile ─────────────────────── --}}
+            <div id="tab-myprofile" class="tab-panel p-6">
+                @php $profile = $user->userprofile; @endphp
+                <ul class="space-y-3 text-sm">
+                    @foreach([
+                    ['age.svg', 'Age', $profile->age ?? '--'],
+                    ['marriage.svg', 'Marriage Status', ucfirst($profile->marriage_status ?? '--')],
+                    ['date.svg', 'Marriage Date', $profile->marriage_date ? date('d M Y', strtotime($profile->marriage_date)) : '--'],
+                    ['member-ship.svg','Membership Type', ucfirst($profile->membership_type ?? '--')],
+                    ['date.svg', 'Membership Start Date', $profile->membership_type === 'member' && $profile->membership_start_date ? date('d M Y', strtotime($profile->membership_start_date)) : '--'],
+                    ] as [$icon, $label, $value])
+                    <li class="flex items-center gap-3">
+                        <img src="{{ url('uploads/icons/'.$icon) }}" class="w-4 h-4 flex-shrink-0">
+                        <span class="text-gray-500 font-medium w-44 flex-shrink-0">{{ $label }} :</span>
+                        <span class="text-gray-800">{{ $value }}</span>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
 
-            <portal-target name="profile"></portal-target>
+            {{-- ── Tab 2 : Timeline ───────────────────────── --}}
+            <div id="tab-timeline" class="tab-panel hidden p-4">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Date & Time</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Action</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Description</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($activitylog as $log)
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-3 py-2">{{ $log->created_at ? $log->created_at->format('d M Y H:i') : '--' }}</td>
+                                <td class="px-3 py-2 font-medium">{{ $log->log_name ?? '--' }}</td>
+                                <td class="px-3 py-2">{{ $log->description ?? '--' }}</td>
+                                <td class="px-3 py-2 text-gray-400">
+                                    @php $props = is_array($log->properties) ? $log->properties : json_decode($log->properties, true); @endphp
+                                    {{ $props['ip'] ?? '--' }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="px-3 py-6 text-center text-gray-400">No records found</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="px-4 py-3">{{ $activitylog->appends(['msg_page' => request('msg_page')])->links() }}</div>
+            </div>
+
+            {{-- ── Tab 3 : Family ─────────────────────────── --}}
+            <div id="tab-family" class="tab-panel hidden p-4">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Family Member</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Relation</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($family_members as $member)
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-3 py-2">
+                                    <div class="flex items-center gap-2">
+                                        <img src="{{ $member->userprofile->AvatarPath }}" class="w-8 h-8 rounded-full object-cover">
+                                        <a href="{{ url('/admin/member/show/'.$member->name) }}"
+                                            class="text-indigo-600 hover:underline font-medium">
+                                            {{ $member->FullName }}
+                                        </a>
+                                    </div>
+                                </td>
+                                <td class="px-3 py-2 capitalize">{{ $member->userprofile->relation ?? '--' }}</td>
+                                <td class="px-3 py-2">
+                                    <a href="{{ url('/admin/member/edit/'.$member->name) }}">
+                                        <img src="{{ url('uploads/icons/pencil.svg') }}" class="w-3.5 h-3.5">
+                                    </a>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="3" class="px-3 py-6 text-center text-gray-400">No family members found</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {{-- ── Tab 4 : Assigned Groups ─────────────────── --}}
+            <div id="tab-groups" class="tab-panel hidden p-4">
+                @if($grouplinks->count())
+                <div class="space-y-3">
+                    @foreach($grouplinks as $gl)
+                    <div class="flex items-center gap-4 border border-gray-100 rounded-lg px-4 py-3 hover:bg-gray-50">
+                        <img src="{{ $gl->group->CoverImagePath ?? url('uploads/icons/group.svg') }}"
+                            class="w-10 h-10 rounded-lg object-cover flex-shrink-0">
+                        <div class="flex-1">
+                            <a href="{{ url('/admin/group/show/'.$gl->group_id) }}"
+                                class="text-sm font-semibold text-indigo-600 hover:underline">
+                                {{ $gl->group->name ?? '--' }}
+                            </a>
+                            <p class="text-xs text-gray-400 mt-0.5">
+                                Role: <span class="font-medium text-gray-600 capitalize">{{ str_replace('_',' ',$gl->role ?? 'member') }}</span>
+                            </p>
+                        </div>
+                        <span class="text-xs text-gray-400">
+                            Started {{ $gl->created_at ? $gl->created_at->diffForHumans() : '--' }}
+                        </span>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <p class="text-center text-sm text-gray-400 py-6">No groups assigned</p>
+                @endif
+            </div>
+
+            {{-- ── Tab 5 : Messages ───────────────────────── --}}
+            <div id="tab-messages" class="tab-panel hidden p-4">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Mode</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Subject</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Message</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Attachments</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Sent On</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Status</th>
+                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($messages as $msg)
+                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                <td class="px-3 py-2 capitalize">{{ $msg->mode ?? '--' }}</td>
+                                <td class="px-3 py-2">{{ $msg->subject ?? '--' }}</td>
+                                <td class="px-3 py-2 max-w-xs truncate">{{ $msg->message ?? '--' }}</td>
+                                <td class="px-3 py-2">
+                                    @if($msg->attachments)
+                                    <a href="{{ $msg->attachments }}" target="_blank" class="text-indigo-600 hover:underline">Download</a>
+                                    @else --
+                                    @endif
+                                </td>
+                                <td class="px-3 py-2">{{ $msg->executed_at ? \Carbon\Carbon::parse($msg->executed_at)->format('d M Y H:i') : '--' }}</td>
+                                <td class="px-3 py-2">
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                                        {{ $msg->status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                        {{ ucfirst($msg->status ?? '--') }}
+                                    </span>
+                                </td>
+                                <td class="px-3 py-2">
+                                    <a href="{{ url('/admin/message/show/'.$msg->id) }}"
+                                        class="text-indigo-600 hover:underline">View</a>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="px-3 py-6 text-center text-gray-400">No messages found</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+                <div class="px-4 py-3">{{ $messages->appends(['timeline_page' => request('timeline_page')])->links() }}</div>
+            </div>
+
+            {{-- ── Tab 6 : Notes  (keep Vue — complex CRUD) ── --}}
+            <div id="tab-notes" class="tab-panel hidden p-4">
+                <notes url="{{ url('/') }}"
+                    entity_id="{{ $user->id }}"
+                    entity_name="user"
+                    church_id="{{ $user->church_id }}">
+                </notes>
+            </div>
+
         </div>
-        <!-- <div class="bg-white shadow my-5">
-         <family-tree url="{{ url('/') }}" entity_id="{{ $user->id }}" church_id="{{ $user->church_id }}" name="{{ $user->name }}" mode="member" type="{{ $user->userprofile->membership_type }}"></family-tree>
-        </div> -->
+        {{-- end profile tabs --}}
         <div class="bg-white shadow my-5 hidden" id="sms_div">
             <send-message url="{{ url('/') }}" name="{{ $user->name }}" tab="1" type="member">
             </send-message>
@@ -438,5 +643,45 @@
             }, 400);
         });
     });
+</script>
+
+<style>
+    .active-tab {
+        border-color: #4f46e5;
+        color: #4f46e5;
+        font-weight: 600;
+    }
+
+    .inactive-tab {
+        border-color: transparent;
+        color: #6b7280;
+    }
+
+    .inactive-tab:hover {
+        color: #374151;
+    }
+</style>
+
+<script>
+    function switchTab(id) {
+        // hide all panels
+        document.querySelectorAll('.tab-panel').forEach(function(el) {
+            el.classList.add('hidden');
+        });
+        // reset all buttons
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.classList.remove('active-tab');
+            btn.classList.add('inactive-tab');
+        });
+        // show selected panel
+        var panel = document.getElementById('tab-' + id);
+        if (panel) panel.classList.remove('hidden');
+        // activate selected button
+        var btn = document.getElementById('tab-btn-' + id);
+        if (btn) {
+            btn.classList.remove('inactive-tab');
+            btn.classList.add('active-tab');
+        }
+    }
 </script>
 @endpush
