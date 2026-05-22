@@ -275,7 +275,7 @@
                         </tbody>
                     </table>
                 </div>
-                @if($activitylog->hasPages())
+                @if($activitylog)
                 <div class="px-4 py-3">{{ $activitylog->appends(request()->except('timeline_page'))->links() }}</div>
                 @endif
             </div>
