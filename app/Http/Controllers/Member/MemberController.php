@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Member;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SendMailRequest;
 use App\Traits\SendMessageProcess;
@@ -33,21 +34,21 @@ class MemberController extends Controller
     {
         $user = auth()->user();
 
-        $group_link = GroupLink::where([['user_id',$user->id],['group_id',$group_id]])->first();
+        $group_link = GroupLink::where([['user_id', $user->id], ['group_id', $group_id]])->first();
 
-if($group_link->role=='group_admin'){
-    
- $messages = SendMail::where([['entity_id',$group_id],['entity_name','App\Models\Group'],['church_id',$group_link->church_id]])
-                                ->orderBy('executed_at','desc')
-                                ->paginate(15);
-}else{
-    $messages = SendMail::where([['entity_id',$group_id],['entity_name','App\Models\Group'],['church_id',$group_link->church_id],['user_id',$user->id]])
-                                ->orderBy('executed_at','desc')
-                                ->paginate(15);
-}
-          
+        if ($group_link->role == 'group_admin') {
 
-        return view('member.mygroup_details', ['grouplist' => $group_link,'messages'=>$messages]);
+            $messages = SendMail::where([['entity_id', $group_id], ['entity_name', 'App\Models\Group'], ['church_id', $group_link->church_id]])
+                ->orderBy('executed_at', 'desc')
+                ->paginate(15);
+        } else {
+            $messages = SendMail::where([['entity_id', $group_id], ['entity_name', 'App\Models\Group'], ['church_id', $group_link->church_id], ['user_id', $user->id]])
+                ->orderBy('executed_at', 'desc')
+                ->paginate(15);
+        }
+        $grouplinks  = GroupLink::where([['group_id', $group_id], ['church_id', $group_link->church_id]])->paginate(12);
+
+        return view('member.mygroup_details', ['grouplinks' => $grouplinks, 'grouplist' => $group_link, 'messages' => $messages]);
     }
 
     /**
@@ -96,8 +97,8 @@ if($group_link->role=='group_admin'){
 
             $group      = Group::findOrFail($group_id);
             $members    = GroupLink::where('group_id', $group_id)
-                                   ->where('church_id', $user->church_id)
-                                   ->get();
+                ->where('church_id', $user->church_id)
+                ->get();
             $batch_id   = (string) Str::uuid();
 
             foreach ($members as $member) {
@@ -111,7 +112,6 @@ if($group_link->role=='group_admin'){
             }
 
             return response()->json(['success' => 'Message sent successfully to all group members.']);
-
         } catch (\Exception $e) {
             \Log::error('sendGroupMessage error: ' . $e->getMessage());
             return response()->json(['errors' => ['server' => ['Something went wrong. Please try again.']]], 500);

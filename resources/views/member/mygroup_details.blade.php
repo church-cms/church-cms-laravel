@@ -18,7 +18,7 @@
     {{-- Page heading --}}
     <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-gray-800">My Groups Details</h2>
-       
+
     </div>
 
     {{-- ─────────────────────────────────────────────
@@ -47,27 +47,27 @@
 
                     <span class="text-xs text-indigo-500 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">{{$grouplist->group->groupCategory->name}}</span>
                     <!-- <span class="text-xs text-indigo-500 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">{{$grouplist->group->group_type}}</span> -->
-                </div><br/>
+                </div><br />
 
-                
+
             </div>
-           
+
             {{-- Admin badge --}}
             <span class="text-xs font-semibold bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full">
 
                 @if($grouplist->role=='group_admin')
                 Group Admin
-               @else
-                 {{ucfirst($grouplist->role)}}
+                @else
+                {{ucfirst($grouplist->role)}}
                 @endif
             </span>
         </div>
-         <div>
-                    <p class="font-semibold text-gray-800 text-sm ml-8">{{$grouplist->group->description}}</p>
+        <div>
+            <p class="font-semibold text-gray-800 text-sm ml-8">{{$grouplist->group->description}}</p>
 
 
-                    
-                </div>
+
+        </div>
 
         {{-- Member count --}}
         <div class="px-6 pb-3 flex items-center space-x-1 text-xs text-gray-400">
@@ -113,7 +113,7 @@
                 class="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
                 Send Message
             </button>
@@ -126,104 +126,169 @@
 
     </div>
 
-     {{-- ── Messages Tab ── --}}
-        <div>
-            @if($messages->isEmpty())
-                <div class="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-400 text-sm">
-                    No messages sent to this group yet.
-                </div>
-            @else
-                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                                <th class="px-5 py-3 text-left">From</th>
-                                <th class="px-3 py-3 text-left">Mode</th>
-                                <th class="px-3 py-3 text-left">Subject</th>
-                                <th class="px-3 py-3 text-left">Message</th>
-                                <th class="px-3 py-3 text-left">Attachment</th>
-                                <th class="px-5 py-3 text-left">Sent On</th>
-                                <th class="px-5 py-3 text-left">Status</th>
-                                <!-- <th class="px-5 py-3 text-right">Action</th> -->
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @foreach($messages as $msg)
-                                <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-5 py-3 font-medium text-gray-800">
-                                
-                                            {{ $msg->from }}
-                                        
-                                    </td>
-                                      <td class="px-5 py-3">
-                                        @php
-                                            $modeColors = ['mail'=>'bg-blue-100 text-blue-700','sms'=>'bg-green-100 text-green-700','notification'=>'bg-purple-100 text-purple-700'];
-                                            $mc = $modeColors[$msg->mode] ?? 'bg-gray-100 text-gray-600';
-                                        @endphp
-                                        <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $mc }}">{{ ucwords($msg->mode) }}</span>
-                                    </td>
 
-                                    <td class="px-5 py-3 font-medium text-gray-800">
-                                        
-                                            {{ $msg->subject }}
-                                       
-                                    </td>
 
-                                     <td class="px-5 py-3 font-medium text-gray-800">
-                                        <a href="{{ url('/admin/member/show/'.$msg->user->name) }}" class="hover:text-indigo-600">
-                                            {{ $msg->message }}
-                                        </a>
-                                    </td>
+</div>
 
-                                     <td class="px-5 py-3 font-medium text-gray-800">
-                        
+{{-- Tab nav --}}
+<div class="flex gap-1 border-b border-gray-200 mb-6">
+    <button data-tab="members"
+        class="tab-btn px-4 py-2.5 text-sm text-gray-500 hover:text-gray-700 transition -mb-px">
+        <i class="fas fa-users mr-1.5"></i>Members
+        <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">{{ $memberCount }}</span>
+    </button>
+    <button data-tab="messages"
+        class="tab-btn px-4 py-2.5 text-sm text-gray-500 hover:text-gray-700 transition -mb-px">
+        <i class="fas fa-envelope mr-1.5"></i>Sent Messages
+        <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">{{ $messages->total() }}</span>
+    </button>
+</div>
 
-                                            @if ($msg->mode == 'mail')
-                <div class="flex flex-col lg:flex-row text-sm items-baseline">
-                    
-                    @if ($msg->attachments == null)
-                        <div class="w-full lg:w-4/5 py-3 px-2">--</div>
-                    @else
-                        <div class="w-full lg:w-4/5 py-3 px-2">
-                            <a href="{{ $msg->AttachmentPath }}" class="btn btn-primary submit-btn cursor-pointer"
-                                target="_blank">View</a>
+{{-- ── Members Tab ── --}}
+<div id="tab-members" class="tab-panel hidden">
+    @if($grouplinks->isEmpty())
+    <div class="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-400 text-sm">
+        No members yet.
+        <a href="{{ url('/admin/group/addMember/'.$group->id) }}" class="text-indigo-600 hover:underline ml-1">Add the first one.</a>
+    </div>
+    @else
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach($grouplinks as $gl)
+        @php
+        $user = $gl->user;
+        $profile = $user->userprofile;
+        $name = $user->FullName;
+        $avatar = $profile->AvatarPath;
+        $roleColors = [
+        'group_admin' => 'bg-indigo-100 text-indigo-700',
+        'member' => 'bg-green-100 text-green-700',
+        'guest' => 'bg-gray-100 text-gray-600',
+        ];
+        $roleLabels = [
+        'group_admin' => 'Group Admin',
+        'member' => 'Member',
+        'guest' => 'Guest',
+        ];
+        $roleColor = $roleColors[$gl->role] ?? 'bg-gray-100 text-gray-600';
+        $roleLabel = $roleLabels[$gl->role] ?? ucfirst($gl->role);
+        @endphp
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex items-start gap-3">
+            <img src="{{ $avatar }}" alt="{{ $name }}"
+                class="w-11 h-11 rounded-full object-cover flex-shrink-0">
+            <div class="flex-1 min-w-0">
+                {{ $name }}
+                <p class="text-xs text-gray-400 truncate">{{ $user->email }}</p>
+                <span class="inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium {{ $roleColor }}">
+                    {{ $roleLabel }}
+                </span>
+            </div>
+            <div class="flex gap-1 flex-shrink-0">
+
+            </div>
+        </div>
+        @endforeach
+    </div>
+    <div class="mt-4">{{ $grouplinks->links() }}</div>
+    @endif
+</div>
+
+{{-- ── Messages Tab ── --}}
+<div id="tab-messages" class="tab-panel hidden">
+    @if($messages->isEmpty())
+    <div class="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-400 text-sm">
+        No messages sent to this group yet.
+    </div>
+    @else
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    <th class="px-5 py-3 text-left">From</th>
+                    <th class="px-3 py-3 text-left">Mode</th>
+                    <th class="px-3 py-3 text-left">Subject</th>
+                    <th class="px-3 py-3 text-left">Message</th>
+                    <th class="px-3 py-3 text-left">Attachment</th>
+                    <th class="px-5 py-3 text-left">Sent On</th>
+                    <th class="px-5 py-3 text-left">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @foreach($messages as $msg)
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-5 py-3 font-medium text-gray-800">
+
+                        {{ $msg->from }}
+
+                    </td>
+                    <td class="px-5 py-3">
+                        @php
+                        $modeColors = ['mail'=>'bg-blue-100 text-blue-700','sms'=>'bg-green-100 text-green-700','notification'=>'bg-purple-100 text-purple-700'];
+                        $mc = $modeColors[$msg->mode] ?? 'bg-gray-100 text-gray-600';
+                        @endphp
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $mc }}">{{ ucwords($msg->mode) }}</span>
+                    </td>
+
+                    <td class="px-5 py-3 font-medium text-gray-800">
+
+                        {{ $msg->subject }}
+
+                    </td>
+
+                    <td class="px-5 py-3 font-medium text-gray-800">
+                        <a href="{{ url('/admin/member/show/'.$msg->user->name) }}" class="hover:text-indigo-600">
+                            {{ $msg->message }}
+                        </a>
+                    </td>
+
+                    <td class="px-5 py-3 font-medium text-gray-800">
+
+
+                        @if ($msg->mode == 'mail')
+                        <div class="flex flex-col lg:flex-row text-sm items-baseline">
+
+                            @if ($msg->attachments == null)
+                            <div class="w-full lg:w-4/5 py-3 px-2">--</div>
+                            @else
+                            <div class="w-full lg:w-4/5 py-3 px-2">
+                                <a href="{{ $msg->AttachmentPath }}" class="btn btn-primary submit-btn cursor-pointer"
+                                    target="_blank">View</a>
+                            </div>
+                            @endif
                         </div>
-                    @endif
-                </div>
-              @endif
-                                    </td>
-                                  
-                                    <td class="px-5 py-3 text-gray-600 text-xs">
-                                        {{ \Carbon\Carbon::parse($msg->executed_at)->format('d M Y, h:i A') }}
-                                    </td>
-                                    <td class="px-5 py-3">
-                                        @php $sc = $msg->status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; @endphp
-                                        <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $sc }}">{{ ucwords($msg->status) }}</span>
-                                    </td>
-                                    <!-- <td class="px-5 py-3 text-right">
+                        @endif
+                    </td>
+
+                    <td class="px-5 py-3 text-gray-600 text-xs">
+                        {{ \Carbon\Carbon::parse($msg->executed_at)->format('d M Y, h:i A') }}
+                    </td>
+                    <td class="px-5 py-3">
+                        @php $sc = $msg->status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; @endphp
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $sc }}">{{ ucwords($msg->status) }}</span>
+                    </td>
+                    <!-- <td class="px-5 py-3 text-right">
                                         <a href="{{ url('/admin/message/show/'.$msg->id) }}" target="_blank"
                                            class="px-3 py-1 text-xs font-medium text-indigo-600 bg-indigo-50 border border-indigo-100 rounded hover:bg-indigo-100 transition">
                                             View
                                         </a>
                                     </td> -->
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <div class="px-5 py-3 border-t border-gray-100">{{ $messages->links() }}</div>
-                </div>
-            @endif
-        </div>
-    
-
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="px-5 py-3 border-t border-gray-100">{{ $messages->links() }}</div>
+    </div>
+    @endif
 </div>
+
+</div>{{-- /tabs --}}
+
 
 {{-- ═══════════════════════════════════════════════
      SEND MESSAGE MODAL  (shared, one per page)
 ════════════════════════════════════════════════ --}}
 <div id="send-msg-modal"
-     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
-     role="dialog" aria-modal="true">
+    class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
+    role="dialog" aria-modal="true">
 
     {{-- Backdrop --}}
     <div class="absolute inset-0 bg-black bg-opacity-40" onclick="closeSendModal()"></div>
@@ -237,7 +302,7 @@
             <button type="button" onclick="closeSendModal()"
                 class="text-gray-400 hover:text-gray-600 transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
@@ -323,14 +388,14 @@
                     id="btn-send-submit"
                     class="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-lg transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
                     Send
                 </button>
             </div>
         </form>
 
-       
+
 
     </div>
 </div>
@@ -339,7 +404,7 @@
 <script>
     // ── Remove Group ──────────────────────────────────
     function confirmRemoveGroup(btn) {
-        const id   = btn.dataset.groupId;
+        const id = btn.dataset.groupId;
         const name = btn.dataset.groupName;
         if (confirm('Are you sure you want to remove the group "' + name + '"?\nThis action cannot be undone.')) {
             document.getElementById('remove-form-' + id).submit();
@@ -369,7 +434,7 @@
 
     function onModeChange(mode) {
         const showEmail = mode === 'mail';
-        document.getElementById('field-subject').style.display     = showEmail ? '' : 'none';
+        document.getElementById('field-subject').style.display = showEmail ? '' : 'none';
         document.getElementById('field-attachments').style.display = showEmail ? '' : 'none';
         // update maxlength on message
         document.getElementById('field-message').maxLength = mode === 'sms' ? 300 : 1000;
@@ -380,8 +445,8 @@
     }
 
     function submitSendMessage() {
-        const form   = document.getElementById('send-msg-form');
-        const btn    = document.getElementById('btn-send-submit');
+        const form = document.getElementById('send-msg-form');
+        const btn = document.getElementById('btn-send-submit');
         const errBox = document.getElementById('send-msg-error');
         errBox.classList.add('hidden');
 
@@ -391,48 +456,50 @@
             fd.set('send_later', 'false');
         }
 
-        btn.disabled    = true;
+        btn.disabled = true;
         btn.textContent = 'Sending…';
 
         fetch(_sendUrl, {
-            method : 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body   : fd
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                closeSendModal();
-                // show flash message without full reload
-                showFlash(data.success, 'success');
-            } else if (data.errors) {
-                const msgs = Object.values(data.errors).flat().join(' ');
-                errBox.textContent = msgs;
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: fd
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    closeSendModal();
+                    // show flash message without full reload
+                    showFlash(data.success, 'success');
+                } else if (data.errors) {
+                    const msgs = Object.values(data.errors).flat().join(' ');
+                    errBox.textContent = msgs;
+                    errBox.classList.remove('hidden');
+                } else {
+                    errBox.textContent = 'Something went wrong. Please try again.';
+                    errBox.classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                errBox.textContent = 'Network error. Please try again.';
                 errBox.classList.remove('hidden');
-            } else {
-                errBox.textContent = 'Something went wrong. Please try again.';
-                errBox.classList.remove('hidden');
-            }
-        })
-        .catch(() => {
-            errBox.textContent = 'Network error. Please try again.';
-            errBox.classList.remove('hidden');
-        })
-        .finally(() => {
-            btn.disabled    = false;
-            btn.innerHTML   = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Send';
-        });
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Send';
+            });
     }
 
     // inline flash (no page reload needed)
     function showFlash(msg, type) {
         const div = document.createElement('div');
-        div.className = type === 'success'
-            ? 'mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm flex items-center gap-2'
-            : 'mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm';
-        div.innerHTML = (type === 'success'
-            ? '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
-            : '') + '<span>' + msg + '</span>';
+        div.className = type === 'success' ?
+            'mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm flex items-center gap-2' :
+            'mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm';
+        div.innerHTML = (type === 'success' ?
+            '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
+            '') + '<span>' + msg + '</span>';
         const main = document.querySelector('main');
         main.insertBefore(div, main.firstChild);
         setTimeout(() => div.remove(), 5000);
@@ -444,87 +511,110 @@
 @push('scripts')
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
-$(function() {
+    $(function() {
 
-    // ── Tab switching ──
-    function activateTab(name) {
-        $('.tab-panel').addClass('hidden');
-        $('#tab-' + name).removeClass('hidden');
-        $('.tab-btn')
-            .removeClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold')
-            .addClass('text-gray-500');
-        $('.tab-btn[data-tab="' + name + '"]')
-            .removeClass('text-gray-500')
-            .addClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold');
-        location.hash = name;
-    }
+        // ── Tab switching ──
+        function activateTab(name) {
+            $('.tab-panel').addClass('hidden');
+            $('#tab-' + name).removeClass('hidden');
+            $('.tab-btn')
+                .removeClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold')
+                .addClass('text-gray-500');
+            $('.tab-btn[data-tab="' + name + '"]')
+                .removeClass('text-gray-500')
+                .addClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold');
+            location.hash = name;
+        }
 
-    $('.tab-btn').on('click', function() {
-        activateTab($(this).data('tab'));
-    });
+        $('.tab-btn').on('click', function() {
+            activateTab($(this).data('tab'));
+        });
 
-    // Restore tab from URL hash or default to members
-    var hash = location.hash.replace('#','');
-    activateTab(['info','members','messages'].includes(hash) ? hash : 'members');
+        // Restore tab from URL hash or default to members
+        var hash = location.hash.replace('#', '');
+        activateTab(['info', 'members', 'messages'].includes(hash) ? hash : 'members');
 
-    // Send message panel toggle
-    $('#btn-send-msg').on('click', function() {
-        $('#send-msg-panel').removeClass('hidden');
-        $('html,body').animate({ scrollTop: $('#send-msg-panel').offset().top - 20 }, 300);
-    });
-    $('#btn-close-msg').on('click', function() {
-        $('#send-msg-panel').addClass('hidden');
-    });
+        // Send message panel toggle
+        $('#btn-send-msg').on('click', function() {
+            $('#send-msg-panel').removeClass('hidden');
+            $('html,body').animate({
+                scrollTop: $('#send-msg-panel').offset().top - 20
+            }, 300);
+        });
+        $('#btn-close-msg').on('click', function() {
+            $('#send-msg-panel').addClass('hidden');
+        });
 
-    // Delete group
-    $('#btn-delete-group').on('click', function() {
-        var url = $(this).data('url');
-        swal({
-            icon: 'warning',
-            title: 'Delete Group?',
-            text: 'This will permanently remove the group and all its members.',
-            buttons: { cancel: true, confirm: { text: 'Delete', className: 'swal-button--danger' } },
-            dangerMode: true,
-        }).then(function(confirm) {
-            if (!confirm) return;
-            $.ajax({
-                url: url, type: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                success: function() {
-                    swal({ icon: 'success', text: 'Group deleted.' }).then(function() {
-                        window.location.href = '/admin/groups';
-                    });
-                }
+        // Delete group
+        $('#btn-delete-group').on('click', function() {
+            var url = $(this).data('url');
+            swal({
+                icon: 'warning',
+                title: 'Delete Group?',
+                text: 'This will permanently remove the group and all its members.',
+                buttons: {
+                    cancel: true,
+                    confirm: {
+                        text: 'Delete',
+                        className: 'swal-button--danger'
+                    }
+                },
+                dangerMode: true,
+            }).then(function(confirm) {
+                if (!confirm) return;
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function() {
+                        swal({
+                            icon: 'success',
+                            text: 'Group deleted.'
+                        }).then(function() {
+                            window.location.href = '/admin/groups';
+                        });
+                    }
+                });
             });
         });
-    });
 
-    // Remove member
-    $(document).on('click', '.delete-member', function() {
-        var url = $(this).data('url');
-        swal({
-            icon: 'warning',
-            text: 'Remove this member from the group?',
-            buttons: { cancel: true, confirm: true },
-        }).then(function(confirm) {
-            if (!confirm) return;
-            $.ajax({
-                url: url, type: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                success: function() {
-                    swal({ icon: 'success', text: 'Member removed.' }).then(function() {
-                        window.location.reload();
-                    });
-                }
+        // Remove member
+        $(document).on('click', '.delete-member', function() {
+            var url = $(this).data('url');
+            swal({
+                icon: 'warning',
+                text: 'Remove this member from the group?',
+                buttons: {
+                    cancel: true,
+                    confirm: true
+                },
+            }).then(function(confirm) {
+                if (!confirm) return;
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function() {
+                        swal({
+                            icon: 'success',
+                            text: 'Member removed.'
+                        }).then(function() {
+                            window.location.reload();
+                        });
+                    }
+                });
             });
         });
-    });
 
-});
+    });
 </script>
 <style>
-    table th{
-       width:0% !important; 
+    table th {
+        width: 0% !important;
     }
-    </style>
+</style>
 @endpush
