@@ -275,7 +275,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="px-4 py-3">{{ $activitylog->appends(['msg_page' => request('msg_page')])->links() }}</div>
+                @if($activitylog->hasPages())
+                <div class="px-4 py-3">{{ $activitylog->appends(request()->except('timeline_page'))->links() }}</div>
+                @endif
             </div>
 
             {{-- ── Tab 3 : Family ─────────────────────────── --}}
@@ -393,7 +395,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="px-4 py-3">{{ $messages->appends(['timeline_page' => request('timeline_page')])->links() }}</div>
+                @if($messages->hasPages())
+                <div class="px-4 py-3">{{ $messages->appends(request()->except('msg_page'))->links() }}</div>
+                @endif
             </div>
 
             {{-- ── Tab 6 : Notes  (keep Vue — complex CRUD) ── --}}
