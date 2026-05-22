@@ -210,6 +210,7 @@
                 ['id'=>'groups', 'label'=>'Assigned Groups'],
                 ['id'=>'messages', 'label'=>'Messages'],
                 ['id'=>'notes', 'label'=>'Notes'],
+                ['id'=>'idcard', 'label'=>'IDCard']
                 ];
                 @endphp
                 @foreach($tabs as $i => $tab)
@@ -403,6 +404,18 @@
                     church_id="{{ $user->church_id }}">
                 </notes>
             </div>
+            {{-- ── Tab 6 : Notes  (ID Card) ── --}}
+            <div id="tab-idcard" class="tab-panel hidden p-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide ">Membership Id Card</h3>&nbsp; <a href="{{ url('/admin/member/print/'.$user->name) }}"
+                            class="text-xs font-semibold text-white bg-blue-500 px-3 py-1 rounded cursor-pointer">
+                            Print
+                        </a>
+                    </div>
+                    @include('member.idcard.idcard')
+                </div>
+            </div>
 
         </div>
         {{-- end profile tabs --}}
@@ -411,15 +424,7 @@
             </send-message>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <div class="flex justify-between items-center mb-2">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide ">Membership Id Card</h3>&nbsp; <a href="{{ url('/admin/member/print/'.$user->name) }}"
-                    class="text-xs font-semibold text-white bg-blue-500 px-3 py-1 rounded cursor-pointer">
-                    Print
-                </a>
-            </div>
-            @include('member.idcard.idcard')
-        </div>
+
     </div>
 </div>
 @endsection
