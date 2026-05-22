@@ -322,8 +322,8 @@
 
             {{-- ── Tab 4 : Assigned Groups ─────────────────── --}}
             <div id="tab-groups" class="tab-panel hidden p-4">
-                {{dd($grouplinks)}}
-                @if($grouplinks->count())
+
+                @if($grouplinks!=null)
                 <div class="space-y-3">
                     @foreach($grouplinks as $gl)
                     <div class="flex items-center gap-4 border border-gray-100 rounded-lg px-4 py-3 hover:bg-gray-50">
