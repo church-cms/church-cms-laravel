@@ -1,620 +1,796 @@
 @extends('layouts.app')
 
-@section('title', 'My Groups Details')
+@section('title', $grouplist->group->name ?? 'Group Details')
 
 @section('content')
 
-<div class="mb-6 mx-auto max-w-[640px]">
+@php
+$group = $grouplist->group;
+$totalMembers = App\Models\GroupLink::where('group_id', $grouplist->group_id)->count();
+$isAdmin = $grouplist->role === 'group_admin';
+$coverImage = $group->cover_image ? url('storage/'.$group->cover_image) : null;
+$sendUrl = route('member.group.sendmessage', $grouplist->group_id);
+$authProfile = auth()->user()->userprofile;
+@endphp
 
-    {{-- Back link --}}
-    <a href="{{ url('/member/mygrouplist') }}"
-        class="inline-flex items-center text-sm text-gray-500 hover:text-indigo-600 no-underline mb-4">
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to Mygrouplist
-    </a>
+{{-- ═══════════════════════════════════════════════════════════════
+     COVER PHOTO + GROUP HEADER
+════════════════════════════════════════════════════════════════ --}}
+<div class="relative -mx-4 sm:-mx-6 lg:-mx-8 mb-0">
 
-    {{-- Page heading --}}
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-gray-800">My Groups Details</h2>
-
-    </div>
-
-    {{-- ─────────────────────────────────────────────
-         GROUP CARD 1  —  Admin (send-message enabled)
-    ───────────────────────────────────────────── --}}
-
-
-    @php
-
-    $total_group_count=App\Models\GroupLink::where('group_id',$grouplist->group_id)->count();
-
-    @endphp
-
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4 overflow-hidden">
-
-        {{-- Card header --}}
-        <div class="flex items-center justify-between px-6 pt-5 pb-3">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                    @if($grouplist->group->cover_image)
-                    <img src="{{url('storage/'.$grouplist->group->cover_image)}}" alt="">
-                    @endif
-                </div>
-                <div>
-                    <p class="font-semibold text-gray-800 text-sm">{{$grouplist->group->name}}</p>
-
-                    <span class="text-xs text-indigo-500 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">{{$grouplist->group->groupCategory->name}}</span>
-                    <!-- <span class="text-xs text-indigo-500 font-medium bg-indigo-50 px-2 py-0.5 rounded-full">{{$grouplist->group->group_type}}</span> -->
-                </div><br />
-
-
-            </div>
-
-            {{-- Admin badge --}}
-            <span class="text-xs font-semibold bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full">
-
-                @if($grouplist->role=='group_admin')
-                Group Admin
-                @else
-                {{ucfirst($grouplist->role)}}
-                @endif
-            </span>
-        </div>
-        <div>
-            <p class="font-semibold text-gray-800 text-sm ml-8">{{$grouplist->group->description}}</p>
-
-
-
-        </div>
-
-        {{-- Member count --}}
-        <div class="px-6 pb-3 flex items-center space-x-1 text-xs text-gray-400">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
+    {{-- Cover photo --}}
+    <div class="relative h-48 sm:h-64 lg:h-72 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 overflow-hidden">
+        @if($coverImage)
+        <img src="{{ $coverImage }}" alt="Cover" class="w-full h-full object-cover">
+        @else
+        <div class="absolute inset-0 flex items-center justify-center opacity-20">
+            <svg class="w-32 h-32 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
             </svg>
-            <span>{{$total_group_count}} members</span>
         </div>
+        @endif
+        <a href="{{ url('/member/mygrouplist') }}"
+            class="absolute top-4 left-4 inline-flex items-center gap-1.5 bg-black bg-opacity-40 hover:bg-opacity-60 text-white text-xs font-medium px-3 py-1.5 rounded-full transition no-underline">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+        </a>
+    </div>
 
-        {{-- Admin action buttons --}}
+    {{-- Group identity bar --}}
+    <div class="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 pb-0">
+        <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12 pb-4">
 
-        <div class="px-6 pb-4 flex items-center space-x-2">
-
-            {{-- Remove Group button --}}
-            <button type="button"
-                data-group-id="{{ $grouplist->group_id }}"
-                data-group-name="{{ $grouplist->group->name }}"
-                onclick="confirmRemoveGroup(this)"
-                class="inline-flex items-center text-xs font-semibold text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition">
-                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a1 1 0 00-1-1h-4a1 1 0 00-1 1H5" />
+            {{-- Group avatar --}}
+            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 border-white shadow-md bg-indigo-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                @if($coverImage)
+                <img src="{{ $coverImage }}" alt="{{ $group->name }}" class="w-full h-full object-cover">
+                @else
+                <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
                 </svg>
-                Remove Group
-            </button>
-
-            {{-- Hidden remove form (POST + spoofed DELETE) --}}
-            <form id="remove-form-{{ $grouplist->group_id }}"
-                action="{{ route('member.group.remove', $grouplist->group_id) }}"
-                method="POST" class="hidden">
-                @csrf
-                @method('DELETE')
-            </form>
-
-            @if($grouplist->role == 'group_admin')
-            {{-- Send Message button — opens modal --}}
-            <button type="button"
-                data-group-id="{{ $grouplist->group_id }}"
-                data-group-name="{{ $grouplist->group->name }}"
-                data-send-url="{{ route('member.group.sendmessage', $grouplist->group_id) }}"
-                onclick="openSendModal(this)"
-                class="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                Send Message
-            </button>
-            @endif
-
-        </div>
-
-
-
-
-    </div>
-
-
-
-</div>
-
-{{-- Tab nav --}}
-<div class="flex gap-1 border-b border-gray-200 mb-6">
-    <button data-tab="members"
-        class="tab-btn px-4 py-2.5 text-sm text-gray-500 hover:text-gray-700 transition -mb-px">
-        <i class="fas fa-users mr-1.5"></i>Members
-        <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">{{ $memberCount }}</span>
-    </button>
-    <button data-tab="messages"
-        class="tab-btn px-4 py-2.5 text-sm text-gray-500 hover:text-gray-700 transition -mb-px">
-        <i class="fas fa-envelope mr-1.5"></i>Sent Messages
-        <span class="ml-1 px-1.5 py-0.5 rounded-full text-xs bg-gray-100 text-gray-600">{{ $messages->total() }}</span>
-    </button>
-</div>
-
-{{-- ── Members Tab ── --}}
-<div id="tab-members" class="tab-panel hidden">
-    @if($grouplinks->isEmpty())
-    <div class="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-400 text-sm">
-        No members yet.
-        <a href="{{ url('/admin/group/addMember/'.$group->id) }}" class="text-indigo-600 hover:underline ml-1">Add the first one.</a>
-    </div>
-    @else
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        @foreach($grouplinks as $gl)
-        @php
-        $user = $gl->user;
-        $profile = $user->userprofile;
-        $name = $user->FullName;
-        $avatar = $profile->AvatarPath;
-        $roleColors = [
-        'group_admin' => 'bg-indigo-100 text-indigo-700',
-        'member' => 'bg-green-100 text-green-700',
-        'guest' => 'bg-gray-100 text-gray-600',
-        ];
-        $roleLabels = [
-        'group_admin' => 'Group Admin',
-        'member' => 'Member',
-        'guest' => 'Guest',
-        ];
-        $roleColor = $roleColors[$gl->role] ?? 'bg-gray-100 text-gray-600';
-        $roleLabel = $roleLabels[$gl->role] ?? ucfirst($gl->role);
-        @endphp
-        <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex items-start gap-3">
-            <img src="{{ $avatar }}" alt="{{ $name }}"
-                class="w-11 h-11 rounded-full object-cover flex-shrink-0">
-            <div class="flex-1 min-w-0">
-                {{ $name }}
-                <p class="text-xs text-gray-400 truncate">{{ $user->email }}</p>
-                <span class="inline-block mt-1.5 px-2 py-0.5 rounded-full text-xs font-medium {{ $roleColor }}">
-                    {{ $roleLabel }}
-                </span>
-            </div>
-            <div class="flex gap-1 flex-shrink-0">
-
-            </div>
-        </div>
-        @endforeach
-    </div>
-    <div class="mt-4">{{ $grouplinks->links() }}</div>
-    @endif
-</div>
-
-{{-- ── Messages Tab ── --}}
-<div id="tab-messages" class="tab-panel hidden">
-    @if($messages->isEmpty())
-    <div class="bg-white border border-gray-200 rounded-xl p-12 text-center text-gray-400 text-sm">
-        No messages sent to this group yet.
-    </div>
-    @else
-    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <table class="w-full text-sm">
-            <thead>
-                <tr class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3 text-left">From</th>
-                    <th class="px-3 py-3 text-left">Mode</th>
-                    <th class="px-3 py-3 text-left">Subject</th>
-                    <th class="px-3 py-3 text-left">Message</th>
-                    <th class="px-3 py-3 text-left">Attachment</th>
-                    <th class="px-5 py-3 text-left">Sent On</th>
-                    <th class="px-5 py-3 text-left">Status</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @foreach($messages as $msg)
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="px-5 py-3 font-medium text-gray-800">
-
-                        {{ $msg->from }}
-
-                    </td>
-                    <td class="px-5 py-3">
-                        @php
-                        $modeColors = ['mail'=>'bg-blue-100 text-blue-700','sms'=>'bg-green-100 text-green-700','notification'=>'bg-purple-100 text-purple-700'];
-                        $mc = $modeColors[$msg->mode] ?? 'bg-gray-100 text-gray-600';
-                        @endphp
-                        <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $mc }}">{{ ucwords($msg->mode) }}</span>
-                    </td>
-
-                    <td class="px-5 py-3 font-medium text-gray-800">
-
-                        {{ $msg->subject }}
-
-                    </td>
-
-                    <td class="px-5 py-3 font-medium text-gray-800">
-                        <a href="{{ url('/admin/member/show/'.$msg->user->name) }}" class="hover:text-indigo-600">
-                            {{ $msg->message }}
-                        </a>
-                    </td>
-
-                    <td class="px-5 py-3 font-medium text-gray-800">
-
-
-                        @if ($msg->mode == 'mail')
-                        <div class="flex flex-col lg:flex-row text-sm items-baseline">
-
-                            @if ($msg->attachments == null)
-                            <div class="w-full lg:w-4/5 py-3 px-2">--</div>
-                            @else
-                            <div class="w-full lg:w-4/5 py-3 px-2">
-                                <a href="{{ $msg->AttachmentPath }}" class="btn btn-primary submit-btn cursor-pointer"
-                                    target="_blank">View</a>
-                            </div>
-                            @endif
-                        </div>
-                        @endif
-                    </td>
-
-                    <td class="px-5 py-3 text-gray-600 text-xs">
-                        {{ \Carbon\Carbon::parse($msg->executed_at)->format('d M Y, h:i A') }}
-                    </td>
-                    <td class="px-5 py-3">
-                        @php $sc = $msg->status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; @endphp
-                        <span class="px-2 py-0.5 rounded-full text-xs font-medium {{ $sc }}">{{ ucwords($msg->status) }}</span>
-                    </td>
-                    <!-- <td class="px-5 py-3 text-right">
-                                        <a href="{{ url('/admin/message/show/'.$msg->id) }}" target="_blank"
-                                           class="px-3 py-1 text-xs font-medium text-indigo-600 bg-indigo-50 border border-indigo-100 rounded hover:bg-indigo-100 transition">
-                                            View
-                                        </a>
-                                    </td> -->
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="px-5 py-3 border-t border-gray-100">{{ $messages->links() }}</div>
-    </div>
-    @endif
-</div>
-
-</div>{{-- /tabs --}}
-
-
-{{-- ═══════════════════════════════════════════════
-     SEND MESSAGE MODAL  (shared, one per page)
-════════════════════════════════════════════════ --}}
-<div id="send-msg-modal"
-    class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
-    role="dialog" aria-modal="true">
-
-    {{-- Backdrop --}}
-    <div class="absolute inset-0 bg-black bg-opacity-40" onclick="closeSendModal()"></div>
-
-    {{-- Panel --}}
-    <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto p-6 z-10">
-
-        {{-- Header --}}
-        <div class="flex items-center justify-between mb-5">
-            <h3 class="text-base font-semibold text-gray-800">Send Message</h3>
-            <button type="button" onclick="closeSendModal()"
-                class="text-gray-400 hover:text-gray-600 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-
-        {{-- Group name badge --}}
-        <p id="modal-group-name" class="text-xs text-indigo-600 font-medium bg-indigo-50 px-3 py-1.5 rounded-lg mb-4 truncate"></p>
-
-        {{-- Form --}}
-        <form id="send-msg-form" enctype="multipart/form-data">
-            @csrf
-
-            {{-- Mode: Email / Notification / SMS --}}
-            <div class="flex items-center gap-5 mb-4">
-                <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
-                    <input type="radio" name="mode" value="mail" checked
-                        onchange="onModeChange(this.value)"
-                        class="accent-indigo-600"> Email
-                </label>
-                <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
-                    <input type="radio" name="mode" value="notification"
-                        onchange="onModeChange(this.value)"
-                        class="accent-indigo-600"> Notification
-                </label>
-                <label class="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer">
-                    <input type="radio" name="mode" value="sms"
-                        onchange="onModeChange(this.value)"
-                        class="accent-indigo-600"> SMS
-                </label>
+                @endif
             </div>
 
-            {{-- Subject (Email only) --}}
-            <div id="field-subject" class="mb-3">
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                    Subject <span class="text-red-500">*</span>
-                </label>
-                <input type="text" name="subject" maxlength="30"
-                    placeholder="Enter Subject"
-                    class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
-            </div>
-
-            {{-- Message --}}
-            <div class="mb-3">
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                    Message <span class="text-red-500">*</span>
-                </label>
-                <textarea name="message" rows="4" id="field-message" maxlength="1000"
-                    placeholder="Enter Message"
-                    class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"></textarea>
-            </div>
-
-            {{-- Attachments (Email only) --}}
-            <div id="field-attachments" class="mb-3">
-                <label class="block text-xs font-medium text-gray-600 mb-1">Attachments</label>
-                <input type="file" name="attachments"
-                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.csv"
-                    class="w-full text-sm text-gray-500 border border-gray-300 rounded-lg px-3 py-2 file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-            </div>
-
-            {{-- Send Later --}}
-            <div class="mb-4">
-                <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                    <input type="checkbox" name="send_later" value="true" id="chk-send-later"
-                        onchange="toggleSendLater(this.checked)"
-                        class="accent-indigo-600 w-4 h-4">
-                    Send Later
-                </label>
-                <div id="field-execute-at" class="hidden mt-2">
-                    <input type="datetime-local" name="executed_at"
-                        class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+            {{-- Name + meta --}}
+            <div class="flex-1 min-w-0 pb-1">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 leading-tight truncate">{{ $group->name }}</h1>
+                <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                    @if($group->groupCategory)
+                    <span class="text-xs font-semibold bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full">
+                        {{ $group->groupCategory->name }}
+                    </span>
+                    @endif
+                    @if($group->group_type)
+                    <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-full">
+                        {{ ucfirst($group->group_type) }}
+                    </span>
+                    @endif
+                    <span class="text-xs text-gray-500 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
+                        </svg>
+                        {{ $totalMembers }} member{{ $totalMembers != 1 ? 's' : '' }}
+                    </span>
+                    <span class="text-xs font-semibold {{ $isAdmin ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700' }} px-2.5 py-0.5 rounded-full">
+                        {{ $isAdmin ? 'Group Admin' : ucfirst($grouplist->role) }}
+                    </span>
                 </div>
             </div>
 
-            {{-- Error area --}}
-            <div id="send-msg-error" class="hidden mb-3 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2"></div>
-
-            {{-- Actions --}}
-            <div class="flex justify-end gap-2">
-                <button type="button" onclick="closeSendModal()"
-                    class="text-sm text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg border border-gray-200 bg-white transition">
-                    Cancel
-                </button>
-                <button type="button" onclick="submitSendMessage()"
-                    id="btn-send-submit"
-                    class="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-lg transition">
+            {{-- Action buttons --}}
+            <div class="flex items-center gap-2 pb-3 flex-shrink-0">
+                {{-- Send Message — always visible, scrolls to inline form --}}
+                <button type="button" onclick="focusMessageForm()"
+                    class="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
-                    Send
+                    Post Message
                 </button>
+
+                {{-- Leave Group --}}
+                <button type="button"
+                    data-group-id="{{ $grouplist->group_id }}"
+                    data-group-name="{{ $group->name }}"
+                    onclick="confirmRemoveGroup(this)"
+                    class="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg transition shadow-sm">
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Leave Group
+                </button>
+
+                {{-- Hidden DELETE form --}}
+                <form id="remove-form-{{ $grouplist->group_id }}"
+                    action="{{ route('member.group.remove', $grouplist->group_id) }}"
+                    method="POST" class="hidden">
+                    @csrf
+                    @method('DELETE')
+                </form>
             </div>
-        </form>
+        </div>
 
-
-
+        {{-- Tab nav --}}
+        <div class="flex gap-0 -mb-px mt-1">
+            <button data-tab="discussion"
+                class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">
+                <svg class="w-4 h-4 inline mr-1.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                Discussion
+            </button>
+            <button data-tab="members"
+                class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">
+                <svg class="w-4 h-4 inline mr-1.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+                </svg>
+                Members
+                <span class="ml-1 text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">{{ $totalMembers }}</span>
+            </button>
+            <button data-tab="about"
+                class="tab-btn px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition">
+                <svg class="w-4 h-4 inline mr-1.5 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                About
+            </button>
+        </div>
     </div>
 </div>
 
-{{-- Scripts --}}
+{{-- ═══════════════════════════════════════════════════════════════
+     TAB PANELS
+════════════════════════════════════════════════════════════════ --}}
+<div class="mt-4">
+
+    {{-- ── DISCUSSION TAB ─────────────────────────────────────────── --}}
+    <div id="tab-discussion" class="tab-panel hidden">
+
+        {{-- ══════════════════════════════════════════════════════════
+             CREATE POST — Facebook-style composer
+        ═══════════════════════════════════════════════════════════ --}}
+        <div id="group-message-form-card"
+            class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-4">
+
+            {{-- Title bar --}}
+            <div class="px-5 py-4 border-b border-gray-100 text-center relative">
+                <h3 class="text-base font-bold text-gray-900">Create post</h3>
+            </div>
+
+            <form id="group-msg-form" enctype="multipart/form-data">
+                @csrf
+
+                {{-- ── Poster identity + mode pill ── --}}
+                <div class="flex items-center gap-3 px-5 pt-4 pb-2">
+                    {{-- Avatar --}}
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 flex-shrink-0 overflow-hidden flex items-center justify-center">
+                        @if($authProfile && $authProfile->AvatarPath)
+                        <img src="{{ $authProfile->AvatarPath }}" alt="" class="w-full h-full object-cover">
+                        @else
+                        <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                        </svg>
+                        @endif
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900 leading-tight">{{ auth()->user()->FullName }}</p>
+                        {{-- Mode pill selector --}}
+                        <!-- <div class="flex items-center gap-1.5 mt-1">
+                            <label class="gf-mode-pill cursor-pointer">
+                                <input type="radio" name="mode" value="mail" class="sr-only" checked>
+                                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border transition">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    Email
+                                </span>
+                            </label>
+                            <label class="gf-mode-pill cursor-pointer">
+                                <input type="radio" name="mode" value="notification" class="sr-only">
+                                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border transition">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                    Notification
+                                </span>
+                            </label>
+                            <label class="gf-mode-pill cursor-pointer">
+                                <input type="radio" name="mode" value="sms" class="sr-only">
+                                <span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border transition">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                    </svg>
+                                    SMS
+                                </span>
+                            </label>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- {{-- ── Subject (Email only) ── --}}
+                <div id="gf-subject" class="px-5 pt-1 pb-0">
+                    <input type="text" name="subject" id="gf-subject-input" maxlength="30"
+                        placeholder="Subject…"
+                        class="w-full text-sm font-medium text-gray-700 placeholder-gray-400 border-0 border-b border-gray-200 pb-2 focus:outline-none focus:border-indigo-400 transition bg-transparent">
+                </div> -->
+
+                {{-- ── Message textarea ── --}}
+                <div class="px-5 py-3">
+                    <textarea name="message" id="gf-message" rows="4" maxlength="1000"
+                        placeholder="Write a message to the group..."
+                        class="w-full text-base text-gray-800 placeholder-gray-400 border-0 focus:outline-none resize-none bg-transparent leading-relaxed"></textarea>
+                    <p class="text-right text-xs text-gray-300 mt-1">
+                        <span id="gf-char-count">0</span> / <span id="gf-char-max">1000</span>
+                    </p>
+                </div>
+
+                {{-- ── Media / file preview ── --}}
+                <div id="gf-preview-area" class="hidden mx-5 mb-3 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 relative">
+                    <button type="button" onclick="clearAttachment()"
+                        class="absolute top-2 right-2 w-7 h-7 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 text-white rounded-full flex items-center justify-center z-10">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    {{-- Image preview --}}
+                    <img id="gf-img-preview" src="" alt="" class="hidden w-full w-20 max-h-64 object-cover">
+                    {{-- Video preview --}}
+                    <video id="gf-vid-preview" controls class="hidden w-full max-h-64"></video>
+                    {{-- File preview --}}
+                    <div id="gf-file-preview" class="hidden flex items-center gap-3 px-4 py-3">
+                        <svg class="w-8 h-8 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span id="gf-file-name" class="text-sm font-medium text-gray-700 truncate"></span>
+                    </div>
+                </div>
+
+                {{-- ── Schedule datetime ── --}}
+                <!-- <div id="gf-execute-at" class="hidden mx-5 mb-3">
+                    <div class="flex items-center gap-2 bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-2.5">
+                        <svg class="w-4 h-4 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <input type="datetime-local" name="executed_at"
+                            class="flex-1 text-sm text-indigo-700 bg-transparent border-0 focus:outline-none">
+                        <button type="button" onclick="clearSchedule()"
+                            class="text-indigo-400 hover:text-indigo-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div> -->
+
+                {{-- Hidden inputs --}}
+                <input type="hidden" name="send_later" id="gf-send-later-val" value="false">
+                {{-- Single file input (accept changes via JS) --}}
+                <input type="file" name="attachments" id="gf-file-input"
+                    accept="image/*,video/*,.pdf,.doc,.docx,.csv"
+                    class="sr-only" onchange="handleFileSelect(this)">
+
+                {{-- Error box --}}
+                <div id="gf-error" class="hidden mx-5 mb-3 text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5"></div>
+
+                {{-- ── "Add to your post" toolbar ── --}}
+                <div id="gf-add-toolbar" class="mx-5 mb-4 border border-gray-200 rounded-2xl overflow-hidden">
+                    <p class="px-4 py-2 text-xs font-semibold text-gray-500 border-b border-gray-100">Add to your post</p>
+                    <div class="flex items-center divide-x divide-gray-100">
+                        {{-- Photo --}}
+                        <button type="button" onclick="triggerFile('image/*')" title="Photo / Image"
+                            class="flex-1 flex flex-col items-center gap-1 py-3 hover:bg-gray-50 transition text-xs text-gray-600 font-medium">
+                            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            Photo
+                        </button>
+                        {{-- Video --}}
+                        <button type="button" onclick="triggerFile('video/*')" title="Video"
+                            class="flex-1 flex flex-col items-center gap-1 py-3 hover:bg-gray-50 transition text-xs text-gray-600 font-medium">
+                            <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Video
+                        </button>
+                        {{-- File --}}
+                        <!-- <button type="button" onclick="triggerFile('.pdf,.doc,.docx,.csv')" title="Attachment"
+                            class="flex-1 flex flex-col items-center gap-1 py-3 hover:bg-gray-50 transition text-xs text-gray-600 font-medium">
+                            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                            </svg>
+                            File
+                        </button> -->
+                        {{-- Schedule --}}
+                        <!-- <button type="button" onclick="toggleSchedule()" title="Schedule"
+                            class="flex-1 flex flex-col items-center gap-1 py-3 hover:bg-gray-50 transition text-xs text-gray-600 font-medium" id="gf-schedule-btn">
+                            <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Schedule
+                        </button> -->
+                    </div>
+                </div>
+
+                {{-- ── Post button ── --}}
+                <div class="px-5 pb-5">
+                    <button type="button" id="gf-submit-btn" onclick="submitGroupMessage()"
+                        class="w-full py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 rounded-xl transition shadow-sm">
+                        Post
+                    </button>
+                </div>
+            </form>
+        </div>
+        {{-- /group-message-form-card --}}
+
+        {{-- Two-column: feed + sidebar --}}
+        <div class="flex flex-col lg:flex-row gap-4">
+
+            {{-- ── Message feed ── --}}
+            <div class="flex-1 min-w-0 space-y-4">
+       
+                {{-- ── Message Feed ── --}}
+                @if($messages->isEmpty())
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-10 text-center">
+                    <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    <p class="text-sm font-medium text-gray-500">No messages yet</p>
+                    <p class="text-xs text-gray-400 mt-1">Be the first to send a message to this group.</p>
+                </div>
+                @else
+                @foreach($messages as $msg)
+
+                <div class="bg-yellow rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    {{-- Post header --}}
+                    <div class="flex items-start gap-3 px-5 pt-4 pb-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                            @if($msg->user && $msg->user->userprofile)
+                            <img src="{{ $msg->user->userprofile->AvatarPath }}" alt="" class="w-full h-full object-cover">
+                            @else
+                            <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                            </svg>
+                            @endif
+                        </div>
+                
+                    </div>
+                    {{-- Post body --}}
+                    <div class="px-5 pb-5">
+                        @if($msg->subject)
+                        <h3 class="text-sm font-semibold text-gray-800 mb-1">{{ $msg->subject }}</h3>
+                        @endif
+
+                          <p class="text-xs text-red-400 mt-0.5">
+                                {{ $msg->messasge}}
+                               
+                            </p>
+                        <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ $msg->message }}</p>
+                        @if($msg->attachments && $msg->attachment_type === 'image' )
+                        <div class="mt-3">
+                        <img src="{{ asset('storage/' . $msg->attachments) }}" class="w-12 h-12">
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+
+                @if($messages->hasPages())
+                <div class="mt-2">{{ $messages->links() }}</div>
+                @endif
+                @endif
+            </div>{{-- /main feed --}}
+
+            {{-- ── Sidebar ── --}}
+            <!-- <div class="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
+
+                {{-- About card --}}
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3">About</h3>
+                    @if($group->description)
+                    <p class="text-sm text-gray-600 leading-relaxed mb-3">{{ $group->description }}</p>
+                    @else
+                    <p class="text-xs text-gray-400 italic mb-3">No description provided.</p>
+                    @endif
+                    <div class="space-y-2 text-xs text-gray-500">
+                        @if($group->groupCategory)
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                            <span>Category: <span class="font-medium text-gray-700">{{ $group->groupCategory->name }}</span></span>
+                        </div>
+                        @endif
+                        @if($group->group_type)
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            <span>Type: <span class="font-medium text-gray-700">{{ ucfirst($group->group_type) }}</span></span>
+                        </div>
+                        @endif
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197" />
+                            </svg>
+                            <span><span class="font-medium text-gray-700">{{ $totalMembers }}</span> member{{ $totalMembers != 1 ? 's' : '' }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            </svg>
+                            <span>Your role:
+                                <span class="font-medium {{ $isAdmin ? 'text-amber-700' : 'text-green-700' }}">
+                                    {{ $isAdmin ? 'Group Admin' : ucfirst($grouplist->role) }}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Members preview --}}
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-gray-800">Members</h3>
+                        <button onclick="activateTab('members')"
+                            class="text-xs text-indigo-600 hover:underline font-medium">See all</button>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($grouplinks->getCollection()->take(12) as $gl)
+                        @php $mu = $gl->user; $mp = $mu ? $mu->userprofile : null; @endphp
+                        @if($mu)
+                        <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-sm bg-indigo-50 flex items-center justify-center"
+                            title="{{ $mu->FullName }}">
+                            @if($mp && $mp->AvatarPath)
+                            <img src="{{ $mp->AvatarPath }}" alt="{{ $mu->FullName }}" class="w-full h-full object-cover">
+                            @else
+                            <span class="text-xs font-bold text-indigo-600">{{ strtoupper(substr($mu->FullName,0,1)) }}</span>
+                            @endif
+                        </div>
+                        @endif
+                        @endforeach
+                        @if($totalMembers > 12)
+                        <div class="w-9 h-9 rounded-full bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center text-xs font-semibold text-gray-500">
+                            +{{ $totalMembers - 12 }}
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+            </div>{{-- /sidebar --}} -->
+        </div>
+    </div>{{-- /tab-discussion --}}
+
+    {{-- ── MEMBERS TAB ─────────────────────────────────────────────── --}}
+    <div id="tab-members" class="tab-panel hidden">
+        @if($grouplinks->isEmpty())
+        <div class="bg-white border border-gray-200 rounded-2xl p-12 text-center text-gray-400 text-sm">
+            No members in this group yet.
+        </div>
+        @else
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach($grouplinks as $gl)
+            @php
+            $u = $gl->user;
+            $p = $u ? $u->userprofile : null;
+            $nm = $u ? $u->FullName : 'Unknown';
+            $av = $p ? $p->AvatarPath : null;
+            $rColors = ['group_admin'=>'bg-amber-100 text-amber-700','member'=>'bg-green-100 text-green-700','guest'=>'bg-gray-100 text-gray-600'];
+            $rLabels = ['group_admin'=>'Group Admin','member'=>'Member','guest'=>'Guest'];
+            @endphp
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
+                <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 flex-shrink-0 bg-indigo-50 flex items-center justify-center">
+                    @if($av)
+                    <img src="{{ $av }}" alt="{{ $nm }}" class="w-full h-full object-cover">
+                    @else
+                    <span class="text-sm font-bold text-indigo-500">{{ strtoupper(substr($nm,0,1)) }}</span>
+                    @endif
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-800 truncate">{{ $nm }}</p>
+                    @if($u)<p class="text-xs text-gray-400 truncate">{{ $u->email }}</p>@endif
+                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium {{ $rColors[$gl->role] ?? 'bg-gray-100 text-gray-600' }}">
+                        {{ $rLabels[$gl->role] ?? ucfirst($gl->role) }}
+                    </span>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @if($grouplinks->hasPages())
+        <div class="mt-4">{{ $grouplinks->links() }}</div>
+        @endif
+        @endif
+    </div>
+
+    {{-- ── ABOUT TAB ───────────────────────────────────────────────── --}}
+    <div id="tab-about" class="tab-panel hidden">
+        <div class="max-w-2xl">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Group Name</h3>
+                    <p class="text-sm font-medium text-gray-800">{{ $group->name }}</p>
+                </div>
+                @if($group->description)
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Description</h3>
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ $group->description }}</p>
+                </div>
+                @endif
+                @if($group->groupCategory)
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Category</h3>
+                    <span class="inline-block text-xs font-semibold bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">{{ $group->groupCategory->name }}</span>
+                </div>
+                @endif
+                @if($group->group_type)
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Group Type</h3>
+                    <p class="text-sm text-gray-700">{{ ucfirst($group->group_type) }}</p>
+                </div>
+                @endif
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Members</h3>
+                    <p class="text-sm text-gray-700">{{ $totalMembers }} member{{ $totalMembers != 1 ? 's' : '' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>{{-- /tab panels --}}
+
+
+<style>
+    /* Tab nav */
+    .tab-btn.active-tab {
+        border-color: #4f46e5;
+        color: #4f46e5;
+        font-weight: 600;
+    }
+
+    /* Mode pill: active = indigo filled, inactive = gray outline */
+    .gf-mode-pill input:checked~span {
+        background-color: #eef2ff;
+        border-color: #4f46e5;
+        color: #4338ca;
+    }
+
+    .gf-mode-pill input:not(:checked)~span {
+        background-color: #f9fafb;
+        border-color: #e5e7eb;
+        color: #6b7280;
+    }
+
+    .gf-mode-pill span {
+        display: inline-flex;
+    }
+</style>
+
 <script>
-    // ── Remove Group ──────────────────────────────────
+    // ── Tab switching ─────────────────────────────────────────────
+    function activateTab(name) {
+        document.querySelectorAll('.tab-panel').forEach(function(p) {
+            p.classList.add('hidden');
+        });
+        var panel = document.getElementById('tab-' + name);
+        if (panel) panel.classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(function(b) {
+            b.classList.remove('active-tab');
+            b.classList.add('border-transparent', 'text-gray-500');
+        });
+        var btn = document.querySelector('.tab-btn[data-tab="' + name + '"]');
+        if (btn) {
+            btn.classList.add('active-tab');
+            btn.classList.remove('border-transparent', 'text-gray-500');
+        }
+        location.hash = name;
+    }
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            activateTab(this.dataset.tab);
+        });
+    });
+    (function() {
+        var hash = location.hash.replace('#', '');
+        activateTab(['discussion', 'members', 'about'].includes(hash) ? hash : 'discussion');
+    })();
+
+    // ── Mode pill: toggle subject visibility + maxlength ─────────
+    function syncModePills() {
+        var mode = document.querySelector('#group-msg-form input[name="mode"]:checked').value;
+        var isEmail = mode === 'mail';
+        document.getElementById('gf-subject').style.display = isEmail ? '' : 'none';
+        document.getElementById('gf-message').maxLength = mode === 'sms' ? 300 : 1000;
+        document.getElementById('gf-char-max').textContent = mode === 'sms' ? '300' : '1000';
+        // Photo/Video/File toolbar only useful for email (attachment); dim otherwise
+        var toolbar = document.getElementById('gf-add-toolbar');
+        if (toolbar) toolbar.style.opacity = isEmail ? '1' : '0.4';
+    }
+    document.querySelectorAll('#group-msg-form input[name="mode"]').forEach(function(r) {
+        r.addEventListener('change', syncModePills);
+    });
+    syncModePills();
+
+    // ── Character counter ─────────────────────────────────────────
+    document.getElementById('gf-message').addEventListener('input', function() {
+        document.getElementById('gf-char-count').textContent = this.value.length;
+    });
+
+    // ── File trigger (Photo / Video / File buttons) ───────────────
+    function triggerFile(accept) {
+        var input = document.getElementById('gf-file-input');
+        input.accept = accept;
+        input.click();
+    }
+
+    function handleFileSelect(input) {
+        if (!input.files || input.files.length === 0) return;
+        var file = input.files[0];
+        var area = document.getElementById('gf-preview-area');
+        var img = document.getElementById('gf-img-preview');
+        var vid = document.getElementById('gf-vid-preview');
+        var fdiv = document.getElementById('gf-file-preview');
+        var fname = document.getElementById('gf-file-name');
+
+        // Hide all previews first
+        img.classList.add('hidden');
+        vid.classList.add('hidden');
+        fdiv.classList.add('hidden');
+
+        if (file.type.startsWith('image/')) {
+            img.src = URL.createObjectURL(file);
+            img.classList.remove('hidden');
+        } else if (file.type.startsWith('video/')) {
+            vid.src = URL.createObjectURL(file);
+            vid.classList.remove('hidden');
+        } else {
+            fname.textContent = file.name;
+            fdiv.classList.remove('hidden');
+        }
+        area.classList.remove('hidden');
+    }
+
+    function clearAttachment() {
+        document.getElementById('gf-file-input').value = '';
+        document.getElementById('gf-preview-area').classList.add('hidden');
+        document.getElementById('gf-img-preview').src = '';
+        document.getElementById('gf-vid-preview').src = '';
+    }
+
+    // ── Schedule toggle ───────────────────────────────────────────
+    function toggleSchedule() {
+        var box = document.getElementById('gf-execute-at');
+        var hidden = box.classList.toggle('hidden');
+        document.getElementById('gf-send-later-val').value = hidden ? 'false' : 'true';
+    }
+
+    function clearSchedule() {
+        document.getElementById('gf-execute-at').classList.add('hidden');
+        document.getElementById('gf-send-later-val').value = 'false';
+    }
+
+    // ── Focus form (header Send Message button) ───────────────────
+    function focusMessageForm() {
+        activateTab('discussion');
+        var card = document.getElementById('group-message-form-card');
+        if (card) {
+            card.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+            setTimeout(function() {
+                document.getElementById('gf-message').focus();
+            }, 400);
+        }
+    }
+
+    // ── Leave Group ───────────────────────────────────────────────
     function confirmRemoveGroup(btn) {
-        const id = btn.dataset.groupId;
-        const name = btn.dataset.groupName;
-        if (confirm('Are you sure you want to remove the group "' + name + '"?\nThis action cannot be undone.')) {
+        var id = btn.dataset.groupId,
+            name = btn.dataset.groupName;
+        if (confirm('Are you sure you want to leave "' + name + '"?\nThis action cannot be undone.')) {
             document.getElementById('remove-form-' + id).submit();
         }
     }
 
-    // ── Send Message Modal ────────────────────────────
-    let _sendUrl = '';
-
-    function openSendModal(btn) {
-        _sendUrl = btn.dataset.sendUrl;
-        document.getElementById('modal-group-name').textContent = btn.dataset.groupName;
-        // reset form
-        document.getElementById('send-msg-form').reset();
-        onModeChange('mail');
-        document.getElementById('field-execute-at').classList.add('hidden');
-        document.getElementById('send-msg-error').classList.add('hidden');
-        // show modal
-        document.getElementById('send-msg-modal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeSendModal() {
-        document.getElementById('send-msg-modal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
-    function onModeChange(mode) {
-        const showEmail = mode === 'mail';
-        document.getElementById('field-subject').style.display = showEmail ? '' : 'none';
-        document.getElementById('field-attachments').style.display = showEmail ? '' : 'none';
-        // update maxlength on message
-        document.getElementById('field-message').maxLength = mode === 'sms' ? 300 : 1000;
-    }
-
-    function toggleSendLater(checked) {
-        document.getElementById('field-execute-at').classList.toggle('hidden', !checked);
-    }
-
-    function submitSendMessage() {
-        const form = document.getElementById('send-msg-form');
-        const btn = document.getElementById('btn-send-submit');
-        const errBox = document.getElementById('send-msg-error');
+    // ── Submit ────────────────────────────────────────────────────
+    function submitGroupMessage() {
+        var form = document.getElementById('group-msg-form');
+        var btn = document.getElementById('gf-submit-btn');
+        var errBox = document.getElementById('gf-error');
         errBox.classList.add('hidden');
 
-        const fd = new FormData(form);
-        // normalize send_later
-        if (!form.querySelector('#chk-send-later').checked) {
-            fd.set('send_later', 'false');
-        }
-
+        var fd = new FormData(form);
+        // send_later is controlled by hidden input, not a checkbox
         btn.disabled = true;
-        btn.textContent = 'Sending…';
+        btn.textContent = 'Posting…';
 
-        fetch(_sendUrl, {
+        fetch('{{ $sendUrl }}', {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: fd
             })
-            .then(r => r.json())
-            .then(data => {
+            .then(function(r) {
+                return r.json();
+            })
+            .then(function(data) {
                 if (data.success) {
-                    closeSendModal();
-                    // show flash message without full reload
-                    showFlash(data.success, 'success');
+
+            
+                    form.reset();
+                    clearAttachment();
+                     showFlash(data.success, 'success');
+            
+                    document.getElementById('gf-char-count').textContent = '0';
+            
+                   
+
+                    setTimeout(function() {
+                        window.location.hash = 'discussion';
+                        window.location.reload();
+                    }, 1200);
                 } else if (data.errors) {
-                    const msgs = Object.values(data.errors).flat().join(' ');
+                     alert("fail");
+                    var msgs = Object.values(data.errors).flat().join(' ');
                     errBox.textContent = msgs;
                     errBox.classList.remove('hidden');
+                    errBox.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest'
+                    });
                 } else {
                     errBox.textContent = 'Something went wrong. Please try again.';
                     errBox.classList.remove('hidden');
                 }
             })
-            .catch(() => {
+            .catch(function() {
+                   alert("facil");
                 errBox.textContent = 'Network error. Please try again.';
                 errBox.classList.remove('hidden');
             })
-            .finally(() => {
+            .finally(function() {
                 btn.disabled = false;
-                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Send';
+                btn.textContent = 'Post';
             });
     }
 
-    // inline flash (no page reload needed)
+    // ── Inline flash ──────────────────────────────────────────────
     function showFlash(msg, type) {
-        const div = document.createElement('div');
+        var div = document.createElement('div');
         div.className = type === 'success' ?
             'mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm flex items-center gap-2' :
             'mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm';
         div.innerHTML = (type === 'success' ?
             '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
             '') + '<span>' + msg + '</span>';
-        const main = document.querySelector('main');
-        main.insertBefore(div, main.firstChild);
-        setTimeout(() => div.remove(), 5000);
+        var main = document.querySelector('main');
+        if (main) main.insertBefore(div, main.firstChild);
+        setTimeout(function() {
+            div.remove();
+        }, 5000);
     }
 </script>
 
 @endsection
-
-@push('scripts')
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script>
-    $(function() {
-
-        // ── Tab switching ──
-        function activateTab(name) {
-            $('.tab-panel').addClass('hidden');
-            $('#tab-' + name).removeClass('hidden');
-            $('.tab-btn')
-                .removeClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold')
-                .addClass('text-gray-500');
-            $('.tab-btn[data-tab="' + name + '"]')
-                .removeClass('text-gray-500')
-                .addClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold');
-            location.hash = name;
-        }
-
-        $('.tab-btn').on('click', function() {
-            activateTab($(this).data('tab'));
-        });
-
-        // Restore tab from URL hash or default to members
-        var hash = location.hash.replace('#', '');
-        activateTab(['info', 'members', 'messages'].includes(hash) ? hash : 'members');
-
-        // Send message panel toggle
-        $('#btn-send-msg').on('click', function() {
-            $('#send-msg-panel').removeClass('hidden');
-            $('html,body').animate({
-                scrollTop: $('#send-msg-panel').offset().top - 20
-            }, 300);
-        });
-        $('#btn-close-msg').on('click', function() {
-            $('#send-msg-panel').addClass('hidden');
-        });
-
-        // Delete group
-        $('#btn-delete-group').on('click', function() {
-            var url = $(this).data('url');
-            swal({
-                icon: 'warning',
-                title: 'Delete Group?',
-                text: 'This will permanently remove the group and all its members.',
-                buttons: {
-                    cancel: true,
-                    confirm: {
-                        text: 'Delete',
-                        className: 'swal-button--danger'
-                    }
-                },
-                dangerMode: true,
-            }).then(function(confirm) {
-                if (!confirm) return;
-                $.ajax({
-                    url: url,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function() {
-                        swal({
-                            icon: 'success',
-                            text: 'Group deleted.'
-                        }).then(function() {
-                            window.location.href = '/admin/groups';
-                        });
-                    }
-                });
-            });
-        });
-
-        // Remove member
-        $(document).on('click', '.delete-member', function() {
-            var url = $(this).data('url');
-            swal({
-                icon: 'warning',
-                text: 'Remove this member from the group?',
-                buttons: {
-                    cancel: true,
-                    confirm: true
-                },
-            }).then(function(confirm) {
-                if (!confirm) return;
-                $.ajax({
-                    url: url,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function() {
-                        swal({
-                            icon: 'success',
-                            text: 'Member removed.'
-                        }).then(function() {
-                            window.location.reload();
-                        });
-                    }
-                });
-            });
-        });
-
-    });
-</script>
-<style>
-    table th {
-        width: 0% !important;
-    }
-</style>
-@endpush

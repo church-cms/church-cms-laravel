@@ -6,11 +6,11 @@ use App\Models\Widget;
 
 // Public widget endpoint — no auth required
 Route::get('/widget/{uid}', function ($uid) {
-    $widget = Widget::where('slug', $uid)->first();
-    if (! $widget) {
-        return response()->json(['content' => ''], 404);
-    }
-    return response()->json(['content' => $widget->content]);
+	$widget = Widget::where('slug', $uid)->first();
+	if (! $widget) {
+		return response()->json(['content' => ''], 404);
+	}
+	return response()->json(['content' => $widget->content]);
 });
 @include('guestapi.php');
 
@@ -26,7 +26,7 @@ Route::get('/widget/{uid}', function ($uid) {
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
 
 //Testing Purpose start
@@ -34,11 +34,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/test', 'Api\TestController@test');
 Route::get('/users', 'Api\TestController@index');
 
-Route::get('/events','Api\TestController@events');
+Route::get('/events', 'Api\TestController@events');
 
-Route::get('/gallery','Api\TestController@gallery');
+Route::get('/gallery', 'Api\TestController@gallery');
 
-Route::get('/events/show/details/{id}','Api\EventsController@showdetails');
+Route::get('/events/show/details/{id}', 'Api\EventsController@showdetails');
 
 //end
 
@@ -65,149 +65,154 @@ Route::post('/reset/change/password', 'Api\UserController@resetChangePassword');
 
 //Route::post('/password/reset', 'Api\UserController@reset');
 
-Route::group(['namespace' =>'Api' , 'middleware'=>['auth:sanctum']],
-	function() {
+Route::group(
+	['namespace' => 'Api', 'middleware' => ['auth:sanctum']],
+	function () {
 		Route::post('/logout', 'LoginController@logout');
-	});
+	}
+);
 
-Route::group([
-	'prefix' => 'v1',
-	'namespace' =>'Api' ,
-	'middleware'=>['auth:sanctum']],
-	function() {
+Route::group(
+	[
+		'prefix' => 'v1',
+		'namespace' => 'Api',
+		'middleware' => ['auth:sanctum']
+	],
+	function () {
 
-	//Test Push Notification
+		//Test Push Notification
 
-	Route::post('/notification/create', 'TestController@notification');
+		Route::post('/notification/create', 'TestController@notification');
 
-	//members
-	Route::get('/member/show/{id}', 'UserController@show');
+		//members
+		Route::get('/member/show/{id}', 'UserController@show');
 
-	Route::post('/member/changePassword', 'UserController@changePassword');
+		Route::post('/member/changePassword', 'UserController@changePassword');
 
-	Route::post('/member/updatetoken', 'UserController@updatetoken');
+		Route::post('/member/updatetoken', 'UserController@updatetoken');
 
-	//Route::get('/member/resetPassword/{id}','UserController@resetPassword');
+		//Route::get('/member/resetPassword/{id}','UserController@resetPassword');
 
-	Route::get('/member/get/marriage_status','UserprofileController@marriage_status');
+		Route::get('/member/get/marriage_status', 'UserprofileController@marriage_status');
 
-	Route::get('/member/get/profession','UserprofileController@create');
+		Route::get('/member/get/profession', 'UserprofileController@create');
 
-	Route::get('/member/get/country','UserprofileController@country');
+		Route::get('/member/get/country', 'UserprofileController@country');
 
-	Route::get('/member/get/state/{id}','UserprofileController@state');
+		Route::get('/member/get/state/{id}', 'UserprofileController@state');
 
-	Route::get('/member/get/city/{id}','UserprofileController@city');
+		Route::get('/member/get/city/{id}', 'UserprofileController@city');
 
 
-	Route::post('/member/edit/{id}', 'UserprofileController@update');
+		Route::post('/member/edit/{id}', 'UserprofileController@update');
 
-	//events
+		//events
 
-	Route::get('/event/show/{id}', 'EventsController@show');
+		Route::get('/event/show/{id}', 'EventsController@show');
 
-	Route::get('/events/upcoming', 'EventsController@upcoming');//upcoming events
+		Route::get('/events/upcoming', 'EventsController@upcoming'); //upcoming events
 
-	Route::get('/events/past', 'EventsController@past');//past events
+		Route::get('/events/past', 'EventsController@past'); //past events
 
-	Route::get('/events/gallery/show/{event_id}', 'EventGalleryController@showimage');
+		Route::get('/events/gallery/show/{event_id}', 'EventGalleryController@showimage');
 
-	//attendance (QR-based check-in)
-	Route::get('/attendance/events',               'AttendanceController@myEvents');
-	Route::post('/attendance/session',             'AttendanceController@openSession');
-	Route::post('/attendance/scan',                'AttendanceController@scan');
-	Route::post('/attendance/session/{id}/lock',   'AttendanceController@lock');
-	Route::get('/attendance/session/{id}',         'AttendanceController@sessionReport');
+		//attendance (QR-based check-in)
+		Route::get('/attendance/events',               'AttendanceController@myEvents');
+		Route::post('/attendance/session',             'AttendanceController@openSession');
+		Route::post('/attendance/scan',                'AttendanceController@scan');
+		Route::post('/attendance/session/{id}/lock',   'AttendanceController@lock');
+		Route::get('/attendance/session/{id}',         'AttendanceController@sessionReport');
 
-	//gallery
+		//gallery
 
-	Route::get('/gallery/show/{church_id}', 'GalleryController@showdetails');
+		Route::get('/gallery/show/{church_id}', 'GalleryController@showdetails');
 
-	Route::get('gallery/view/photos/{gallery_id}', 'PhotosController@showdetails');
+		Route::get('gallery/view/photos/{gallery_id}', 'PhotosController@showdetails');
 
-	//sermons
+		//sermons
 
-	Route::post('sermon/like','VotesController@like');
+		Route::post('sermon/like', 'VotesController@like');
 
-	Route::post('sermon/unlike','VotesController@unlike');
+		Route::post('sermon/unlike', 'VotesController@unlike');
 
-	Route::post('sermon/favorite','FavoritesController@favorites');
+		Route::post('sermon/favorite', 'FavoritesController@favorites');
 
-	Route::get('sermon/view/{church_id}','SermonsController@index');
+		Route::get('sermon/view/{church_id}', 'SermonsController@index');
 
-	Route::get('sermon/show/{sermons_id}','SermonLinkController@showdetails');
+		Route::get('sermon/show/{sermons_id}', 'SermonLinkController@showdetails');
 
-	//video
+		//video
 
-	Route::get('/mediaFiles','MediaFilesController@showvideo');
+		Route::get('/mediaFiles', 'MediaFilesController@showvideo');
 
-	//bulletins
+		//bulletins
 
-	Route::get('/bulletin/show', 'BulletinsController@show');
+		Route::get('/bulletin/show', 'BulletinsController@show');
 
-	//fund
+		//fund
 
-	Route::get('/myFunds', 'FundController@myFunds');
+		Route::get('/myFunds', 'FundController@myFunds');
 
-	Route::get('/fund/list', 'FundController@list');
+		Route::get('/fund/list', 'FundController@list');
 
-	Route::post('/add/fund', 'FundController@store');
+		Route::post('/add/fund', 'FundController@store');
 
-	Route::get('/paymentgateway', 'PayaccountContorller@getlist');
+		Route::get('/paymentgateway', 'PayaccountContorller@getlist');
 
-	Route::get('/payaccount/{gateway_id}', 'PayaccountContorller@showdetails');
+		Route::get('/payaccount/{gateway_id}', 'PayaccountContorller@showdetails');
 
-	//quotes
+		//quotes
 
-	Route::get('/quotes/show','QuotesController@index');
+		Route::get('/quotes/show', 'QuotesController@index');
 
-	//prayer_requests
+		//prayer_requests
 
-	Route::get('/prayer_requests', 'PrayerRequestsController@index');
+		Route::get('/prayer_requests', 'PrayerRequestsController@index');
 
-	Route::get('/prayer_requests/user', 'PrayerRequestsController@show');
- 
-	Route::get('/prayercategory/list', 'PrayerRequestsController@prayerCategory');
+		Route::get('/prayer_requests/user', 'PrayerRequestsController@show');
 
-	Route::post('/prayer_requests/create', 'PrayerRequestsController@store');
+		Route::get('/prayercategory/list', 'PrayerRequestsController@prayerCategory');
 
-	//prayer_participants
+		Route::post('/prayer_requests/create', 'PrayerRequestsController@store');
 
-	Route::post('/prayer_participants/{id}', 'PrayerParticipantsController@store');
+		//prayer_participants
 
-	//helps
+		Route::post('/prayer_participants/{id}', 'PrayerParticipantsController@store');
 
-	Route::get('/helps', 'HelpsController@index');
+		//helps
 
-	Route::get('/helps/user', 'HelpsController@show'); //my helps
+		Route::get('/helps', 'HelpsController@index');
 
-	Route::post('/helps/create', 'HelpsController@store');
+		Route::get('/helps/user', 'HelpsController@show'); //my helps
 
-	Route::post('/helps/close/{id}', 'HelpsController@update');
+		Route::post('/helps/create', 'HelpsController@store');
 
-	//groups
+		Route::post('/helps/close/{id}', 'HelpsController@update');
 
-	Route::get('/groups/list' , 'GroupsController@index');
+		//groups
 
-    //messages
+		Route::get('/groups/list', 'GroupsController@index');
 
-    Route::get('/messages','SendMessageController@index');
+		//messages
 
-    Route::get('/notifications','SendMessageController@notificationList');
+		Route::get('/messages', 'SendMessageController@index');
 
-    Route::post('/message/read/{id}','SendMessageController@readMessage');
+		Route::get('/notifications', 'SendMessageController@notificationList');
 
-    Route::post('/church/contact','ContactController@userStore');
+		Route::post('/message/read/{id}', 'SendMessageController@readMessage');
 
-    //feedbacks
+		Route::post('/church/contact', 'ContactController@userStore');
 
-    Route::get('/feedbacks','FeedbackController@index');
+		//feedbacks
 
-    Route::get('/feedback/category/list','FeedbackController@list');
+		Route::get('/feedbacks', 'FeedbackController@index');
 
-    Route::post('/feedback/add','FeedbackController@store');
+		Route::get('/feedback/category/list', 'FeedbackController@list');
 
-    //church detail
+		Route::post('/feedback/add', 'FeedbackController@store');
 
-    Route::get('/church/details/{church_id}','ChurchDetailsController@show');
-});
+		//church detail
+
+		Route::get('/church/details/{church_id}', 'ChurchDetailsController@show');
+	}
+);

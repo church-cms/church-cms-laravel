@@ -22,7 +22,7 @@ use App\Models\User;
 use Exception;
 use Hash;
 use Log;
-
+use OpenApi\Attributes as OA;   // ← add this line
 class UserController extends Controller
 {
     use AuthenticationProcess;
@@ -31,56 +31,67 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $users = User::with('userprofile')->where([['id',Auth::user()->id],['church_id',Auth::user()->church_id]])->get();
+        $users = User::with('userprofile')->where([['id', Auth::user()->id], ['church_id', Auth::user()->church_id]])->get();
 
         $users = UserDetailResource::collection($users);
 
         return $users;
     }
 
-     public function updatetoken(Request $request)
+    public function updatetoken(Request $request)
     {
         //
-        try
-        {
-            $user = User::where([['id',Auth::id()],['church_id',Auth::user()->church_id]])->first();
+        try {
+            $user = User::where([['id', Auth::id()], ['church_id', Auth::user()->church_id]])->first();
 
             $user->platform_token  = $request->platform_token;
 
             $user->save();
 
-            $res['message']='Token Updated Successfully';
+            $res['message'] = 'Token Updated Successfully';
 
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
+    #[OA\Post(
+        path: '/api/v1/member/changePassword',
 
+        security: [['sanctum' => []]],
+
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/ChangePasswordRequest'
+            )
+        ),
+
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ChangePasswordResponse'
+            )
+        ]
+    )]
     public function changePassword(ChangePasswordRequest $request)
     {
-        try
-        {
-            $user = User::where('id',Auth::id())->first();
+        try {
+            $user = User::where('id', Auth::id())->first();
 
             $hashedPassword = $user->password;
-            if (Hash::check($request->oldpassword, $hashedPassword))
-            {
+            if (Hash::check($request->oldpassword, $hashedPassword)) {
                 //Change the password
                 $user->password = Hash::make($request->newpassword);
                 $user->is_reset  = 0;
 
                 $user->save();
 
-                if($user->email != null)
-                {
+                if ($user->email != null) {
                     Mail::to($user->email)->queue(new ChangePassword($user));
                 }
 
-                $data=[];
+                $data = [];
 
                 $data['church_id']  =   Auth::user()->church_id;
                 $data['user_id']    =   $user->id;
@@ -90,25 +101,19 @@ class UserController extends Controller
                 event(new SinglePushEvent($data));
 
                 $res['message'] = "Changed Password Successfully";
-            }
-            else
-            {
+            } else {
                 $res['message'] = "Change Password Failed";
             }
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function resetPassword(ResetPasswordRequest $request)
     {
-        try
-        {
-            $user = User::where('mobile_no',$request->mobile_no)->first();
+        try {
+            $user = User::where('mobile_no', $request->mobile_no)->first();
 
             $user->tokens()->delete();
 
@@ -116,19 +121,16 @@ class UserController extends Controller
 
             $user->save();
 
-            $this->createAuthentication($user,$request);
+            $this->createAuthentication($user, $request);
 
 
 
             return response()->json([
                 'success'   =>  true,
                 'message'   =>  'Check sms to reset the password'
-            ],200);
-        }
-        catch(Exception $e)
-        {
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -142,24 +144,22 @@ class UserController extends Controller
     {
         //
         \DB::beginTransaction();
-        try
-        {
-            $user = User::where('mobile_no',request('mobile_no'))->first();
+        try {
+            $user = User::where('mobile_no', request('mobile_no'))->first();
             $authentication = Authentication::where([
-                ['user_id',$user->id],
-                ['status',0]
-            ])->orderBy('id','DESC')->get();
+                ['user_id', $user->id],
+                ['status', 0]
+            ])->orderBy('id', 'DESC')->get();
 
-            if($authentication[0]['token'] === $request->password)
-            {
-                $authentication_update = Authentication::where('id',$authentication[0]['id'])->first();
+            if ($authentication[0]['token'] === $request->password) {
+                $authentication_update = Authentication::where('id', $authentication[0]['id'])->first();
 
                 $authentication_update->status = 1;
 
                 $authentication_update->save();
 
 
-                $user = User::where('mobile_no',$request->mobile_no)->first();
+                $user = User::where('mobile_no', $request->mobile_no)->first();
 
                 $user->is_reset  = 1;
 
@@ -171,57 +171,46 @@ class UserController extends Controller
                 return response()->json([
                     'success'   =>  true,
                     'message'   =>  'Password Reset Successfully',
-                ],200);
-            }
-            else
-            {
+                ], 200);
+            } else {
                 return response()->json([
                     'success'   =>  false,
                     'message'   =>  'Password Does Not Match',
-                ],302);
+                ], 302);
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             \DB::rollBack();
             Log::info($e->getMessage());
-
         }
     }
 
     public function checkReset(Request $request)
     {
-        try
-        {
-            $user = User::where('mobile_no',$request->mobile_no)->first();
+        try {
+            $user = User::where('mobile_no', $request->mobile_no)->first();
 
             return response()->json([
                 'success'   =>  true,
                 'is_reset'  =>  $user->is_reset
-            ],200);
-        }
-        catch(Exception $e)
-        {
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function resetChangePassword(ResetChangePasswordRequest $request)
     {
-        try
-        {
-            $user = User::where('mobile_no',$request->mobile_no)->first();
+        try {
+            $user = User::where('mobile_no', $request->mobile_no)->first();
 
             $authentication = Authentication::where([
-                ['user_id',$user->id],
-                ['status',1]
-            ])->orderBy('id','DESC')->get();
+                ['user_id', $user->id],
+                ['status', 1]
+            ])->orderBy('id', 'DESC')->get();
 
-            $admin = User::where([['church_id',$user->church_id],['usergroup_id',3]])->first();
+            $admin = User::where([['church_id', $user->church_id], ['usergroup_id', 3]])->first();
 
-            if($authentication[0]['token'] === $request->oldpassword)
-            {
+            if ($authentication[0]['token'] === $request->oldpassword) {
                 $user->tokens()->delete();
 
                 //Change the password
@@ -231,8 +220,7 @@ class UserController extends Controller
 
                 $user->save();
 
-                if($user->email != null)
-                {
+                if ($user->email != null) {
                     Mail::to($user->email)->queue(new ChangePassword($user));
                 }
 
@@ -241,20 +229,15 @@ class UserController extends Controller
                 $data->message  = 'Changed Password Successfully';
                 $data->attachments  = '';
 
-                $this->sendMessage($data , $user->church_id , $admin->email , $user , $admin);
+                $this->sendMessage($data, $user->church_id, $admin->email, $user, $admin);
 
                 $res['message'] = "Changed Password Successfully";
-            }
-            else
-            {
+            } else {
                 $res['message'] = "Change Password Failed";
             }
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

@@ -17,6 +17,7 @@ use App\Models\City;
 use App\Models\User;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;   // ← add this line
 
 class UserprofileController extends Controller
 {
@@ -25,10 +26,19 @@ class UserprofileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/member/get/country',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/CountryResponse'
+            )
+        ]
+    )]
     public function country()
     {
         //
-        $country = Country::where('status','1')->get();
+        $country = Country::where('status', '1')->get();
         $country = CountryResource::collection($country);
 
         return $country;
@@ -39,10 +49,29 @@ class UserprofileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/member/get/state/{id}',
+
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/StateResponse'
+            )
+        ]
+    )]
     public function state($id)
     {
         //
-        $state = State::where('country_id',$id)->get();
+        $state = State::where('country_id', $id)->get();
         $state = StateResource::collection($state);
 
         return $state;
@@ -56,7 +85,7 @@ class UserprofileController extends Controller
     public function city($id)
     {
         //
-        $city = City::where('state_id',$id)->get();
+        $city = City::where('state_id', $id)->get();
         $city = CityResource::collection($city);
 
         return $city;
@@ -71,21 +100,19 @@ class UserprofileController extends Controller
     {
         //
         $profession = [];
-        $profession['data'] = ['business','doctor','engineer','government_employee','home_maker','lawyer','pastor','police','professionals','self_employed','student','teacher','others'];
+        $profession['data'] = ['business', 'doctor', 'engineer', 'government_employee', 'home_maker', 'lawyer', 'pastor', 'police', 'professionals', 'self_employed', 'student', 'teacher', 'others'];
 
         return $profession;
     }
 
     public function marriage_status()
     {
-         $marriage_status = SiteHelper::getMarriageStatus();
+        $marriage_status = SiteHelper::getMarriageStatus();
 
         return response()->json([
-                        'status'            => 'success',
-                        'data'              => $marriage_status,
-                    ], 200);
-
-
+            'status'            => 'success',
+            'data'              => $marriage_status,
+        ], 200);
     }
 
     /**
@@ -98,11 +125,9 @@ class UserprofileController extends Controller
     public function update(EditUserDetailRequest $request, $id)
     {
         //
-        try
-        {
+        try {
 
-
-            $userprofile = Userprofile::where([['user_id',$id],['church_id',Auth::user()->church_id]])->first();
+            $userprofile = Userprofile::where([['user_id', $id], ['church_id', Auth::user()->church_id]])->first();
             // if($request->hasFile('avatar'))
             // {
             //   $file = $request->file('avatar');
@@ -110,7 +135,7 @@ class UserprofileController extends Controller
             //   $userprofile->avatar = $path;
 
             // }
-            
+
             if ($request->hasFile('avatar')) {
 
                 $file = $request->file('avatar');
@@ -118,9 +143,7 @@ class UserprofileController extends Controller
                 $path = $file->store('uploads/admin/member/avatar', 'public');
 
                 $userprofile->avatar = $path;
-            }
-            else
-            {
+            } else {
                 $userprofile->avatar = $userprofile->avatar;
             }
 
@@ -147,15 +170,11 @@ class UserprofileController extends Controller
 
             $userprofile->save();
 
-             return response()->json([
-                        'status'            => 'success',
-                        'message'           => 'User Details Updated Successfully',
-                    ], 200);
-
-        }
-
-        catch(Exception $e)
-        {
+            return response()->json([
+                'status'            => 'success',
+                'message'           => 'User Details Updated Successfully',
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
         }
     }
