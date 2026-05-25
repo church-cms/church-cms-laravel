@@ -103,13 +103,21 @@ class UserprofileController extends Controller
 
 
             $userprofile = Userprofile::where([['user_id',$id],['church_id',Auth::user()->church_id]])->first();
+            // if($request->hasFile('avatar'))
+            // {
+            //   $file = $request->file('avatar');
+            //   $path = \Storage::putFile('uploads/admin/member/avatar',$file);
+            //   $userprofile->avatar = $path;
 
-            if($request->hasFile('avatar'))
-            {
-              $file = $request->file('avatar');
-              $path = \Storage::putFile('uploads/admin/member/avatar',$file);
-              $userprofile->avatar = $path;
+            // }
+            
+            if ($request->hasFile('avatar')) {
 
+                $file = $request->file('avatar');
+
+                $path = $file->store('uploads/admin/member/avatar', 'public');
+
+                $userprofile->avatar = $path;
             }
             else
             {
