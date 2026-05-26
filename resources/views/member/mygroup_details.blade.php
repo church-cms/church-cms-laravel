@@ -122,7 +122,7 @@ $authProfile = auth()->user()->userprofile;
                 @endif
 
                 {{-- Hidden DELETE form --}}
-                @if(is_null(Auth::id()))
+                @if(!request('user_id'))
                 <form id="remove-form-{{ $grouplist->group_id }}"
                     action="{{ route('member.group.remove', $grouplist->group_id) }}"
                     method="POST" class="hidden">
