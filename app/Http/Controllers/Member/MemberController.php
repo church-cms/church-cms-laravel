@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\SendMail;
 use App\Models\GroupPost;
+use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
@@ -33,15 +34,26 @@ class MemberController extends Controller
 
     public function groupDetails($group_id)
     {
-        $user = auth()->user();
 
-        $group_link = GroupLink::with(['group.groupCategory'])
-            ->where([['user_id', $user->id], ['group_id', $group_id]])
-            ->first();
+        if (request('user_id')) {
+            $user = User::where('id', request('user_id'))->first();
+            $group_link = GroupLink::with(['group.groupCategory'])
+                ->where([['group_id', $group_id]])
+                ->first();
+        } else {
+            $user = auth()->user();
+            $group_link = GroupLink::with(['group.groupCategory'])
+                ->where([['user_id', $user->id], ['group_id', $group_id]])
+                ->first();
+        }
+
+        // dd($user);
+
+
 
         if ($group_link->role == 'group_admin') {
 
-           $messages =GroupPost::where([['group_id', $group_id], ['church_id', $group_link->church_id]])->paginate(15);
+            $messages = GroupPost::where([['group_id', $group_id], ['church_id', $group_link->church_id]])->orderBy('id', 'DESC')->paginate(15);
 
             //$messages = SendMail::where([['entity_id', $group_id], ['entity_name', 'App\Models\Group'], ['church_id', $group_link->church_id]])
             //     ->orderBy('executed_at', 'desc')
@@ -50,8 +62,7 @@ class MemberController extends Controller
             // $messages = SendMail::where([['entity_id', $group_id], ['entity_name', 'App\Models\Group'], ['church_id', $group_link->church_id], ['user_id', $user->id]])
             //     ->orderBy('executed_at', 'desc')
             //     ->paginate(15);
-          $messages =GroupPost::where([['group_id', $group_id], ['church_id', $group_link->church_id]])->paginate(15);
-
+            $messages = GroupPost::where([['group_id', $group_id], ['church_id', $group_link->church_id]])->orderBy('id', 'DESC')->paginate(15);
         }
         $grouplinks = GroupLink::with(['user.userprofile'])
             ->where([['group_id', $group_id], ['church_id', $group_link->church_id]])
@@ -138,13 +149,13 @@ class MemberController extends Controller
     {
 
 
-            //dd($request);
+        //dd($request);
 
         // Validate
         $request->validate([
             'message'     => 'required|string|max:1000',
             //'title'       => 'nullable|string|max:100',
-            'attachments' => 'nullable|file|max:20480', // 20 MB
+            'attachments' =>  'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:20480',
         ]);
 
         try {
@@ -164,6 +175,7 @@ class MemberController extends Controller
             // ── Handle file attachment ────────────────────────────
             $attachmentPath = null;
             $attachmentType = null;
+            $attachmentType = 'image';
 
             if ($request->hasFile('attachments') && $request->file('attachments')->isValid()) {
                 $file   = $request->file('attachments');
@@ -198,8 +210,9 @@ class MemberController extends Controller
             return response()->json([
                 'success' => 'Post created successfully.',
             ]);
-
         } catch (\Exception $e) {
+
+            dd($e->getMessage());
             \Log::error('sendGroupMessage error: ' . $e->getMessage());
             return response()->json([
                 'errors' => ['server' => ['Something went wrong. Please try again.']],

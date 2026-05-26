@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class GroupPost extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $table = 'group_posts';
     protected $fillable = [
         'church_id', 'user_id', 'group_id', 'title', 'message', 'status', 'attachments', 'attachment_type',

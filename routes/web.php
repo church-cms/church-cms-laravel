@@ -72,6 +72,7 @@ Route::group(['prefix' => 'nova-api', 'middleware' => ['auth', 'nova']], functio
 Route::get('/payment/subscription', 'Admin\PaymentController@Subscription');
 
 
+Route::get('/mygroup/{group_id}', 'Member\MemberController@groupDetails')->name('mygroupdetails');
 //member
 Route::group(['prefix' => 'member', 'middleware' => ['auth', 'churchmember'], 'namespace' => 'Member'], function () {
 

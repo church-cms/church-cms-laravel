@@ -82,6 +82,25 @@ class UserprofileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+      #[OA\Get(
+        path: '/api/v1/member/get/city/{id}',
+
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/CityResponse'
+            )
+        ]
+    )]
     public function city($id)
     {
         //

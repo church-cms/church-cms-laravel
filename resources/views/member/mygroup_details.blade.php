@@ -9,13 +9,21 @@ $group = $grouplist->group;
 $totalMembers = App\Models\GroupLink::where('group_id', $grouplist->group_id)->count();
 $isAdmin = $grouplist->role === 'group_admin';
 $coverImage = $group->cover_image ? url('storage/'.$group->cover_image) : null;
+
+if(request('user_id')){
+$sendUrl =='';
+}else{
 $sendUrl = route('member.group.sendmessage', $grouplist->group_id);
+}
+
+
 $authProfile = auth()->user()->userprofile;
 @endphp
 
 {{-- ═══════════════════════════════════════════════════════════════
      COVER PHOTO + GROUP HEADER
 ════════════════════════════════════════════════════════════════ --}}
+
 <div class="relative -mx-4 sm:-mx-6 lg:-mx-8 mb-0">
 
     {{-- Cover photo --}}
@@ -39,11 +47,11 @@ $authProfile = auth()->user()->userprofile;
     </div>
 
     {{-- Group identity bar --}}
-    <div class="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 pb-0">
-        <div class="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12 pb-4">
+    <div class="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end gap-4 pb-3">
 
-            {{-- Group avatar --}}
-            <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-4 border-white shadow-md bg-indigo-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+            {{-- Group avatar — only this overlaps the cover --}}
+            <div class="flex-shrink-0 -mt-10 sm:-mt-14 w-20 h-20 sm:w-28 sm:h-28 rounded-xl border-4 border-white shadow-md bg-indigo-100 flex items-center justify-center overflow-hidden">
                 @if($coverImage)
                 <img src="{{ $coverImage }}" alt="{{ $group->name }}" class="w-full h-full object-cover">
                 @else
@@ -55,7 +63,7 @@ $authProfile = auth()->user()->userprofile;
             </div>
 
             {{-- Name + meta --}}
-            <div class="flex-1 min-w-0 pb-1">
+            <div class="flex-1 min-w-0 pt-3 pb-1">
                 <h1 class="text-xl sm:text-2xl font-bold text-gray-900 leading-tight truncate">{{ $group->name }}</h1>
                 <div class="flex flex-wrap items-center gap-2 mt-1.5">
                     @if($group->groupCategory)
@@ -75,15 +83,19 @@ $authProfile = auth()->user()->userprofile;
                         </svg>
                         {{ $totalMembers }} member{{ $totalMembers != 1 ? 's' : '' }}
                     </span>
+                    @if( !request('user_id'))
                     <span class="text-xs font-semibold {{ $isAdmin ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700' }} px-2.5 py-0.5 rounded-full">
                         {{ $isAdmin ? 'Group Admin' : ucfirst($grouplist->role) }}
                     </span>
+                    @endif
                 </div>
             </div>
 
             {{-- Action buttons --}}
-            <div class="flex items-center gap-2 pb-3 flex-shrink-0">
+            <div class="flex items-center gap-2 pb-1 flex-shrink-0">
                 {{-- Send Message — always visible, scrolls to inline form --}}
+
+                @if($isAdmin=='group_admin' && !request('user_id'))
                 <button type="button" onclick="focusMessageForm()"
                     class="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +103,10 @@ $authProfile = auth()->user()->userprofile;
                     </svg>
                     Post Message
                 </button>
+                @endif
 
+
+                @if(!request('user_id'))
                 {{-- Leave Group --}}
                 <button type="button"
                     data-group-id="{{ $grouplist->group_id }}"
@@ -104,14 +119,17 @@ $authProfile = auth()->user()->userprofile;
                     </svg>
                     Leave Group
                 </button>
+                @endif
 
                 {{-- Hidden DELETE form --}}
+                @if(is_null(Auth::id()))
                 <form id="remove-form-{{ $grouplist->group_id }}"
                     action="{{ route('member.group.remove', $grouplist->group_id) }}"
                     method="POST" class="hidden">
                     @csrf
                     @method('DELETE')
                 </form>
+                @endif
             </div>
         </div>
 
@@ -153,6 +171,8 @@ $authProfile = auth()->user()->userprofile;
 
     {{-- ── DISCUSSION TAB ─────────────────────────────────────────── --}}
     <div id="tab-discussion" class="tab-panel hidden">
+
+        @if($isAdmin=='group_admin' && !request('user_id'))
 
         {{-- ══════════════════════════════════════════════════════════
              CREATE POST — Facebook-style composer
@@ -244,7 +264,7 @@ $authProfile = auth()->user()->userprofile;
                         </svg>
                     </button>
                     {{-- Image preview --}}
-                    <img id="gf-img-preview" src="" alt="" class="hidden w-full w-20 max-h-64 object-cover">
+                    <img id="gf-img-preview" src="" alt="" class="hidden w-full w-10 h-10 object-cover">
                     {{-- Video preview --}}
                     <video id="gf-vid-preview" controls class="hidden w-full max-h-64"></video>
                     {{-- File preview --}}
@@ -299,14 +319,14 @@ $authProfile = auth()->user()->userprofile;
                             Photo
                         </button>
                         {{-- Video --}}
-                        <button type="button" onclick="triggerFile('video/*')" title="Video"
+                        <!-- <button type="button" onclick="triggerFile('video/*')" title="Video"
                             class="flex-1 flex flex-col items-center gap-1 py-3 hover:bg-gray-50 transition text-xs text-gray-600 font-medium">
                             <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 10l4.553-2.276A1 1 0 0121 8.723v6.554a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
                             Video
-                        </button>
+                        </button> -->
                         {{-- File --}}
                         <!-- <button type="button" onclick="triggerFile('.pdf,.doc,.docx,.csv')" title="Attachment"
                             class="flex-1 flex flex-col items-center gap-1 py-3 hover:bg-gray-50 transition text-xs text-gray-600 font-medium">
@@ -338,13 +358,14 @@ $authProfile = auth()->user()->userprofile;
             </form>
         </div>
         {{-- /group-message-form-card --}}
+        @endif
 
         {{-- Two-column: feed + sidebar --}}
         <div class="flex flex-col lg:flex-row gap-4">
 
             {{-- ── Message feed ── --}}
             <div class="flex-1 min-w-0 space-y-4">
-       
+
                 {{-- ── Message Feed ── --}}
                 @if($messages->isEmpty())
                 <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-10 text-center">
@@ -358,38 +379,71 @@ $authProfile = auth()->user()->userprofile;
                 @else
                 @foreach($messages as $msg)
 
-                <div class="bg-yellow rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                    {{-- Post header --}}
-                    <div class="flex items-start gap-3 px-5 pt-4 pb-3">
-                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                            @if($msg->user && $msg->user->userprofile)
-                            <img src="{{ $msg->user->userprofile->AvatarPath }}" alt="" class="w-full h-full object-cover">
-                            @else
-                            <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
-                            </svg>
-                            @endif
-                        </div>
-                
-                    </div>
-                    {{-- Post body --}}
-                    <div class="px-5 pb-5">
-                        @if($msg->subject)
-                        <h3 class="text-sm font-semibold text-gray-800 mb-1">{{ $msg->subject }}</h3>
-                        @endif
+                {{-- ── Facebook-style Post Card ── --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
 
-                          <p class="text-xs text-red-400 mt-0.5">
-                                {{ $msg->messasge}}
-                               
-                            </p>
-                        <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ $msg->message }}</p>
-                        @if($msg->attachments && $msg->attachment_type === 'image' )
-                        <div class="mt-3">
-                        <img src="{{ asset('storage/' . $msg->attachments) }}" class="w-12 h-12">
+                    {{-- Header: Avatar + Name + Time + Menu --}}
+                    <div class="flex items-center justify-between px-4 pt-4 pb-2">
+                        <div class="flex items-center gap-3">
+                            {{-- Avatar --}}
+                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex-shrink-0 overflow-hidden flex items-center justify-center ring-2 ring-indigo-100">
+                                @if($msg->user && $msg->user->userprofile && $msg->user->userprofile->AvatarPath)
+                                <img src="{{ $msg->user->userprofile->AvatarPath }}" alt="" class="w-full h-full object-cover">
+                                @else
+                                <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                                </svg>
+                                @endif
+                            </div>
+                            {{-- Name + time --}}
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 leading-tight">
+                                    {{ $msg->user->FullName ?? 'Unknown' }}
+                                </p>
+                                <p class="text-xs text-gray-400 mt-0.5 flex items-center gap-1">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    {{ $msg->created_at->diffForHumans() }}
+                                </p>
+                            </div>
                         </div>
-                        @endif
+                        {{-- Three-dot menu (UI only) --}}
+                        <button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="5" cy="12" r="2" />
+                                <circle cx="12" cy="12" r="2" />
+                                <circle cx="19" cy="12" r="2" />
+                            </svg>
+                        </button>
                     </div>
-                </div>
+
+                    {{-- Post text --}}
+                    <div class="px-4 pb-3">
+                        @if($msg->title)
+                        <p class="text-sm font-semibold text-gray-800 mb-1">{{ $msg->title }}</p>
+                        @endif
+                        <p class="text-sm text-gray-800 leading-relaxed whitespace-pre-line">{{ $msg->message }}</p>
+                    </div>
+
+                    {{-- Full-width image --}}
+                    @if($msg->attachments && $msg->attachment_type === 'image')
+                    <div class="w-full bg-gray-100">
+                        <img src="{{ asset('storage/' . $msg->attachments) }}"
+                            alt="Post image"
+                            class="w-full max-h-[480px] object-cover cursor-pointer hover:opacity-95 transition">
+                    </div>
+                    @elseif($msg->attachments && $msg->attachment_type === 'video')
+                    <div class="w-full bg-black">
+                        <video src="{{ asset('storage/' . $msg->attachments) }}"
+                            controls class="w-full max-h-[480px]"></video>
+                    </div>
+                    @endif
+
+                    {{-- bottom padding --}}
+                    <div class="pb-2"></div>
+
+                </div>{{-- /post card --}}
                 @endforeach
 
                 @if($messages->hasPages())
@@ -484,39 +538,66 @@ $authProfile = auth()->user()->userprofile;
 
     {{-- ── MEMBERS TAB ─────────────────────────────────────────────── --}}
     <div id="tab-members" class="tab-panel hidden">
+
+        {{-- Header row --}}
+        <div class="flex items-center justify-between mb-4">
+            <p class="text-sm font-semibold text-gray-700">
+                {{ $totalMembers }} Member{{ $totalMembers != 1 ? 's' : '' }}
+            </p>
+        </div>
+
         @if($grouplinks->isEmpty())
-        <div class="bg-white border border-gray-200 rounded-2xl p-12 text-center text-gray-400 text-sm">
-            No members in this group yet.
+        <div class="bg-white border border-gray-200 rounded-2xl p-12 text-center">
+            <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-sm font-medium text-gray-500">No members yet.</p>
         </div>
         @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach($grouplinks as $gl)
             @php
             $u = $gl->user;
             $p = $u ? $u->userprofile : null;
             $nm = $u ? $u->FullName : 'Unknown';
             $av = $p ? $p->AvatarPath : null;
-            $rColors = ['group_admin'=>'bg-amber-100 text-amber-700','member'=>'bg-green-100 text-green-700','guest'=>'bg-gray-100 text-gray-600'];
-            $rLabels = ['group_admin'=>'Group Admin','member'=>'Member','guest'=>'Guest'];
+            $isGroupAdmin = $gl->role === 'group_admin';
             @endphp
-            <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex items-center gap-3 hover:shadow-md transition">
-                <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 flex-shrink-0 bg-indigo-50 flex items-center justify-center">
-                    @if($av)
-                    <img src="{{ $av }}" alt="{{ $nm }}" class="w-full h-full object-cover">
-                    @else
-                    <span class="text-sm font-bold text-indigo-500">{{ strtoupper(substr($nm,0,1)) }}</span>
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition group">
+                {{-- Avatar block --}}
+                <div class="relative bg-gradient-to-br from-indigo-50 to-purple-50 h-28 flex items-center justify-center">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-md bg-indigo-100 flex items-center justify-center">
+                        @if($av)
+                        <img src="{{ $av }}" alt="{{ $nm }}" class="w-full h-full object-cover">
+                        @else
+                        <span class="text-2xl font-bold text-indigo-500">{{ strtoupper(substr($nm,0,1)) }}</span>
+                        @endif
+                    </div>
+                    {{-- Admin crown badge --}}
+                    @if($isGroupAdmin)
+                    <span class="absolute top-2 right-2 bg-amber-400 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                        Admin
+                    </span>
                     @endif
                 </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-semibold text-gray-800 truncate">{{ $nm }}</p>
-                    @if($u)<p class="text-xs text-gray-400 truncate">{{ $u->email }}</p>@endif
-                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-xs font-medium {{ $rColors[$gl->role] ?? 'bg-gray-100 text-gray-600' }}">
-                        {{ $rLabels[$gl->role] ?? ucfirst($gl->role) }}
+                {{-- Info block --}}
+                <div class="px-3 py-3 text-center">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $nm }}</p>
+                    @if($u)
+                    <p class="text-xs text-gray-400 truncate mt-0.5">{{ $u->email }}</p>
+                    @endif
+                    <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium
+                        {{ $isGroupAdmin ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700' }}">
+                        {{ $isGroupAdmin ? 'Group Admin' : ucfirst($gl->role) }}
                     </span>
                 </div>
             </div>
             @endforeach
         </div>
+
         @if($grouplinks->hasPages())
         <div class="mt-4">{{ $grouplinks->links() }}</div>
         @endif
@@ -525,40 +606,104 @@ $authProfile = auth()->user()->userprofile;
 
     {{-- ── ABOUT TAB ───────────────────────────────────────────────── --}}
     <div id="tab-about" class="tab-panel hidden">
-        <div class="max-w-2xl">
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
-                <div>
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Group Name</h3>
-                    <p class="text-sm font-medium text-gray-800">{{ $group->name }}</p>
+        <div class="max-w-2xl space-y-4">
+
+            {{-- Stats row --}}
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 text-center">
+                    <p class="text-2xl font-bold text-indigo-600">{{ $totalMembers }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Members</p>
                 </div>
-                @if($group->description)
-                <div>
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Description</h3>
-                    <p class="text-sm text-gray-700 leading-relaxed">{{ $group->description }}</p>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 text-center">
+                    <p class="text-2xl font-bold text-indigo-600">{{ $messages->total() }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Posts</p>
                 </div>
-                @endif
-                @if($group->groupCategory)
-                <div>
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Category</h3>
-                    <span class="inline-block text-xs font-semibold bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">{{ $group->groupCategory->name }}</span>
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 text-center">
+                    <p class="text-2xl font-bold text-indigo-600">{{ $isAdmin ? '★' : '✓' }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">{{ $isAdmin ? 'Admin' : 'Member' }}</p>
                 </div>
-                @endif
-                @if($group->group_type)
-                <div>
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Group Type</h3>
-                    <p class="text-sm text-gray-700">{{ ucfirst($group->group_type) }}</p>
+            </div>
+
+            {{-- Main info card --}}
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm divide-y divide-gray-100">
+
+                {{-- Description --}}
+                <div class="p-5">
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">About</h3>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        {{ $group->description ?: 'No description provided for this group.' }}
+                    </p>
                 </div>
-                @endif
-                <div>
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Members</h3>
-                    <p class="text-sm text-gray-700">{{ $totalMembers }} member{{ $totalMembers != 1 ? 's' : '' }}</p>
+
+                {{-- Info rows --}}
+                <div class="p-5 space-y-4">
+
+                    {{-- Group name --}}
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400">Group Name</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ $group->name }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Category --}}
+                    @if($group->groupCategory)
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400">Category</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ $group->groupCategory->name }}</p>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Group type --}}
+                    @if($group->group_type)
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400">Group Type</p>
+                            <p class="text-sm font-semibold text-gray-800">{{ ucfirst($group->group_type) }}</p>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Your role --}}
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400">Your Role</p>
+                            <span class="inline-block mt-0.5 px-2.5 py-0.5 rounded-full text-xs font-semibold
+                                {{ $isAdmin ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700' }}">
+                                {{ $isAdmin ? 'Group Admin' : ucfirst($grouplist->role) }}
+                            </span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 
 </div>{{-- /tab panels --}}
-
+@push('styles')
 
 <style>
     /* Tab nav */
@@ -585,51 +730,47 @@ $authProfile = auth()->user()->userprofile;
         display: inline-flex;
     }
 </style>
+@endpush
+
+@push('scripts')
 
 <script>
     // ── Tab switching ─────────────────────────────────────────────
     function activateTab(name) {
+        // Hide all panels using style.display (avoids Tailwind specificity issues)
         document.querySelectorAll('.tab-panel').forEach(function(p) {
-            p.classList.add('hidden');
+            p.style.display = 'none';
         });
+
+        // Show target panel
         var panel = document.getElementById('tab-' + name);
-        if (panel) panel.classList.remove('hidden');
+        if (panel) panel.style.display = 'block';
+
+        // Update tab button styles
         document.querySelectorAll('.tab-btn').forEach(function(b) {
             b.classList.remove('active-tab');
-            b.classList.add('border-transparent', 'text-gray-500');
         });
         var btn = document.querySelector('.tab-btn[data-tab="' + name + '"]');
-        if (btn) {
-            btn.classList.add('active-tab');
-            btn.classList.remove('border-transparent', 'text-gray-500');
-        }
-        location.hash = name;
+        if (btn) btn.classList.add('active-tab');
+
+        // Update URL hash without scrolling
+        history.replaceState(null, '', '#' + name);
     }
+
     document.querySelectorAll('.tab-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
             activateTab(this.dataset.tab);
         });
     });
+
+    // Activate initial tab on page load
     (function() {
         var hash = location.hash.replace('#', '');
-        activateTab(['discussion', 'members', 'about'].includes(hash) ? hash : 'discussion');
+        var valid = ['discussion', 'members', 'about'];
+        activateTab(valid.indexOf(hash) !== -1 ? hash : 'discussion');
     })();
 
-    // ── Mode pill: toggle subject visibility + maxlength ─────────
-    function syncModePills() {
-        var mode = document.querySelector('#group-msg-form input[name="mode"]:checked').value;
-        var isEmail = mode === 'mail';
-        document.getElementById('gf-subject').style.display = isEmail ? '' : 'none';
-        document.getElementById('gf-message').maxLength = mode === 'sms' ? 300 : 1000;
-        document.getElementById('gf-char-max').textContent = mode === 'sms' ? '300' : '1000';
-        // Photo/Video/File toolbar only useful for email (attachment); dim otherwise
-        var toolbar = document.getElementById('gf-add-toolbar');
-        if (toolbar) toolbar.style.opacity = isEmail ? '1' : '0.4';
-    }
-    document.querySelectorAll('#group-msg-form input[name="mode"]').forEach(function(r) {
-        r.addEventListener('change', syncModePills);
-    });
-    syncModePills();
+    // (mode pills removed — no syncModePills needed)
 
     // ── Character counter ─────────────────────────────────────────
     document.getElementById('gf-message').addEventListener('input', function() {
@@ -728,7 +869,8 @@ $authProfile = auth()->user()->userprofile;
         fetch('{{ $sendUrl }}', {
                 method: 'POST',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
                 },
                 body: fd
             })
@@ -737,22 +879,14 @@ $authProfile = auth()->user()->userprofile;
             })
             .then(function(data) {
                 if (data.success) {
-
-            
                     form.reset();
                     clearAttachment();
-                     showFlash(data.success, 'success');
-            
+                    alert('Post Successfully');
                     document.getElementById('gf-char-count').textContent = '0';
-            
-                   
 
-                    setTimeout(function() {
-                        window.location.hash = 'discussion';
-                        window.location.reload();
-                    }, 1200);
+                    // Redirect with ?posted=1 so success toast shows after reload
+                    window.location.href = window.location.pathname + '?posted=1#discussion';
                 } else if (data.errors) {
-                     alert("fail");
                     var msgs = Object.values(data.errors).flat().join(' ');
                     errBox.textContent = msgs;
                     errBox.classList.remove('hidden');
@@ -766,7 +900,7 @@ $authProfile = auth()->user()->userprofile;
                 }
             })
             .catch(function() {
-                   alert("facil");
+                alert("facil");
                 errBox.textContent = 'Network error. Please try again.';
                 errBox.classList.remove('hidden');
             })
@@ -776,21 +910,25 @@ $authProfile = auth()->user()->userprofile;
             });
     }
 
-    // ── Inline flash ──────────────────────────────────────────────
-    function showFlash(msg, type) {
-        var div = document.createElement('div');
-        div.className = type === 'success' ?
-            'mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm flex items-center gap-2' :
-            'mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm';
-        div.innerHTML = (type === 'success' ?
-            '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
-            '') + '<span>' + msg + '</span>';
-        var main = document.querySelector('main');
-        if (main) main.insertBefore(div, main.firstChild);
-        setTimeout(function() {
-            div.remove();
-        }, 5000);
+    // ── Success Swal: check ?posted=1 in URL ─────────────────────
+    if (new URLSearchParams(window.location.search).get('posted') === '1') {
+        history.replaceState(null, '', window.location.pathname + '#discussion');
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Posted!',
+            text: 'Your post has been created successfully.',
+            timer: 2500,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            toast: true,
+            position: 'top-end'
+        });
     }
 </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@endpush
 
 @endsection

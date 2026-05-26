@@ -57,8 +57,8 @@
 
                 @if($grouplist->role=='group_admin')
                 Group Admin
-               @else
-                 {{ucfirst($grouplist->role)}}
+                @else
+                {{ucfirst($grouplist->role)}}
                 @endif
             </span>
         </div>
@@ -97,7 +97,7 @@
                 @method('DELETE')
             </form>
 
-            @if($grouplist->role == 'group_admin')
+            <!-- @if($grouplist->role == 'group_admin')
             {{-- Send Message button — opens modal --}}
             <button type="button"
                 data-group-id="{{ $grouplist->group_id }}"
@@ -111,14 +111,15 @@
                 </svg>
                 Send Message
             </button>
-            @endif
-<a href="{{url('/member/mygroup/'.$grouplist->group_id)}}">
-            <button type="button"
-               
-                class="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition">
-                
-               View
-            </button></a>
+            @endif -->
+
+            <a href="{{url('/member/mygroup/'.$grouplist->group_id)}}">
+                <button type="button"
+
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition">
+
+                    View
+                </button></a>
 
         </div>
 
@@ -137,8 +138,8 @@
      SEND MESSAGE MODAL  (shared, one per page)
 ════════════════════════════════════════════════ --}}
 <div id="send-msg-modal"
-     class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
-     role="dialog" aria-modal="true">
+    class="fixed inset-0 z-50 hidden flex items-center justify-center p-4"
+    role="dialog" aria-modal="true">
 
     {{-- Backdrop --}}
     <div class="absolute inset-0 bg-black bg-opacity-40" onclick="closeSendModal()"></div>
@@ -152,7 +153,7 @@
             <button type="button" onclick="closeSendModal()"
                 class="text-gray-400 hover:text-gray-600 transition">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
@@ -238,7 +239,7 @@
                     id="btn-send-submit"
                     class="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded-lg transition">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
                     Send
                 </button>
@@ -252,7 +253,7 @@
 <script>
     // ── Remove Group ──────────────────────────────────
     function confirmRemoveGroup(btn) {
-        const id   = btn.dataset.groupId;
+        const id = btn.dataset.groupId;
         const name = btn.dataset.groupName;
         if (confirm('Are you sure you want to remove the group "' + name + '"?\nThis action cannot be undone.')) {
             document.getElementById('remove-form-' + id).submit();
@@ -282,7 +283,7 @@
 
     function onModeChange(mode) {
         const showEmail = mode === 'mail';
-        document.getElementById('field-subject').style.display     = showEmail ? '' : 'none';
+        document.getElementById('field-subject').style.display = showEmail ? '' : 'none';
         document.getElementById('field-attachments').style.display = showEmail ? '' : 'none';
         // update maxlength on message
         document.getElementById('field-message').maxLength = mode === 'sms' ? 300 : 1000;
@@ -293,8 +294,8 @@
     }
 
     function submitSendMessage() {
-        const form   = document.getElementById('send-msg-form');
-        const btn    = document.getElementById('btn-send-submit');
+        const form = document.getElementById('send-msg-form');
+        const btn = document.getElementById('btn-send-submit');
         const errBox = document.getElementById('send-msg-error');
         errBox.classList.add('hidden');
 
@@ -304,48 +305,50 @@
             fd.set('send_later', 'false');
         }
 
-        btn.disabled    = true;
+        btn.disabled = true;
         btn.textContent = 'Sending…';
 
         fetch(_sendUrl, {
-            method : 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body   : fd
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                closeSendModal();
-                // show flash message without full reload
-                showFlash(data.success, 'success');
-            } else if (data.errors) {
-                const msgs = Object.values(data.errors).flat().join(' ');
-                errBox.textContent = msgs;
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: fd
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    closeSendModal();
+                    // show flash message without full reload
+                    showFlash(data.success, 'success');
+                } else if (data.errors) {
+                    const msgs = Object.values(data.errors).flat().join(' ');
+                    errBox.textContent = msgs;
+                    errBox.classList.remove('hidden');
+                } else {
+                    errBox.textContent = 'Something went wrong. Please try again.';
+                    errBox.classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                errBox.textContent = 'Network error. Please try again.';
                 errBox.classList.remove('hidden');
-            } else {
-                errBox.textContent = 'Something went wrong. Please try again.';
-                errBox.classList.remove('hidden');
-            }
-        })
-        .catch(() => {
-            errBox.textContent = 'Network error. Please try again.';
-            errBox.classList.remove('hidden');
-        })
-        .finally(() => {
-            btn.disabled    = false;
-            btn.innerHTML   = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Send';
-        });
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Send';
+            });
     }
 
     // inline flash (no page reload needed)
     function showFlash(msg, type) {
         const div = document.createElement('div');
-        div.className = type === 'success'
-            ? 'mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm flex items-center gap-2'
-            : 'mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm';
-        div.innerHTML = (type === 'success'
-            ? '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
-            : '') + '<span>' + msg + '</span>';
+        div.className = type === 'success' ?
+            'mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm flex items-center gap-2' :
+            'mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm';
+        div.innerHTML = (type === 'success' ?
+            '<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>' :
+            '') + '<span>' + msg + '</span>';
         const main = document.querySelector('main');
         main.insertBefore(div, main.firstChild);
         setTimeout(() => div.remove(), 5000);
@@ -357,82 +360,105 @@
 @push('scripts')
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script>
-$(function() {
+    $(function() {
 
-    // ── Tab switching ──
-    function activateTab(name) {
-        $('.tab-panel').addClass('hidden');
-        $('#tab-' + name).removeClass('hidden');
-        $('.tab-btn')
-            .removeClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold')
-            .addClass('text-gray-500');
-        $('.tab-btn[data-tab="' + name + '"]')
-            .removeClass('text-gray-500')
-            .addClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold');
-        location.hash = name;
-    }
+        // ── Tab switching ──
+        function activateTab(name) {
+            $('.tab-panel').addClass('hidden');
+            $('#tab-' + name).removeClass('hidden');
+            $('.tab-btn')
+                .removeClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold')
+                .addClass('text-gray-500');
+            $('.tab-btn[data-tab="' + name + '"]')
+                .removeClass('text-gray-500')
+                .addClass('border-b-2 border-indigo-600 text-indigo-600 font-semibold');
+            location.hash = name;
+        }
 
-    $('.tab-btn').on('click', function() {
-        activateTab($(this).data('tab'));
-    });
+        $('.tab-btn').on('click', function() {
+            activateTab($(this).data('tab'));
+        });
 
-    // Restore tab from URL hash or default to members
-    var hash = location.hash.replace('#','');
-    activateTab(['info','members','messages'].includes(hash) ? hash : 'members');
+        // Restore tab from URL hash or default to members
+        var hash = location.hash.replace('#', '');
+        activateTab(['info', 'members', 'messages'].includes(hash) ? hash : 'members');
 
-    // Send message panel toggle
-    $('#btn-send-msg').on('click', function() {
-        $('#send-msg-panel').removeClass('hidden');
-        $('html,body').animate({ scrollTop: $('#send-msg-panel').offset().top - 20 }, 300);
-    });
-    $('#btn-close-msg').on('click', function() {
-        $('#send-msg-panel').addClass('hidden');
-    });
+        // Send message panel toggle
+        $('#btn-send-msg').on('click', function() {
+            $('#send-msg-panel').removeClass('hidden');
+            $('html,body').animate({
+                scrollTop: $('#send-msg-panel').offset().top - 20
+            }, 300);
+        });
+        $('#btn-close-msg').on('click', function() {
+            $('#send-msg-panel').addClass('hidden');
+        });
 
-    // Delete group
-    $('#btn-delete-group').on('click', function() {
-        var url = $(this).data('url');
-        swal({
-            icon: 'warning',
-            title: 'Delete Group?',
-            text: 'This will permanently remove the group and all its members.',
-            buttons: { cancel: true, confirm: { text: 'Delete', className: 'swal-button--danger' } },
-            dangerMode: true,
-        }).then(function(confirm) {
-            if (!confirm) return;
-            $.ajax({
-                url: url, type: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                success: function() {
-                    swal({ icon: 'success', text: 'Group deleted.' }).then(function() {
-                        window.location.href = '/admin/groups';
-                    });
-                }
+        // Delete group
+        $('#btn-delete-group').on('click', function() {
+            var url = $(this).data('url');
+            swal({
+                icon: 'warning',
+                title: 'Delete Group?',
+                text: 'This will permanently remove the group and all its members.',
+                buttons: {
+                    cancel: true,
+                    confirm: {
+                        text: 'Delete',
+                        className: 'swal-button--danger'
+                    }
+                },
+                dangerMode: true,
+            }).then(function(confirm) {
+                if (!confirm) return;
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function() {
+                        swal({
+                            icon: 'success',
+                            text: 'Group deleted.'
+                        }).then(function() {
+                            window.location.href = '/admin/groups';
+                        });
+                    }
+                });
             });
         });
-    });
 
-    // Remove member
-    $(document).on('click', '.delete-member', function() {
-        var url = $(this).data('url');
-        swal({
-            icon: 'warning',
-            text: 'Remove this member from the group?',
-            buttons: { cancel: true, confirm: true },
-        }).then(function(confirm) {
-            if (!confirm) return;
-            $.ajax({
-                url: url, type: 'DELETE',
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                success: function() {
-                    swal({ icon: 'success', text: 'Member removed.' }).then(function() {
-                        window.location.reload();
-                    });
-                }
+        // Remove member
+        $(document).on('click', '.delete-member', function() {
+            var url = $(this).data('url');
+            swal({
+                icon: 'warning',
+                text: 'Remove this member from the group?',
+                buttons: {
+                    cancel: true,
+                    confirm: true
+                },
+            }).then(function(confirm) {
+                if (!confirm) return;
+                $.ajax({
+                    url: url,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function() {
+                        swal({
+                            icon: 'success',
+                            text: 'Member removed.'
+                        }).then(function() {
+                            window.location.reload();
+                        });
+                    }
+                });
             });
         });
-    });
 
-});
+    });
 </script>
 @endpush
