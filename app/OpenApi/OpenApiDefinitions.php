@@ -57,6 +57,28 @@ use OpenApi\Attributes as OA;
         )
     ),
 
+      OA\Schema(
+        schema: 'CityResource',
+        properties: [
+            new OA\Property(property: 'id', type: 'integer'),
+            new OA\Property(property: 'country_id', type: 'integer'),
+            new OA\Property(property: 'state_id', type: 'integer'),
+            new OA\Property(property: 'name', type: 'string'),
+            new OA\Property(property: 'status', type: 'integer'),
+
+          ]
+    ),
+    OA\Response(
+        response: 'CityResponse',
+        description: 'City List',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(
+                ref: '#/components/schemas/CityResource'
+            )
+        )
+    ),
+
     OA\Schema(
         schema: 'ChangePasswordRequest',
         required: ['oldpassword', 'newpassword'],
