@@ -61,7 +61,7 @@
                         </a>
 
                         <a href="{{ url('/mygroup/'.$group->id.'?user_id=5') }}"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 border border-gray-300 hover:bg-gray-50 text-gray-700 text-xs font-medium rounded-lg transition" target="_blank">
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 border border-gray-300 hover:bg-gray-50 text-white text-xs font-medium rounded-lg transition" target="_blank">
                             Post View
                         </a>
                         <button id="btn-delete-group"
