@@ -40,6 +40,14 @@ class MemberController extends Controller
             $group_link = GroupLink::with(['group.groupCategory'])
                 ->where([['group_id', $group_id]])
                 ->first();
+
+            if(auth()->user()->usergroup_id!='3' && auth()->user()->usergroup_id!='4'){
+
+               abort('403');
+
+            }
+
+     
         } else {
             $user = auth()->user();
             $group_link = GroupLink::with(['group.groupCategory'])
@@ -48,7 +56,6 @@ class MemberController extends Controller
         }
 
         // dd($user);
-
 
 
         if ($group_link->role == 'group_admin') {
