@@ -9,6 +9,7 @@ use App\Models\Gallery;
 use App\Models\Photos;
 use App\Traits\Common;
 use App\Http\Resources\API\ShowPhotos as ShowPhotosResource;
+use OpenApi\Attributes as OA;   // ← add this line
 
 /**
  * GalleryController
@@ -21,25 +22,42 @@ use App\Http\Resources\API\ShowPhotos as ShowPhotosResource;
  */
 class GalleryController extends Controller
 {
-	    use Common;
+    use Common;
 
-	public function show()
+    public function show()
     {
-    	$slider = Gallery::with('photos')->get();
+        $slider = Gallery::with('photos')->get();
         $gallery = ShowGalleryResource::collection($slider);
-    	return response()->json($gallery);
+        return response()->json($gallery);
     }
 
-    public function view($gallery_id,$church_id)
+    public function view($gallery_id, $church_id)
     {
-        $photos = Photos::where([['gallery_id',$gallery_id],['church_id',$church_id]])->get();
+        $photos = Photos::where([['gallery_id', $gallery_id], ['church_id', $church_id]])->get();
         $photos = ShowPhotosResource::collection($photos);
         return response()->json($photos);
     }
+    #[OA\Get(
+        path: '/api/v1/gallery/show/{church_id}',
+        parameters: [
+            new OA\Parameter(
+                name: 'church_id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/EventGalleryResponse'
+            )
+        ]
+    )]
 
-	public function showdetails($church_id)
+    public function showdetails($church_id)
     {
-        $gallery = Gallery::where('church_id',$church_id)->latest()->paginate(10);
+        $gallery = Gallery::where('church_id', $church_id)->latest()->paginate(10);
         $gallery = ShowGalleryResource::collection($gallery);
 
         return $gallery;

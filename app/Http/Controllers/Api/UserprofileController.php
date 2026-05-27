@@ -19,6 +19,8 @@ use Exception;
 use Log;
 use OpenApi\Attributes as OA;   // ← add this line
 
+
+
 class UserprofileController extends Controller
 {
     /**
@@ -82,7 +84,7 @@ class UserprofileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-      #[OA\Get(
+    #[OA\Get(
         path: '/api/v1/member/get/city/{id}',
 
         parameters: [
@@ -141,6 +143,50 @@ class UserprofileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    // #[OA\Post(
+    //     path: '/api/v1/member/edit/{id}',
+
+    //     security: [['sanctum' => []]],
+
+    //     requestBody: new OA\RequestBody(
+    //         required: true,
+    //         content: new OA\JsonContent(
+    //             ref: '#/components/schemas/EditUserDetailRequest'
+    //         )
+    //     ),
+
+    //     responses: [
+    //         new OA\Response(
+    //             response: 200,
+    //             ref: '#/components/responses/EditUserDetailResponse'
+    //         )
+    //     ]
+    // )]
+
+    #[OA\Post(
+        path: '/api/v1/member/edit/{id}',
+
+        security: [['sanctum' => []]],
+
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    ref: '#/components/schemas/EditUserDetailRequest'
+                )
+            )
+        ),
+
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/EditUserDetailResponse'
+            )
+        ]
+    )]
+
     public function update(EditUserDetailRequest $request, $id)
     {
         //

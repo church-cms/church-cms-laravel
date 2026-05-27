@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Events;
 use Carbon\Carbon;
+use OpenApi\Attributes as OA;   // ← add this line
 
 /**
  * EventsController
@@ -19,29 +20,65 @@ use Carbon\Carbon;
  */
 class EventsController extends Controller
 {
+    #[OA\Get(
+        path: '/api/v1/events/upcoming',
 
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/EventResponse'
+            )
+        ]
+    )]
     public function upcoming()
     {
         $end_date = Carbon::now();
-        $event = Events::where([['church_id',Auth::user()->church_id],['end_date','>=',$end_date]])->get();
-        $upcomingevent= ShowEventResource::collection($event);
+        $event = Events::where([['church_id', Auth::user()->church_id], ['end_date', '>=', $end_date]])->get();
+        $upcomingevent = ShowEventResource::collection($event);
 
         return $upcomingevent;
     }
-
+    #[OA\Get(
+        path: '/api/v1/events/past',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/EventResponse'
+            )
+        ]
+    )]
     public function past()
     {
         $end_date = Carbon::now();
-        $event = Events::where([['church_id',Auth::user()->church_id],['end_date','<',$end_date]])->get();
-        $pastevent= ShowEventResource::collection($event);
+        $event = Events::where([['church_id', Auth::user()->church_id], ['end_date', '<', $end_date]])->get();
+        $pastevent = ShowEventResource::collection($event);
 
         return $pastevent;
     }
+    #[OA\Get(
+        path: '/api/v1/event/show/{id}',
+
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/EventResponse'
+            )
+        ]
+    )]
 
     public function show($id)
     {
-        $event = Events::where([['church_id',Auth::user()->church_id],['id',$id]])->get();
-        $event= ShowEventResource::collection($event);
+        $event = Events::where([['church_id', Auth::user()->church_id], ['id', $id]])->get();
+        $event = ShowEventResource::collection($event);
 
         return $event;
     }

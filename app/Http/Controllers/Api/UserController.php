@@ -28,7 +28,18 @@ class UserController extends Controller
     use AuthenticationProcess;
     use ResetPasswordProcess;
     use SendMessageProcess;
+    #[OA\Get(
+        path: '/api/v1/member/show/{id}',
 
+        security: [['sanctum' => []]],
+
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/UserDetailResponse',
+            )
+        ]
+    )]
     public function show($id)
     {
         $users = User::with('userprofile')->where([['id', Auth::user()->id], ['church_id', Auth::user()->church_id]])->get();

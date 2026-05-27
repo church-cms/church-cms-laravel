@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Token;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;   // ← add this line
 
 /**
  * LoginController
@@ -32,23 +33,37 @@ class LoginController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/login',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/LoginRequest'
+            )
+        ),
+
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/LoginResponse'
+            )
+        ]
+    )]
+
     public function login(LoginRequest $request)
     {
-        try
-        {
+        try {
 
-            if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')]) )
-            {
+            if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')])) {
                 $user = Auth::user();
                 $user->tokens()->delete();
 
                 $userprofile = Userprofile::where('user_id', $user->id)->first();
-                if ($userprofile->status === 'active')
-                {
+                if ($userprofile->status === 'active') {
                     $token = $user->createToken("churchcms")->plainTextToken;
 
 
-                    $user = User::where([['id',$user->id],['church_id',$user->church_id]])->first();
+                    $user = User::where([['id', $user->id], ['church_id', $user->church_id]])->first();
 
                     $user->platform_token = $request->platform_token;
 
@@ -67,24 +82,19 @@ class LoginController extends Controller
                     ], $this->successStatus);
                 }
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function logout(Request $request)
     {
-        try
-        {
-            if (Auth::check())
-            {
+        try {
+            if (Auth::check()) {
                 Auth()->user()->tokens()->delete();
             }
 
-            $user = User::where('id',Auth::id())->first();
+            $user = User::where('id', Auth::id())->first();
 
             $user->platform_token  = NULL;
 
@@ -93,12 +103,9 @@ class LoginController extends Controller
             return response()->json([
                 'success'   =>  true,
                 'message'   =>  'Logged out successfully'
-            ],200);
-        }
-        catch(Exception $e)
-        {
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }
