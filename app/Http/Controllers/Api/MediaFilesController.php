@@ -6,7 +6,7 @@ use App\Http\Resources\API\MediaFile as MediaFileResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MediaFile;
-
+use OpenApi\Attributes as OA; 
 /**
  * MediaFilesController
  *
@@ -17,6 +17,16 @@ use App\Models\MediaFile;
  */
 class MediaFilesController extends Controller
 {
+     #[OA\Get(
+        path: '/api/v1/mediaFiles',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/MediaFileResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function showvideo()
     {
         $files = MediaFile::where('church_id',Auth::user()->church_id)->latest()->paginate(10);

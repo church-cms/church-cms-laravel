@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\GroupLink;
 use App\Models\User;
+use OpenApi\Attributes as OA;
 
 /**
  * GroupsController
@@ -24,6 +25,17 @@ class GroupsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/groups/list',
+        summary: "List the current user's group memberships",
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/GroupLinkResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         //

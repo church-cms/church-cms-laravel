@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 /**
  * HelpsController
@@ -32,6 +33,17 @@ class HelpsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/helps',
+        summary: 'List approved help requests from other members',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         //
@@ -47,6 +59,23 @@ class HelpsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/v1/helps/create',
+        summary: 'Submit a new help request',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/HelpAddRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpCreateResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function store(HelpAddRequest $request)//HelpAdd
     {
         //
@@ -87,6 +116,17 @@ class HelpsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/helps/user',
+        summary: "List the current user's own help requests",
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpUserResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function show()
     {
         //
@@ -103,6 +143,26 @@ class HelpsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/v1/helps/close/{id}',
+        summary: 'Close a help request (mark as resolved)',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Help request ID',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpCloseResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function update(Request $request, $id)
     {
         //

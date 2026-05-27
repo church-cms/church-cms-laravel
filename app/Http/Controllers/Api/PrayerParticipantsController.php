@@ -9,6 +9,7 @@ use App\Models\Prayer;
 use Illuminate\Http\Request;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 class PrayerParticipantsController extends Controller
 {
@@ -17,6 +18,26 @@ class PrayerParticipantsController extends Controller
      * Handles MEMBER (authenticated) and GUEST participation.
      * Returns idempotently — lifting the same prayer twice is a no-op.
      */
+    #[OA\Post(
+        path: '/api/v1/prayer_participants/{id}',
+        summary: 'Record that the current user is praying for a prayer request',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Prayer request ID',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 201,
+                ref: '#/components/responses/PrayerParticipantResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function store(Request $request, $prayerId)
     {
         try {

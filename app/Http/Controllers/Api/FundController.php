@@ -16,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 /**
  * FundController
@@ -32,6 +33,17 @@ class FundController extends Controller
     use LogActivity;
     use Common;
 
+    #[OA\Get(
+        path: '/api/v1/myFunds',
+        summary: 'Get current user\'s fund requests',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FundResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function myFunds()
     {
         $funds = Fund::where([['user_id',Auth::id()],['church_id',Auth::user()->church_id]])->get();
@@ -41,6 +53,17 @@ class FundController extends Controller
         return $funds;
     }
 
+    #[OA\Get(
+        path: '/api/v1/fund/list',
+        summary: 'List all deposited funds from other members',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FundResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function list()
     {
         $funds = Fund::where([['user_id','!=',Auth::id()],['church_id',Auth::user()->church_id],['status','deposited']])->get();
@@ -50,6 +73,23 @@ class FundController extends Controller
         return $funds;
     }
 
+    #[OA\Post(
+        path: '/api/v1/add/fund',
+        summary: 'Submit a new fund request',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/AddFundRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/AddFundResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function store(FundRequest $request)
     {
     	$user=User::where([['id',Auth::id()],['church_id',Auth::user()->church_id]])->first();

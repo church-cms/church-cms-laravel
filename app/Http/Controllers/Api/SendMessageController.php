@@ -14,6 +14,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 class SendMessageController extends Controller
 {
@@ -23,6 +24,17 @@ class SendMessageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/messages',
+        summary: 'List notification messages for the current user',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/MessageListResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         //
@@ -43,6 +55,26 @@ class SendMessageController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/v1/message/read/{id}',
+        summary: 'Mark a message as read',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Message ID',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/MessageReadResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function readMessage(Request $request,$id)
     {
         //
@@ -68,6 +100,17 @@ class SendMessageController extends Controller
         }
     }
 
+    #[OA\Get(
+        path: '/api/v1/notifications',
+        summary: 'List push notifications for the current user',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/NotificationListResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function notificationList()
     {
         //   

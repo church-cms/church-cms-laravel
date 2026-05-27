@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('mobile_no');
-             $table->string('mobile_country_code')->nullable();
+            $table->string('mobile_country_code')->nullable();
             $table->string('password');
             $table->string('email_verification_code')->nullable();
             $table->boolean('email_verified')->default('0');

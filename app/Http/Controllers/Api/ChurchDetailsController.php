@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ChurchDetail;
 use App\Models\Church;
 use App\Traits\Common;
+use OpenApi\Attributes as OA;
 
 /**
  * ChurchDetailsController
@@ -25,6 +26,26 @@ class ChurchDetailsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/church/details/{church_id}',
+        summary: 'Get church details by church ID',
+        operationId: '21c3f4daa89e704858570f38c70e4eb4',
+        parameters: [
+            new OA\Parameter(
+                name: 'church_id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ChurchDetailResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function show($church_id)
     {
         //

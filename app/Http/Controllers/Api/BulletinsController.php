@@ -6,6 +6,7 @@ use App\Http\Resources\API\Bulletin as BulletinResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Bulletin;
+use OpenApi\Attributes as OA;
 
 /**
  * BulletinsController
@@ -17,6 +18,17 @@ use App\Models\Bulletin;
  */
 class BulletinsController extends Controller
 {
+    #[OA\Get(
+        path: '/api/v1/bulletin/show',
+        summary: 'List church bulletins',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/BulletinResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function show()
     {
         $bulletins = Bulletin::where('church_id',Auth::user()->church_id)->latest()->paginate(10);

@@ -6,10 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Quote;
+use OpenApi\Attributes as OA;
 
 class QuotesController extends Controller
 {
   
+    #[OA\Get(
+        path: '/api/v1/quotes/show',
+        summary: "Get today's quote for the church",
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/QuoteResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         $start_today = date('Y-m-d 00:00:00');

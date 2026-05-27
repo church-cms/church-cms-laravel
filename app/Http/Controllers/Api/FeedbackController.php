@@ -16,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 /**
  * FeedbackController
@@ -34,6 +35,18 @@ class FeedbackController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/feedbacks',
+        summary: 'Get all feedbacks submitted by the authenticated user',
+        operationId: 'a15a31f8309a98a18a63a0cab53a13ae',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FeedbackResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         //
@@ -45,6 +58,18 @@ class FeedbackController extends Controller
         return $feedback;
     }
 
+    #[OA\Get(
+        path: '/api/v1/feedback/category/list',
+        summary: 'Get feedback category list',
+        operationId: 'ac6f79957960ab699e0247577733376c',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FeedbackCategoryResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function list()
     {
         $categoryList = SiteHelper::getFeedbackCategoryList();
@@ -58,6 +83,24 @@ class FeedbackController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/v1/feedback/add',
+        summary: 'Submit a new feedback message',
+        operationId: '6973684c2bac7753c462ffb7ac5169fa',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/AddFeedbackRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/AddFeedbackResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function store(FeedbackRequest $request)
     {
         //

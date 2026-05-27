@@ -15,6 +15,7 @@ use App\Models\Church;
 use App\Models\User;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 /**
  * ContactController
@@ -35,6 +36,23 @@ class ContactController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/v1/church/contact',
+        summary: 'Submit a church contact / enquiry form',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/ContactRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ContactResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function userStore(ContactRequest $request)
     {
         try

@@ -10,6 +10,7 @@ use App\Models\Paymentgateway;
 use App\Models\Payaccount;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 /**
  * PayaccountContorller
@@ -22,6 +23,17 @@ use Log;
 class PayaccountContorller extends Controller
 {
 
+    #[OA\Get(
+        path: '/api/v1/paymentgateway',
+        summary: 'List all available payment gateways',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/PaymentgatewayResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function getlist()
     {
 
@@ -34,6 +46,25 @@ class PayaccountContorller extends Controller
 
     }
 
+    #[OA\Get(
+        path: '/api/v1/payaccount/{gateway_id}',
+        summary: 'Get payment account details for a gateway',
+        parameters: [
+            new OA\Parameter(
+                name: 'gateway_id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/PayaccountDetailResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function showdetails($gateway_id)
     {
         $church_id=Auth::user()->church_id;

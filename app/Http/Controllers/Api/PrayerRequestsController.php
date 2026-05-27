@@ -15,11 +15,24 @@ use Exception;
 use Log;
 use App\Http\Resources\API\PrayerCategory as PrayerCategoryResource;
 use App\Models\PrayerCategory;
+use OpenApi\Attributes as OA;
+
 class PrayerRequestsController extends Controller
 {
     /**
      * List active prayers for the public board (excluding the current user's own prayers).
      */
+    #[OA\Get(
+        path: '/api/v1/prayer_requests',
+        summary: 'List active prayer requests on the public board',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/PrayerRequestResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         $prayers = Prayer::forChurch(Auth::user()->church_id)
@@ -34,6 +47,23 @@ class PrayerRequestsController extends Controller
     /**
      * Submit a new prayer request (creates a PENDING prayer).
      */
+    #[OA\Post(
+        path: '/api/v1/prayer_requests/create',
+        summary: 'Submit a new prayer request',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/SubmitPrayerRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/PrayerRequestCreateResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function store(SubmitPrayerRequest $request)
     {
         try {
@@ -68,6 +98,17 @@ class PrayerRequestsController extends Controller
     /**
      * List the authenticated user's own prayers.
      */
+    #[OA\Get(
+        path: '/api/v1/prayer_requests/user',
+        summary: "List the current user's own prayer requests",
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/PrayerRequestUserResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function show()
     {
         $prayers = Prayer::where('user_id', Auth::id())
@@ -77,6 +118,17 @@ class PrayerRequestsController extends Controller
         return PrayerRequestUserResource::collection($prayers);
     }
 
+    #[OA\Get(
+        path: '/api/v1/prayercategory/list',
+        summary: 'List active prayer categories',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/PrayerCategoryResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function prayerCategory()
     {
         $prayercatlist = PrayerCategory::where('is_active', 1)
