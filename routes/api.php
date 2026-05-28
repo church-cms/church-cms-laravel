@@ -44,6 +44,8 @@ Route::get('/events/show/details/{id}', 'Api\EventsController@showdetails');
 
 //login
 Route::post('/login', 'Api\LoginController@login');
+//logout All Devices
+Route::post('/logout/devices', 'LoginController@logoutDevices');
 
 //locations , churches list
 Route::get('/locations', 'Api\ChurchController@locationList');
@@ -174,6 +176,7 @@ Route::group(
 		Route::get('/prayercategory/list', 'PrayerRequestsController@prayerCategory');
 
 		Route::post('/prayer_requests/create', 'PrayerRequestsController@store');
+		
 
 		//prayer_participants
 

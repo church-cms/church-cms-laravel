@@ -103,7 +103,8 @@ class User extends Authenticatable
         'platform_token',
         'remember_token',
         'last_login_at',
-        'mobile_country_code'
+        'mobile_country_code',
+        'device_id'
     ];
 
     /**

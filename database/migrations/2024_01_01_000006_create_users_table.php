@@ -26,6 +26,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_reset')->default('0');
             $table->string('platform_token')->nullable();
+            $table->string('device_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->timestamp('last_login_at')->nullable();

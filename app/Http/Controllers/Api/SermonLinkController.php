@@ -22,7 +22,7 @@ class SermonLinkController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/sermon/show/{sermons_id}',
-        summary: 'Show Sermons  ',
+        summary: 'Show Sermons',
         parameters: [
             new OA\Parameter(
                 name: 'sermons_id',
@@ -42,6 +42,7 @@ class SermonLinkController extends Controller
     public function showdetails($sermons_id)
     {
         $sermon = Sermon::where('id', $sermons_id)->first();
+
         $links = SermonLink::with('sermons')->where([['sermons_id', $sermon->id], ['church_id', Auth::user()->church_id]])->paginate(10);
 
         $links = ShowSermonLinkResource::collection($links);

@@ -144,103 +144,126 @@
 </div>
 
 <script>
-(function() {
-    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    var baseUrl   = '{{ url("/admin/prayerboard") }}';
+    (function() {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        var baseUrl = '{{ url("/admin/prayerboard") }}';
 
-    window.prayerAction = function(id, action) {
-        fetch(baseUrl + '/' + id + '/' + action, {
-            method: 'POST',
-            headers: { 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.success) {
-                showToast(data.message, 'green');
-                if (action === 'unpublish') {
-                    var card = document.getElementById('prayer-card-' + id);
-                    if (card) card.remove();
-                } else {
-                    // Reload tab to reflect pin change
-                    window.switchTab && switchTab('active');
-                }
-            } else {
-                showToast(data.message || 'Error', 'red');
-            }
-        });
-    };
+        window.prayerAction = function(id, action) {
+            fetch(baseUrl + '/' + id + '/' + action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    if (data.success) {
+                        showToast(data.message, 'green');
+                        if (action === 'unpublish') {
+                            var card = document.getElementById('prayer-card-' + id);
+                            if (card) card.remove();
+                        } else {
+                            // Reload tab to reflect pin change
+                            window.switchTab && switchTab('active');
+                        }
+                    } else {
+                        showToast(data.message || 'Error', 'red');
+                    }
+                });
+        };
 
-    window.showAnsweredModal = function(id) {
-        document.getElementById('answeredPrayerId').value = id;
-        document.getElementById('answeredTestimony').value = '';
-        document.getElementById('answeredModal').classList.remove('hidden');
-    };
+        window.showAnsweredModal = function(id) {
+            document.getElementById('answeredPrayerId').value = id;
+            document.getElementById('answeredTestimony').value = '';
+            document.getElementById('answeredModal').classList.remove('hidden');
+        };
 
-    window.submitAnswered = function() {
-        var id        = document.getElementById('answeredPrayerId').value;
-        var testimony = document.getElementById('answeredTestimony').value.trim();
-        fetch(baseUrl + '/' + id + '/mark-answered', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ testimony: testimony }),
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            document.getElementById('answeredModal').classList.add('hidden');
-            if (data.success) {
-                var card = document.getElementById('prayer-card-' + id);
-                if (card) card.remove();
-                showToast(data.message, 'green');
-                updateStatCount('active', -1);
-                updateStatCount('answered', 1);
-            } else {
-                showToast(data.message || 'Error', 'red');
-            }
-        });
-    };
+        window.submitAnswered = function() {
+            var id = document.getElementById('answeredPrayerId').value;
+            var testimony = document.getElementById('answeredTestimony').value.trim();
+            fetch(baseUrl + '/' + id + '/mark-answered', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        testimony: testimony
+                    }),
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    document.getElementById('answeredModal').classList.add('hidden');
+                    if (data.success) {
+                        var card = document.getElementById('prayer-card-' + id);
+                        if (card) card.remove();
+                        showToast(data.message, 'green');
+                        updateStatCount('active', -1);
+                        updateStatCount('answered', 1);
+                    } else {
+                        showToast(data.message || 'Error', 'red');
+                    }
+                });
+        };
 
-    window.showExtendModal = function(id) {
-        document.getElementById('extendPrayerId').value = id;
-        document.getElementById('extendModal').classList.remove('hidden');
-    };
+        window.showExtendModal = function(id) {
+            document.getElementById('extendPrayerId').value = id;
+            document.getElementById('extendModal').classList.remove('hidden');
+        };
 
-    window.submitExtend = function() {
-        var id   = document.getElementById('extendPrayerId').value;
-        var days = document.getElementById('extendDays').value;
-        fetch(baseUrl + '/' + id + '/extend', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ additional_days: parseInt(days) }),
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            document.getElementById('extendModal').classList.add('hidden');
-            if (data.success) {
-                showToast(data.message, 'green');
-                switchTab && switchTab('active');
-            } else {
-                showToast(data.message || 'Error', 'red');
-            }
-        });
-    };
+        window.submitExtend = function() {
+            var id = document.getElementById('extendPrayerId').value;
+            var days = document.getElementById('extendDays').value;
+            fetch(baseUrl + '/' + id + '/extend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        additional_days: parseInt(days)
+                    }),
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    document.getElementById('extendModal').classList.add('hidden');
+                    if (data.success) {
+                        showToast(data.message, 'green');
+                        switchTab && switchTab('active');
+                    } else {
+                        showToast(data.message || 'Error', 'red');
+                    }
+                });
+        };
 
-    function showToast(msg, color) {
-        var toast = document.createElement('div');
-        toast.className = 'fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-xl text-white font-semibold text-sm z-50 '
-            + (color === 'green' ? 'bg-green-600' : 'bg-red-600');
-        toast.textContent = msg;
-        document.body.appendChild(toast);
-        setTimeout(function() { toast.remove(); }, 3500);
-    }
-
-    function updateStatCount(tab, delta) {
-        var btn = document.getElementById('stat-' + tab);
-        if (!btn) return;
-        var countEl = btn.querySelector('.text-2xl');
-        if (countEl) {
-            var current = parseInt(countEl.textContent) || 0;
-            countEl.textContent = Math.max(0, current + delta);
+        function showToast(msg, color) {
+            var toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 px-6 py-3 rounded-lg shadow-xl text-white font-semibold text-sm z-50 ' +
+                (color === 'green' ? 'bg-green-600' : 'bg-red-600');
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(function() {
+                toast.remove();
+            }, 3500);
         }
-    }
-})();
+
+        function updateStatCount(tab, delta) {
+            var btn = document.getElementById('stat-' + tab);
+            if (!btn) return;
+            var countEl = btn.querySelector('.text-2xl');
+            if (countEl) {
+                var current = parseInt(countEl.textContent) || 0;
+                countEl.textContent = Math.max(0, current + delta);
+            }
+        }
+    })();
 </script>
