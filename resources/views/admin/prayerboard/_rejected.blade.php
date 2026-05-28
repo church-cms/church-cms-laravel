@@ -32,7 +32,7 @@
 
             @if($prayer->should_delete_at)
             @php
-                $daysLeft = max(0, now()->diffInDays($prayer->should_delete_at, false));
+            $daysLeft = max(0, now()->diffInDays($prayer->should_delete_at, false));
             @endphp
             <div class="p-3 bg-gradient-to-r from-red-100 to-orange-100 rounded-lg">
                 <div class="flex justify-between items-center">
