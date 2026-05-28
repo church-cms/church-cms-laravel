@@ -14,7 +14,7 @@ class ShowSermonLink extends JsonResource
      */
     public function toArray($request)
     {
-       /* if($this->type == 'video')
+        /* if($this->type == 'video')
         {
             $url = $this->url;
         }
@@ -23,25 +23,26 @@ class ShowSermonLink extends JsonResource
         {
             $url = $this->UrlPath;
         }*/
-         if($this->type=='document')
-        {
-            $url=$this->UrlPath;
-        }
-        else
-        {
-            $url= $this->url;
+        if ($this->type == 'document') {
+            $url = $this->UrlPath;
+        } else {
+            $url = $this->url;
         }
 
         return [
             'sermons_id'    =>  $this->sermons_id,
             'title'         =>  $this->sermons->title,
             'total_likes'   =>  $this->sermons->sermonlikevote,
-            'total_unlikes' =>  $this->sermons->sermonunlikevote,           
+            'total_unlikes' =>  $this->sermons->sermonunlikevote,
             'like'          =>  $this->sermons->likevote,
-            'unlike'        =>  $this->sermons->unlikevote, 
+            'unlike'        =>  $this->sermons->unlikevote,
             'type'          =>  $this->type,
             'location'      =>  $this->location,
             'url'           =>  $url,
+            'cover_image'   =>  $this->sermons->CoverImagePath,
+            'video_link' => $this->video_link,
+            'audio_link' => $this->audio_link,
+            'pdf_link' => $this->PdfUrlPath,
         ];
     }
 }
