@@ -38,11 +38,17 @@ trait VoteProcess
             if ($church_id == $sermon->church_id) {
                 $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $sermon->id], ['unlike', 1]])->first();
 
+
+
                 if ($existing_vote != null) {
+                    // dd("GG");
                     $existing_vote->delete();
                 }
+                //dd("mm".$existing_vote);
                 $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $request->entity_id], ['like', 1]])->first();
-                if ($existing_vote != null) {
+                //dd($existing_vote);
+
+                if ($existing_vote == null) {
                     $like = "1";
                     $unlike = "0";
 
@@ -56,6 +62,8 @@ trait VoteProcess
                     $vote->unlike       =   $unlike;
 
                     $vote->save();
+
+                    //dd($vote);
 
                     $res['message'] = 'You have liked this sermon';
                 } else {
@@ -98,7 +106,7 @@ trait VoteProcess
 
                 $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $sermon->id], ['unlike', 1]])->first();
 
-                if ($existing_vote != null) {
+                if ($existing_vote == null) {
                     $unlike = "1";
                     $like = "0";
 
