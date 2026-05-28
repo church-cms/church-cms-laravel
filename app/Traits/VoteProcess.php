@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 use App\Models\Sermon;
@@ -29,26 +30,23 @@ trait VoteProcess
      *
      * @return array Array containing 'message' key with vote result
      */
-    public function createlikeVote(object $request, int $church_id, int $user_id): array {
-        $sermon = Sermon::where([['church_id',$church_id],['id',$request->entity_id]])->first();
+    public function createlikeVote(object $request, int $church_id, int $user_id): array
+    {
+        $sermon = Sermon::where([['church_id', $church_id], ['id', $request->entity_id]])->first();
 
-        if(count($sermon)>'0')
-        {
-            if($church_id==$sermon->church_id)
-            {
-                $existing_vote = Vote::where([['church_id',$church_id],['user_id',$user_id],['entity_id',$sermon->id],['unlike',1]])->first();
+        if ($sermon != null) {
+            if ($church_id == $sermon->church_id) {
+                $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $sermon->id], ['unlike', 1]])->first();
 
-                if(count($existing_vote)>0)
-                {
+                if ($existing_vote != null) {
                     $existing_vote->delete();
                 }
-                $existing_vote = Vote::where([['church_id',$church_id],['user_id',$user_id],['entity_id',$request->entity_id],['like',1]])->first();
-                if (count($existing_vote)==0)
-                {
-                    $like="1";
-                    $unlike="0";
+                $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $request->entity_id], ['like', 1]])->first();
+                if (count($existing_vote) == 0) {
+                    $like = "1";
+                    $unlike = "0";
 
-                    $vote=new Vote;
+                    $vote = new Vote;
 
                     $vote->church_id    =   $church_id;
                     $vote->user_id      =   $user_id;
@@ -59,22 +57,16 @@ trait VoteProcess
 
                     $vote->save();
 
-                    $res['message']='You have liked this sermon';
-                }
-                else
-                {
+                    $res['message'] = 'You have liked this sermon';
+                } else {
                     $existing_vote->delete();
-                    $res['message']='Like Deleted';
+                    $res['message'] = 'Like Deleted';
                 }
+            } else {
+                $res['message'] = 'Invalid';
             }
-            else
-            {
-                $res['message']='Invalid';
-            }
-        }
-        else
-        {
-            $res['message']='Invalid';
+        } else {
+            $res['message'] = 'Invalid';
         }
         return $res;
     }
@@ -92,27 +84,25 @@ trait VoteProcess
      *
      * @return array Array containing 'message' key with vote result
      */
-    public function createunlikeVote(object $request, int $church_id, int $user_id): array {
-        $sermon = Sermon::where([['church_id',$church_id],['id',$request->entity_id]])->first();
+    public function createunlikeVote(object $request, int $church_id, int $user_id): array
+    {
+        $sermon = Sermon::where([['church_id', $church_id], ['id', $request->entity_id]])->first();
 
-        if(count($sermon)>'0')
-        {
-            if($church_id==$sermon->church_id)
-            {
-                $existing_vote = Vote::where([['church_id',$church_id],['user_id',$user_id],['entity_id',$sermon->id],['like',1]])->first();
+        if ($sermon != null) {
+            if ($church_id == $sermon->church_id) {
+                $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $sermon->id], ['like', 1]])->first();
 
-                if(count($existing_vote)>0)
+                if ($existing_vote != null)
 
-                $existing_vote->delete();
+                    $existing_vote->delete();
 
-                $existing_vote = Vote::where([['church_id',$church_id],['user_id',$user_id],['entity_id',$sermon->id],['unlike',1]])->first();
+                $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $sermon->id], ['unlike', 1]])->first();
 
-                if (count($existing_vote)==0)
-                {
-                    $unlike="1";
-                    $like="0";
+                if ($existing_vote != null) {
+                    $unlike = "1";
+                    $like = "0";
 
-                    $vote=new Vote;
+                    $vote = new Vote;
 
                     $vote->church_id    =   $church_id;
                     $vote->user_id      =   $user_id;
@@ -123,22 +113,16 @@ trait VoteProcess
 
                     $vote->save();
 
-                    $res['message']='You have disliked this sermon';
+                    $res['message'] = 'You have disliked this sermon';
+                } else {
+                    $existing_vote->delete();
+                    $res['message'] = 'Dislike Deleted';
                 }
-                else
-                {
-                   $existing_vote->delete();
-                   $res['message']='Dislike Deleted';
-                }
+            } else {
+                $res['message'] = 'Invalid';
             }
-            else
-            {
-               $res['message']='Invalid';
-            }
-        }
-        else
-        {
-            $res['message']='Invalid';
+        } else {
+            $res['message'] = 'Invalid';
         }
         return $res;
     }
