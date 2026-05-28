@@ -42,7 +42,7 @@ trait VoteProcess
                     $existing_vote->delete();
                 }
                 $existing_vote = Vote::where([['church_id', $church_id], ['user_id', $user_id], ['entity_id', $request->entity_id], ['like', 1]])->first();
-                if (count($existing_vote) == 0) {
+                if ($existing_vote != null) {
                     $like = "1";
                     $unlike = "0";
 
