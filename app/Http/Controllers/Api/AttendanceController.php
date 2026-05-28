@@ -20,6 +20,7 @@ class AttendanceController extends Controller
      * List events the authenticated staff member is assigned to,
      * where attendance tracking is enabled.
      */
+
     #[OA\Get(
         path: '/api/v1/attendance/events',
         summary: 'List events assigned to the authenticated staff member with attendance enabled',
