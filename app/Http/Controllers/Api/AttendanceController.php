@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 class AttendanceController extends Controller
 {
@@ -19,6 +20,18 @@ class AttendanceController extends Controller
      * List events the authenticated staff member is assigned to,
      * where attendance tracking is enabled.
      */
+    #[OA\Get(
+        path: '/api/v1/attendance/events',
+        summary: 'List events assigned to the authenticated staff member with attendance enabled',
+        operationId: '0d2f80fb83d5c305051c47b3e28db0c5',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/AttendanceEventsResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function myEvents()
     {
         $staffId = Auth::id();
@@ -54,6 +67,24 @@ class AttendanceController extends Controller
      * Create or retrieve the attendance session for a given event + date.
      * Body: { event_id, attendance_date (optional, defaults to today) }
      */
+    #[OA\Post(
+        path: '/api/v1/attendance/session',
+        summary: 'Open or retrieve an attendance session for an event',
+        operationId: '3795511bd2227894dd5bbdc9c58e3927',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/OpenSessionRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/OpenSessionResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function openSession(Request $request)
     {
         $request->validate([
@@ -103,6 +134,24 @@ class AttendanceController extends Controller
      * Body: { session_id, member_username }
      * The QR code encodes url('/admin/attandance/{username}') — parse the username from it.
      */
+    #[OA\Post(
+        path: '/api/v1/attendance/scan',
+        summary: 'Scan a member QR code and mark them present',
+        operationId: '46ef9498ea664f07cdce9e54bdcb51ba',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/AttendanceScanRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/AttendanceScanResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function scan(Request $request)
     {
         $request->validate([
@@ -170,6 +219,26 @@ class AttendanceController extends Controller
     /**
      * Lock an attendance session (no further check-ins).
      */
+    #[OA\Post(
+        path: '/api/v1/attendance/session/{id}/lock',
+        summary: 'Lock an attendance session to prevent further check-ins',
+        operationId: 'a039bf0ec2aaaf6915e1efbaf6cead58',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/SessionLockResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function lock($session_id)
     {
         $session = EventAttendanceSession::findOrFail($session_id);
@@ -194,6 +263,26 @@ class AttendanceController extends Controller
     /**
      * Return the attendee list for a session.
      */
+    #[OA\Get(
+        path: '/api/v1/attendance/session/{id}',
+        summary: 'Get the attendee report for a session',
+        operationId: 'f89b40e7dca45ed008404928f0593bc7',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/SessionReportResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function sessionReport($session_id)
     {
         $session = EventAttendanceSession::with('event')->findOrFail($session_id);

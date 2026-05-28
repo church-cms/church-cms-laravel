@@ -1153,5 +1153,192 @@ OA\Response(
         )
     ),
 
+    // ── Update Token ──────────────────────────────────────────────────────────
+
+    OA\Schema(
+        schema: 'UpdateTokenRequest',
+        required: ['platform_token'],
+        properties: [
+            new OA\Property(property: 'platform_token', type: 'string', description: 'Push notification device token'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'UpdateTokenResponse',
+        description: 'Token Updated',
+        content: new OA\JsonContent(
+            example: ['message' => 'Token Updated Successfully']
+        )
+    ),
+
+    // ── Profession & Marriage Status ──────────────────────────────────────────
+
+    OA\Response(
+        response: 'ProfessionResponse',
+        description: 'Profession List',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(type: 'string'),
+                    example: ['business', 'doctor', 'engineer', 'government_employee', 'home_maker', 'lawyer', 'pastor', 'police', 'professionals', 'self_employed', 'student', 'teacher', 'others']
+                ),
+            ]
+        )
+    ),
+
+    OA\Response(
+        response: 'MarriageStatusResponse',
+        description: 'Marriage Status List',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'status', type: 'string', example: 'success'),
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(type: 'string')
+                ),
+            ]
+        )
+    ),
+
+    // ── Reset Change Password ─────────────────────────────────────────────────
+
+    OA\Schema(
+        schema: 'ResetChangePasswordRequest',
+        required: ['mobile_no', 'oldpassword', 'newpassword', 'confirmpassword'],
+        properties: [
+            new OA\Property(property: 'mobile_no',       type: 'string', description: 'Registered mobile number'),
+            new OA\Property(property: 'oldpassword',     type: 'string', description: 'OTP token from SMS'),
+            new OA\Property(property: 'newpassword',     type: 'string', minLength: 8),
+            new OA\Property(property: 'confirmpassword', type: 'string', description: 'Must match newpassword'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'ResetChangePasswordResponse',
+        description: 'Password Change Result',
+        content: new OA\JsonContent(
+            example: ['message' => 'Changed Password Successfully']
+        )
+    ),
+
+    // ── Attendance ────────────────────────────────────────────────────────────
+
+    OA\Schema(
+        schema: 'AttendanceEventItem',
+        properties: [
+            new OA\Property(property: 'id',               type: 'integer'),
+            new OA\Property(property: 'title',            type: 'string'),
+            new OA\Property(property: 'category',         type: 'string'),
+            new OA\Property(property: 'start_date',       type: 'string'),
+            new OA\Property(property: 'end_date',         type: 'string'),
+            new OA\Property(property: 'today_session_id', type: 'integer', nullable: true),
+            new OA\Property(property: 'is_locked',        type: 'boolean'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'AttendanceEventsResponse',
+        description: 'Attendance-enabled events assigned to the staff member',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(ref: '#/components/schemas/AttendanceEventItem')
+                ),
+            ]
+        )
+    ),
+
+    OA\Schema(
+        schema: 'OpenSessionRequest',
+        required: ['event_id'],
+        properties: [
+            new OA\Property(property: 'event_id',        type: 'integer'),
+            new OA\Property(property: 'attendance_date', type: 'string', format: 'date', description: 'Defaults to today'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'OpenSessionResponse',
+        description: 'Attendance session opened or retrieved',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'session_id',      type: 'integer'),
+                new OA\Property(property: 'event_id',        type: 'integer'),
+                new OA\Property(property: 'event_title',     type: 'string'),
+                new OA\Property(property: 'attendance_date', type: 'string'),
+                new OA\Property(property: 'is_locked',       type: 'boolean'),
+            ]
+        )
+    ),
+
+    OA\Schema(
+        schema: 'AttendanceScanRequest',
+        required: ['session_id', 'member_username'],
+        properties: [
+            new OA\Property(property: 'session_id',      type: 'integer'),
+            new OA\Property(property: 'member_username', type: 'string'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'AttendanceScanResponse',
+        description: 'Check-in result (200 checked_in / 409 already_checked_in)',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'status',      type: 'string', description: '"checked_in" or "already_checked_in"'),
+                new OA\Property(property: 'member_name', type: 'string'),
+                new OA\Property(property: 'avatar_url',  type: 'string', nullable: true),
+                new OA\Property(property: 'scanned_at',  type: 'string'),
+            ]
+        )
+    ),
+
+    OA\Response(
+        response: 'SessionLockResponse',
+        description: 'Session locked',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'message',   type: 'string'),
+                new OA\Property(property: 'locked_at', type: 'string'),
+            ]
+        )
+    ),
+
+    OA\Schema(
+        schema: 'AttendeeItem',
+        properties: [
+            new OA\Property(property: 'member_id',   type: 'integer'),
+            new OA\Property(property: 'member_name', type: 'string'),
+            new OA\Property(property: 'avatar_url',  type: 'string', nullable: true),
+            new OA\Property(property: 'mobile_no',   type: 'string'),
+            new OA\Property(property: 'scanned_at',  type: 'string'),
+            new OA\Property(property: 'scanned_by',  type: 'string', nullable: true),
+        ]
+    ),
+
+    OA\Response(
+        response: 'SessionReportResponse',
+        description: 'Session attendee report',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(property: 'session_id',      type: 'integer'),
+                new OA\Property(property: 'event_title',     type: 'string'),
+                new OA\Property(property: 'attendance_date', type: 'string'),
+                new OA\Property(property: 'is_locked',       type: 'boolean'),
+                new OA\Property(property: 'total',           type: 'integer'),
+                new OA\Property(
+                    property: 'attendees',
+                    type: 'array',
+                    items: new OA\Items(ref: '#/components/schemas/AttendeeItem')
+                ),
+            ]
+        )
+    ),
+
 ]
 class OpenApiDefinitions {}

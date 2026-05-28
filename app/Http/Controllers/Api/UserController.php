@@ -30,6 +30,7 @@ class UserController extends Controller
     use SendMessageProcess;
     #[OA\Get(
         path: '/api/v1/member/show/{id}',
+        summary: 'Get member details',
 
         security: [['sanctum' => []]],
 
@@ -49,6 +50,24 @@ class UserController extends Controller
         return $users;
     }
 
+    #[OA\Post(
+        path: '/api/v1/member/updatetoken',
+        summary: 'Update the authenticated user\'s platform push token',
+        operationId: '603c8c888febf5275c533656570b7a9c',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/UpdateTokenRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/UpdateTokenResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function updatetoken(Request $request)
     {
         //
@@ -68,6 +87,7 @@ class UserController extends Controller
     }
     #[OA\Post(
         path: '/api/v1/member/changePassword',
+        summary: 'Change Password',
 
         security: [['sanctum' => []]],
 
@@ -209,6 +229,23 @@ class UserController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/v1/reset/change/password',
+        summary: 'Change password using OTP-verified reset token',
+        operationId: 'f69ef19119f4f1265f8caf3460c30ffc',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/ResetChangePasswordRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ResetChangePasswordResponse'
+            )
+        ]
+    )]
     public function resetChangePassword(ResetChangePasswordRequest $request)
     {
         try {

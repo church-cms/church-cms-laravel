@@ -30,6 +30,7 @@ class UserprofileController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/member/get/country',
+        summary: 'Country List',
         responses: [
             new OA\Response(
                 response: 200,
@@ -53,6 +54,7 @@ class UserprofileController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/member/get/state/{id}',
+        summary: 'State List',
 
         parameters: [
             new OA\Parameter(
@@ -86,7 +88,7 @@ class UserprofileController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/member/get/city/{id}',
-
+        summary: 'City List',
         parameters: [
             new OA\Parameter(
                 name: 'id',
@@ -117,6 +119,18 @@ class UserprofileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/member/get/profession',
+        summary: 'Get profession list',
+        operationId: 'daa79a4723c4aeff90d93a583451146c',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ProfessionResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function create()
     {
         //
@@ -126,6 +140,18 @@ class UserprofileController extends Controller
         return $profession;
     }
 
+    #[OA\Get(
+        path: '/api/v1/member/get/marriage_status',
+        summary: 'Get marriage status list',
+        operationId: 'a83a402aec4f031cf54f0f658963b1c0',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/MarriageStatusResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function marriage_status()
     {
         $marriage_status = SiteHelper::getMarriageStatus();
@@ -166,6 +192,7 @@ class UserprofileController extends Controller
 
     #[OA\Post(
         path: '/api/v1/member/edit/{id}',
+        summary: 'Edit user',
 
         security: [['sanctum' => []]],
 

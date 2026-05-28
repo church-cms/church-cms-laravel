@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SermonLink;
 use App\Models\Sermon;
 use OpenApi\Attributes as OA;   // ← add this line
+
 /**
  * SermonLinkController
  *
@@ -21,6 +22,7 @@ class SermonLinkController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/sermon/show/{sermons_id}',
+        summary: 'Show Sermons  ',
         parameters: [
             new OA\Parameter(
                 name: 'sermons_id',
