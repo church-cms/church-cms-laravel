@@ -31,7 +31,8 @@ class MediaFilesController extends Controller
     )]
     public function showvideo()
     {
-        $files = MediaFile::where('church_id', Auth::user()->church_id)->latest()->paginate(10);
+        $type=request('media_type')
+        $files = MediaFile::where([['media_type',$type],['church_id', Auth::user()->church_id]])->latest()->paginate(10);
         $files = MediaFileResource::collection($files);
 
         return $files;
