@@ -562,51 +562,51 @@ use OpenApi\Attributes as OA;
         )
     ),
     OA\Schema(
-    schema: 'MediaFileResource',
-    properties: [
+        schema: 'MediaFileResource',
+        properties: [
 
-        new OA\Property(
-            property: 'id',
-            type: 'integer'
-        ),
+            new OA\Property(
+                property: 'id',
+                type: 'integer'
+            ),
 
-        new OA\Property(
-            property: 'church_id',
-            type: 'integer'
-        ),
+            new OA\Property(
+                property: 'church_id',
+                type: 'integer'
+            ),
 
-        new OA\Property(
-            property: 'name',
-            type: 'string'
-        ),
+            new OA\Property(
+                property: 'name',
+                type: 'string'
+            ),
 
-        new OA\Property(
-            property: 'description',
-            type: 'string'
-        ),
+            new OA\Property(
+                property: 'description',
+                type: 'string'
+            ),
 
-        new OA\Property(
-            property: 'media_type',
-            type: 'string'
-        ),
+            new OA\Property(
+                property: 'media_type',
+                type: 'string'
+            ),
 
-        new OA\Property(
-            property: 'url',
-            type: 'string'
-        ),
-    ]
-),
+            new OA\Property(
+                property: 'url',
+                type: 'string'
+            ),
+        ]
+    ),
 
-OA\Response(
-    response: 'MediaFileResponse',
-    description: 'Media List',
-    content: new OA\JsonContent(
-        type: 'array',
-        items: new OA\Items(
-            ref: '#/components/schemas/MediaFileResource'
+    OA\Response(
+        response: 'MediaFileResponse',
+        description: 'Media List',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(
+                ref: '#/components/schemas/MediaFileResource'
+            )
         )
-    )
-),
+    ),
 
     OA\Schema(
         schema: 'BulletinResource',
@@ -1339,6 +1339,35 @@ OA\Response(
             ]
         )
     ),
+    // ── Logout All  Devices ──────────────────────────────────────────────────────────
+
+    OA\Schema(
+        schema: 'LogoutAllRequest',
+        required: ['email'],
+        properties: [
+            new OA\Property(property: 'email', type: 'string', description: 'Email'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'LogoutAllResponse',
+        description: 'Logout all devices',
+        content: new OA\JsonContent(
+            example: ['message' => 'Logout all devices Successfully']
+        )
+    ),
+
+    OA\Response(
+        response: 'LogoutResponse',
+        description: 'Logout Successfully',
+        content: new OA\JsonContent(
+            example: [
+                'message' => 'Logout Successfully'
+            ]
+        )
+    ),
+
+
 
 ]
 class OpenApiDefinitions {}

@@ -19,7 +19,7 @@ use OpenApi\Attributes as OA;
 class MediaFilesController extends Controller
 {
     #[OA\Get(
-        path: '/api/v1/mediaFiles',
+        path: '/api/v1/mediaFiles?media_type=image',
         summary: 'Get Media Files',
         responses: [
             new OA\Response(

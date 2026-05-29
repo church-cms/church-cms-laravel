@@ -14,6 +14,7 @@ use Exception;
 use Log;
 use OpenApi\Attributes as OA;   // ← add this line
 use Illuminate\Support\Facades\Validator;
+
 /**
  * LoginController
  *
@@ -52,12 +53,12 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'device_id' => 'required|teacher_logoutdevice_id',
-        ],[
+        ], [
             'teacher_logoutdevice_id' => 'Your account is currently logged onto another device. Please log out of the other device or contact your administrator',
         ])->validate();
-        
+
         try {
 
             if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')])) {
@@ -94,6 +95,18 @@ class LoginController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/logout',
+        summary: 'Logout',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/LogoutResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+
     public function logout(Request $request)
     {
         try {
@@ -117,16 +130,32 @@ class LoginController extends Controller
         }
     }
 
-     public function logoutDevices(Request $request)
+    #[OA\Post(
+        path: '/api/logout/devices',
+        summary: 'Logout All Devices',
+
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/LogoutAllRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/LogoutAllResponse'
+            )
+        ],
+
+    )]
+    public function logoutDevices(Request $request)
     {
 
 
-        try
-        {
-             $user = User::where([['mobile_no',$request->email],['device_id','!=',null],['usergroup_id',5]])->first();
+        try {
+            $user = User::where([['mobile_no', $request->email], ['device_id', '!=', null], ['usergroup_id', 5]])->first();
 
-            if ($user!=null) 
-               {
+            if ($user != null) {
 
                 $user->tokens()->delete();
 
@@ -136,17 +165,14 @@ class LoginController extends Controller
 
                 $user->save();
 
-                 return response()->json([
-                'success'   =>  true,
-                'message'   =>  'Logged out from all devices'
-                 ],200);
-             }
-        }
-        catch(Exception $e)
-        {
+                return response()->json([
+                    'success'   =>  true,
+                    'message'   =>  'Logged out from all devices'
+                ], 200);
+            }
+        } catch (Exception $e) {
             Log::info($e->getMessage());
             //dd($e->getMessage());
         }
-
     }
 }
