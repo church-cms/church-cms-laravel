@@ -52,6 +52,12 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request)
     {
+         $validator = Validator::make($request->all(), [
+            'device_id' => 'required|teacher_logoutdevice_id',
+        ],[
+            'teacher_logoutdevice_id' => 'Your account is currently logged onto another device. Please log out of the other device or contact your administrator',
+        ])->validate();
+        
         try {
 
             if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')])) {
@@ -66,6 +72,7 @@ class LoginController extends Controller
                     $user = User::where([['id', $user->id], ['church_id', $user->church_id]])->first();
 
                     $user->platform_token = $request->platform_token;
+                    $user->device_id = $request->device_id;
 
                     $user->save();
 
@@ -97,6 +104,7 @@ class LoginController extends Controller
             $user = User::where('id', Auth::id())->first();
 
             $user->platform_token  = NULL;
+            $user->device_id  = NULL;
 
             $user->save();
 
@@ -107,5 +115,38 @@ class LoginController extends Controller
         } catch (Exception $e) {
             Log::info($e->getMessage());
         }
+    }
+
+     public function logoutDevices(Request $request)
+    {
+
+
+        try
+        {
+             $user = User::where([['mobile_no',$request->email],['device_id','!=',null],['usergroup_id',5]])->first();
+
+            if ($user!=null) 
+               {
+
+                $user->tokens()->delete();
+
+                $user->platform_token  = NULL;
+
+                $user->device_id = NULL;
+
+                $user->save();
+
+                 return response()->json([
+                'success'   =>  true,
+                'message'   =>  'Logged out from all devices'
+                 ],200);
+             }
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+            //dd($e->getMessage());
+        }
+
     }
 }
