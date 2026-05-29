@@ -13,7 +13,7 @@ use App\Token;
 use Exception;
 use Log;
 use OpenApi\Attributes as OA;   // ← add this line
-
+use Illuminate\Support\Facades\Validator;
 /**
  * LoginController
  *
