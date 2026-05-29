@@ -45,13 +45,11 @@ Route::get('/events/show/details/{id}', 'Api\EventsController@showdetails');
 //login
 Route::post('/login', 'Api\LoginController@login');
 //logout All Devices
-Route::post('/logout/devices', 'LoginController@logoutDevices');
-
+Route::post('/logout/devices', 'Api\LoginController@logoutDevices');
 //locations , churches list
 Route::get('/locations', 'Api\ChurchController@locationList');
 
 Route::get('/churches/{city_id}', 'Api\ChurchController@churchList');
-
 
 //password reset
 
@@ -152,7 +150,6 @@ Route::group(
 		Route::get('/bulletin/show', 'BulletinsController@show');
 
 		//fund
-
 		Route::get('/myFunds', 'FundController@myFunds');
 
 		Route::get('/fund/list', 'FundController@list');
