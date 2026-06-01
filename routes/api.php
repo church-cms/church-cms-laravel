@@ -195,6 +195,9 @@ Route::group(
 		//groups
 
 		Route::get('/groups/list', 'GroupsController@index');
+		Route::post('/group/sendmessage/{group_id}', 'GroupsController@sendGroupMessage');
+		Route::get('/grouppost/list/{group_id}', 'GroupsController@postindex');
+
 
 		//messages
 
