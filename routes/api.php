@@ -180,7 +180,7 @@ Route::group(
 
 		Route::post('/prayer_participants/{id}', 'PrayerParticipantsController@store');
 
-		Route::post('/prayer-requests/{id}/lift', 'PrayerRequestController@lift');
+		Route::post('/prayer-requests/{id}/lift', 'PrayerRequestsController@lift');
 
 		//helps
 
