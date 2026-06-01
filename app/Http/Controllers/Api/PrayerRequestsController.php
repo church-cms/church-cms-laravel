@@ -141,6 +141,7 @@ class PrayerRequestsController extends Controller
 
     public function lift(Request $request, $id)
     {
+        
 
         $prayer = Prayer::where('id', $id)
             ->where('status', Prayer::STATUS_ACTIVE)
