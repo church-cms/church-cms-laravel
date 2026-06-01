@@ -101,19 +101,19 @@ $isAdmin = auth()->user()->usergroup_id == 3;
                     <td class="px-4 py-3 text-right">
                         <div class="flex items-center justify-end gap-2">
                             <a href="{{ url('/admin/group/show/' . $group->id) }}"
-                                class="text-xs px-2.5 py-1.5 rounded border border-gray-200 text-gray-600 hover:bg-gray-100 transition">
+                                style="display:inline-flex;align-items:center;justify-content:center;width:62px;height:28px;font-size:12px;font-weight:500;border-radius:4px;border:1px solid #3b82f6;color:#2563eb;background:#eff6ff;text-decoration:none;box-sizing:border-box;">
                                 View
                             </a>
                             @if($isAdmin || Auth::user()->hasPermission('create-groups'))
                             <a href="{{ url('/admin/group/edit/' . $group->id) }}"
-                                class="text-xs px-2.5 py-1.5 rounded border border-gray-200 text-gray-600 hover:bg-gray-100 transition">
+                                style="display:inline-flex;align-items:center;justify-content:center;width:62px;height:28px;font-size:12px;font-weight:500;border-radius:4px;border:1px solid #6b7280;color:#374151;background:#f3f4f6;text-decoration:none;box-sizing:border-box;">
                                 Edit
                             </a>
                             <form action="{{ url('/admin/group/delete/' . $group->id) }}" method="POST"
-                                onsubmit="return confirm('Delete this group?')">
+                                onsubmit="return confirm('Delete this group?')" style="display:inline;margin:0;padding:0;">
                                 @csrf @method('DELETE')
                                 <button type="submit"
-                                    class="text-xs px-2.5 py-1.5 rounded border border-red-200 text-red-500 hover:bg-red-50 transition">
+                                    style="display:inline-flex;align-items:center;justify-content:center;width:62px;height:28px;font-size:12px;font-weight:500;border-radius:4px;border:1px solid #ef4444;color:#dc2626;background:#fef2f2;box-sizing:border-box;cursor:pointer;line-height:1;appearance:none;-webkit-appearance:none;">
                                     Delete
                                 </button>
                             </form>

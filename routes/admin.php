@@ -506,7 +506,7 @@ Route::group(['middleware' => ['admingroup']], function () {
 });
 
 Route::get('/events/show', 'EventsController@events');
-
+Route::get('/events/showdetails/{id}', 'EventsController@showdetails');
 //recurring events
 Route::group(['middleware' => ['permission:read-events']], function () {
     Route::get('/events', 'EventsController@index')->name('admin.events.index');
@@ -521,7 +521,7 @@ Route::group(['middleware' => ['permission:read-events']], function () {
     Route::get('/events/{id}/edit', 'EventsController@editForm')->name('admin.events.editForm');
     Route::post('/events/{id}/edit', 'EventsController@storeEdit')->name('admin.events.storeEdit');
     Route::get('/events/show/details/{id}', 'EventsController@show')->name('admin.events.show');
-    Route::get('/events/showdetails/{id}', 'EventsController@showdetails');
+    //Route::get('/events/showdetails/{id}', 'EventsController@showdetails');
     Route::get('/events/details/{id}', 'EventsController@details');
     Route::delete('/events/delete/{id}', 'EventsController@destroy');
     Route::get('/event/showAttendees/{id}/{status}', 'EventsController@showAttendees');
@@ -622,7 +622,7 @@ Route::group(['middleware' => ['permission:read-files']], function () {
     //video
     Route::get('/mediafile/video/create', 'VideoController@create');
     Route::post('/mediafile/video/create', 'VideoController@store');
- 
+
 
     //audio
     Route::get('/mediafile/audio/create', 'AudioController@create');
