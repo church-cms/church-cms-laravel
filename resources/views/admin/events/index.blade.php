@@ -363,11 +363,12 @@ $isAdmin = auth()->user()->usergroup_id == 3;
         }
 
         window.openEventPopup = function(id) {
-            fetch('{{ url(' / admin / events / showdetails ') }}/' + id, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
+        
+            fetch('{{ url("admin/events/showdetails") }}/' + id, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
                 .then(function(r) {
                     return r.json();
                 })
@@ -399,7 +400,7 @@ $isAdmin = auth()->user()->usergroup_id == 3;
                         coverImg.src = '';
                     }
 
-                    detailLink.href = '{{ url(' / admin / events / show / details ') }}/' + ev.id;
+                    detailLink.href = '{{ url("admin/events/show/details") }}/' + ev.id;
                     overlay.classList.remove('hidden');
                     document.body.style.overflow = 'hidden';
                 });
