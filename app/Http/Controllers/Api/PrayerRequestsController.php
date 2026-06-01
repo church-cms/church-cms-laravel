@@ -141,10 +141,10 @@ class PrayerRequestsController extends Controller
 
     public function lift(Request $request, $id)
     {
-        
+
         $prayer = Prayer::where('id', $id)
             ->where('status', Prayer::STATUS_ACTIVE)
-            ->where('church_id', Auth::user()->church_id))
+            ->where('church_id', Auth::user()->church_id)
             ->first();
 
         if (!$prayer) {
