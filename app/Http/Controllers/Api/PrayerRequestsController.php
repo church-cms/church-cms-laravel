@@ -16,6 +16,7 @@ use Log;
 use App\Http\Resources\API\PrayerCategory as PrayerCategoryResource;
 use App\Models\PrayerCategory;
 use OpenApi\Attributes as OA;
+use App\Models\PrayerParticipant;
 
 class PrayerRequestsController extends Controller
 {
@@ -132,10 +133,60 @@ class PrayerRequestsController extends Controller
     public function prayerCategory()
     {
         $prayercatlist = PrayerCategory::where('is_active', 1)
-            ->orderBy('sort_order','ASC')
+            ->orderBy('sort_order', 'ASC')
             ->get();
 
         return PrayerCategoryResource::collection($prayercatlist);
     }
 
+    public function lift(Request $request, $id)
+    {
+
+        $prayer = Prayer::where('id', $id)
+            ->where('status', Prayer::STATUS_ACTIVE)
+            ->where('church_id', Auth::user()->church_id))
+            ->first();
+
+        if (!$prayer) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'This prayer is no longer active',
+                'code'    => 'PRAYER_INACTIVE',
+            ], 422);
+        }
+
+        if (auth()->check()) {
+            $user = auth()->user();
+            $type = PrayerParticipant::TYPE_MEMBER;
+            $hash = null;
+        } else {
+            $user = null;
+            $type = PrayerParticipant::TYPE_GUEST;
+            $hash = hash('sha256', $request->ip() . '|' . $request->userAgent() . '|' . $id);
+        }
+
+        $lifted = PrayerParticipant::lift($prayer, $user, $type, $hash);
+
+        if (!$lifted) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'You have already prayed for this',
+                'code'    => 'DUPLICATE_PARTICIPATION',
+            ], 403);
+        }
+
+        $prayer->refresh();
+
+        return response()->json([
+            'success'               => true,
+            'message'               => 'Prayer recorded',
+            'participant_count'     => $prayer->total_participant_count,
+            'participant_breakdown' => [
+                'total'     => $prayer->total_participant_count,
+                'members'   => $prayer->member_count,
+                'guests'    => $prayer->guest_count,
+                'anonymous' => $prayer->anonymous_count,
+            ],
+        ], 200);
+    }
 }
