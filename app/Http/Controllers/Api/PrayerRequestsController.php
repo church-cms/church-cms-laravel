@@ -139,6 +139,29 @@ class PrayerRequestsController extends Controller
         return PrayerCategoryResource::collection($prayercatlist);
     }
 
+    /**
+     * Submit a Prayer Participant request .
+     */
+    #[OA\Post(
+        path: '/api/v1/prayer_requests/{id}/lift',
+        summary: 'Prayer Participant request',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/PrayerliftResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+
     public function lift(Request $request, $id)
     {
 

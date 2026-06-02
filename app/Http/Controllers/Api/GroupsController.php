@@ -49,18 +49,130 @@ class GroupsController extends Controller
         return $group;
     }
 
+    #[OA\Get(
+        path: '/api/v1/grouppost/list/{group_id}',
+        summary: 'List posts for a group',
+        description: 'Returns a paginated list of posts for the given group. Only accessible to authenticated members.',
+        parameters: [
+            new OA\Parameter(
+                name: 'group_id',
+                in: 'path',
+                required: true,
+                description: 'The ID of the group',
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Paginated group post list',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'data', type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer'),
+                                    new OA\Property(property: 'group_id', type: 'integer'),
+                                    new OA\Property(property: 'user_id', type: 'integer'),
+                                    new OA\Property(property: 'title', type: 'string', nullable: true),
+                                    new OA\Property(property: 'message', type: 'string'),
+                                    new OA\Property(property: 'attachments', type: 'string', nullable: true),
+                                    new OA\Property(property: 'attachment_type', type: 'string', enum: ['image', 'video', 'url'], nullable: true),
+                                    new OA\Property(property: 'status', type: 'string'),
+                                    new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
+                                ]
+                            )
+                        ),
+                        new OA\Property(property: 'current_page', type: 'integer'),
+                        new OA\Property(property: 'per_page', type: 'integer'),
+                        new OA\Property(property: 'total', type: 'integer'),
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function postindex($group_id)
     {
 
-     
+
         $messages = GroupPost::where([['group_id', $group_id], ['church_id', Auth::user()->church_id]])->orderBy('id', 'DESC')->paginate(15);
-        
+
 
         $grouppost = GroupPostResource::collection($messages);
 
         return $grouppost;
     }
 
+    #[OA\Post(
+        path: '/api/v1/group/sendmessage/{group_id}',
+        summary: 'Send a message/post to a group',
+        description: 'Creates a new post in the specified group. The authenticated user must be a member of the group. Supports optional image attachment (multipart/form-data).',
+        parameters: [
+            new OA\Parameter(
+                name: 'group_id',
+                in: 'path',
+                required: true,
+                description: 'The ID of the group to post in',
+                schema: new OA\Schema(type: 'integer', example: 1)
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    required: ['message'],
+                    properties: [
+                        new OA\Property(
+                            property: 'message',
+                            type: 'string',
+                            maxLength: 1000,
+                            description: 'Post message content',
+                            example: 'Hello group members!'
+                        ),
+                        new OA\Property(
+                            property: 'attachments',
+                            type: 'string',
+                            format: 'binary',
+                            description: 'Optional image attachment (jpeg, png, jpg, gif, webp — max 20 MB)'
+                        ),
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Post created successfully',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(property: 'message', type: 'string', example: 'Post created successfully.'),
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 403,
+                description: 'Not a member of this group',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'errors', type: 'object',
+                            properties: [
+                                new OA\Property(property: 'auth', type: 'array',
+                                    items: new OA\Items(type: 'string', example: 'You are not a member of this group.')
+                                )
+                            ]
+                        )
+                    ]
+                )
+            ),
+            new OA\Response(response: 422, description: 'Validation error — message is required or attachment is invalid'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function sendGroupMessage(Request $request, $group_id)
     {
 

@@ -1368,6 +1368,34 @@ use OpenApi\Attributes as OA;
     ),
 
 
+    OA\Schema(
+        schema: 'PrayerliftResponseSchema',
+        properties: [
+            new OA\Property(property: 'success', type: 'boolean', example: true),
+            new OA\Property(property: 'message', type: 'string', example: 'Prayer recorded'),
+            new OA\Property(property: 'participant_count', type: 'integer', example: 15),
+            new OA\Property(
+                property: 'participant_breakdown',
+                properties: [
+                    new OA\Property(property: 'total', type: 'integer', example: 15),
+                    new OA\Property(property: 'members', type: 'integer', example: 10),
+                    new OA\Property(property: 'guests', type: 'integer', example: 3),
+                    new OA\Property(property: 'anonymous', type: 'integer', example: 2),
+                ],
+                type: 'object'
+            ),
+        ]
+    ),
+
+    OA\Response(
+        response: 'PrayerliftResponse',
+        description: 'Prayer participation recorded successfully',
+        content: new OA\JsonContent(
+            ref: '#/components/schemas/PrayerliftResponseSchema'
+        )
+    ),
+
+
 
 ]
 class OpenApiDefinitions {}
