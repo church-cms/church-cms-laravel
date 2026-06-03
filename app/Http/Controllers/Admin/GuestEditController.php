@@ -57,6 +57,7 @@ class GuestEditController extends Controller
         $array['city_id']               =   $userprofile->city_id;
         $array['pincode']               =   $userprofile->pincode;
         $array['notes']                 =   $userprofile->notes;
+        $array['address']               =   $userprofile->address;
         $array['was_baptized']          =   $userprofile->was_baptized;
         $array['baptism_date']          =   $userprofile->baptism_date === null ? null : date('Y-m-d', strtotime($userprofile->baptism_date));
 
@@ -80,7 +81,11 @@ class GuestEditController extends Controller
         //
         $user = User::where('name', $name)->first();
         if (Gate::allows('member', $user)) {
-            return view('/admin/guest/edit', ['user' => $user]);
+            return view('/admin/guest/edit', [
+                'user'           => $user,
+                'countrylist'    => SiteHelper::getCountries(),
+                'occupationlist' => SiteHelper::getOccupationList(),
+            ]);
         } else {
             abort(403);
         }
