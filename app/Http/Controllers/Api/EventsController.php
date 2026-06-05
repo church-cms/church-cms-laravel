@@ -58,7 +58,7 @@ class EventsController extends Controller
         $year  = request('year');
         if (request('month') != '' && request('year') != '') {
 
-            $events = Events::where('church_id', Auth::user()->church_id)
+            $event = Events::where('church_id', Auth::user()->church_id)
                 ->whereMonth('end_date', $month)
                 ->whereYear('end_date', $year)
                 ->get();
