@@ -14,3 +14,9 @@
 1. update to vue 3
 2. set church page
 3. improve web builder
+
+## Task
+1. Donation Module
+2. facilities.
+   Manage and request resources, such as rooms and items for events, at your campus
+3. Service Planning
