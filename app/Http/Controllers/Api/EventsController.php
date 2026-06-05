@@ -53,18 +53,24 @@ class EventsController extends Controller
     public function past()
     {
         $end_date = Carbon::now();
-
-        $month = request('month'); // June
+        $month = request('month');
         $year  = request('year');
-        if (request('month') != '' && request('year') != '') {
 
-            $event = Events::where('church_id', Auth::user()->church_id)
-                ->whereMonth('end_date', $month)
-                ->whereYear('end_date', $year)
-                ->get();
-        } else {
-            $event = Events::where([['church_id', Auth::user()->church_id], ['end_date', '<', $end_date]])->get();
+        $query = Events::where('church_id', Auth::user()->church_id);
+
+        if (!empty($month)) {
+            $query->whereMonth('end_date', $month);
         }
+
+        if (!empty($year)) {
+            $query->whereYear('end_date', $year);
+        }
+
+        if (empty($month) && empty($year)) {
+            $query->where('end_date', '<', $end_date);
+        }
+
+        $event = $query->get();
 
         //dd($event);
 
