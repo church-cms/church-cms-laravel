@@ -97,8 +97,8 @@
         @endphp
         <script>
             window.__completedEvents = @json($completedJs);
-            window.__eventRouteBase = '{{ url(' / events ') }}';
-            window.__eventRouteBases = '{{ url(' / event ') }}';
+            window.__eventRouteBase = '{{ url('/events') }}';
+            window.__eventRouteBases = '{{ url('/event') }}';
         </script>
 
         <div x-data="{
