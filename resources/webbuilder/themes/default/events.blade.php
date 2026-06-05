@@ -72,7 +72,33 @@
 
         @if(count($completed))
 
-
+        @php
+            $completedJs = [];
+            foreach($completed as $year => $months) {
+                foreach($months as $month => $events) {
+                    $key = $year . '::' . $month;
+                    $completedJs[$key] = collect($events)->map(function($e) {
+                        $image = null;
+                        if ($e->image) {
+                            $image = Str::startsWith($e->image, ['http://', 'https://'])
+                                ? $e->image
+                                : \Storage::url($e->image);
+                        }
+                        return [
+                            'id'       => $e->id,
+                            'title'    => $e->title,
+                            'date'     => \Carbon\Carbon::parse($e->start_date)->format('d M Y, g:i A'),
+                            'location' => $e->location,
+                            'image'    => $image,
+                        ];
+                    })->values()->all();
+                }
+            }
+        @endphp
+        <script>
+            window.__completedEvents = @json($completedJs);
+            window.__eventRouteBase = '{{ url('/events') }}';
+        </script>
 
         <div x-data="{
                 openYear: '{{ array_key_first($completed) }}',
@@ -101,6 +127,8 @@
                             <span x-text="openYear === '{{ $year }}' ? '▲' : '▼'"></span>
                         </span>
                     </button>
+
+
 
                     {{-- Months --}}
                     <div x-show="openYear === '{{ $year }}'" x-collapse>
