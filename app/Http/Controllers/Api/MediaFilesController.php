@@ -20,6 +20,7 @@ class MediaFilesController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/mediaFiles?media_type=image',
+        tags: ['MediaFiles'],
         summary: 'Get Media Files',
         responses: [
             new OA\Response(

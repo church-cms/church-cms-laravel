@@ -36,6 +36,7 @@ class LoginController extends Controller
      */
     #[OA\Post(
         path: '/api/login',
+        tags: ['Login'],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -97,6 +98,7 @@ class LoginController extends Controller
 
     #[OA\Post(
         path: '/api/logout',
+        tags: ['Login'],
         summary: 'Logout',
         responses: [
             new OA\Response(
@@ -132,6 +134,7 @@ class LoginController extends Controller
 
     #[OA\Post(
         path: '/api/logout/devices',
+        tags: ['Login'],
         summary: 'Logout All Devices',
 
         requestBody: new OA\RequestBody(

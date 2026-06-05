@@ -30,6 +30,7 @@ class FavoritesController extends Controller
     use Common;
     #[OA\Post(
         path: '/api/v1/sermon/favorite',
+        tags: ['Sermons'],
         summary: 'Favorite',
         requestBody: new OA\RequestBody(
             required: true,

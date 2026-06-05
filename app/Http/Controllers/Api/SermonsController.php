@@ -10,6 +10,7 @@ class SermonsController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/sermon/view/{church_id}',
+        tags: ['Sermons'],
         summary: 'Get Sermon Details  ',
         parameters: [
             new OA\Parameter(

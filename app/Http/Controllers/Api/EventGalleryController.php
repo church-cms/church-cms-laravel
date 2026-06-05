@@ -20,6 +20,7 @@ class EventGalleryController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/events/gallery/show/{event_id}',
+        tags: ['Events'],
         summary: 'Event Gallery Details',
         parameters: [
             new OA\Parameter(

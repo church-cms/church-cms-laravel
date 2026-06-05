@@ -37,6 +37,7 @@ class FeedbackController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/feedbacks',
+        tags: ['Feedback'],
         summary: 'Get all feedbacks submitted by the authenticated user',
         operationId: 'a15a31f8309a98a18a63a0cab53a13ae',
         responses: [
@@ -50,8 +51,8 @@ class FeedbackController extends Controller
     public function index()
     {
         //
-        $user = User::where('id',Auth::id())->first();
-        $feedback = Feedback::where('user_id',$user->id)->get();
+        $user = User::where('id', Auth::id())->first();
+        $feedback = Feedback::where('user_id', $user->id)->get();
 
         $feedback = FeedbackResource::collection($feedback);
 
@@ -60,6 +61,7 @@ class FeedbackController extends Controller
 
     #[OA\Get(
         path: '/api/v1/feedback/category/list',
+        tags: ['Feedback'],
         summary: 'Get feedback category list',
         operationId: 'ac6f79957960ab699e0247577733376c',
         responses: [
@@ -85,6 +87,7 @@ class FeedbackController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/feedback/add',
+        tags: ['Feedback'],
         summary: 'Submit a new feedback message',
         operationId: '6973684c2bac7753c462ffb7ac5169fa',
         requestBody: new OA\RequestBody(
@@ -104,10 +107,9 @@ class FeedbackController extends Controller
     public function store(FeedbackRequest $request)
     {
         //
-        try
-        {
-            $user = User::where('id',Auth::id())->first();
-            $admin = User::where('church_id',$user->church_id)->ByRole(3)->first();
+        try {
+            $user = User::where('id', Auth::id())->first();
+            $admin = User::where('church_id', $user->church_id)->ByRole(3)->first();
 
             $feedback = new Feedback;
 
@@ -115,8 +117,7 @@ class FeedbackController extends Controller
             $feedback->user_id = $user->id;
             $feedback->admin_id = $admin->id;
 
-            if($feedback->save())
-            {
+            if ($feedback->save()) {
                 $feedbackMessage = new FeedbackMessage;
 
                 $feedbackMessage->message       = $request->message;
@@ -138,32 +139,24 @@ class FeedbackController extends Controller
                 //     $feedbackMessage->file = $path;
                 // }
 
-                if($feedbackMessage->save())
-                {
+                if ($feedbackMessage->save()) {
                     $res['message'] = 'Message Sent Successfully';
 
                     $array = [];
                     $admin = SiteHelper::getAdmin(Auth::user()->church_id);
-                    $array['user']     =$admin ;
+                    $array['user']     = $admin;
                     $array['details']  = 'New Feedback Received';
 
                     event(new SingleNotificationEvent($array));
-                }
-                else
-                {
+                } else {
                     $res['message'] = 'Failed To Send Message';
                 }
-            }
-            else
-            {
+            } else {
                 $res['message'] = 'Failed To Send Message';
             }
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

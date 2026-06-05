@@ -26,6 +26,7 @@ class SendMessageController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/messages',
+        tags: ['Messages'],
         summary: 'List notification messages for the current user',
         responses: [
             new OA\Response(
@@ -38,15 +39,15 @@ class SendMessageController extends Controller
     public function index()
     {
         //
-        $messages =  SendMail::where([['church_id',Auth::user()->church_id],['mode','notification'],['user_id',Auth::id()]])->orderBy('fired_at','desc')->get();
+        $messages =  SendMail::where([['church_id', Auth::user()->church_id], ['mode', 'notification'], ['user_id', Auth::id()]])->orderBy('fired_at', 'desc')->get();
 
         $messages = SendMailResource::collection($messages);
-        
+
         return response()->json([
             'success'   =>  true,
             'message'   =>  'Messages List',
             'data'      =>  $messages
-        ],200);
+        ], 200);
     }
 
     /**
@@ -57,6 +58,7 @@ class SendMessageController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/message/read/{id}',
+        tags: ['Messages'],
         summary: 'Mark a message as read',
         parameters: [
             new OA\Parameter(
@@ -75,12 +77,11 @@ class SendMessageController extends Controller
         ],
         security: [['sanctum' => []]]
     )]
-    public function readMessage(Request $request,$id)
+    public function readMessage(Request $request, $id)
     {
         //
-        try
-        {
-            $message =  SendMail::where([['id',$id],['user_id',Auth::id()]])->first();
+        try {
+            $message =  SendMail::where([['id', $id], ['user_id', Auth::id()]])->first();
 
             $message->read_status = 1;
             $message->read_at = Carbon::now();
@@ -91,17 +92,15 @@ class SendMessageController extends Controller
                 'success'   =>  true,
                 //'message'   =>  'Messages List',
                 //'data'      =>  $messages
-            ],200);
-        }
-        catch(Exception $e)
-        {
+            ], 200);
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     #[OA\Get(
         path: '/api/v1/notifications',
+        tags: ['Notification'],
         summary: 'List push notifications for the current user',
         responses: [
             new OA\Response(
@@ -114,42 +113,32 @@ class SendMessageController extends Controller
     public function notificationList()
     {
         //   
-      try
-        {
+        try {
 
-        $user=User::where([['church_id',Auth::user()->church_id],['id',Auth::id()]])->first();
+            $user = User::where([['church_id', Auth::user()->church_id], ['id', Auth::id()]])->first();
 
-        if($user)
-        {
+            if ($user) {
 
-            $notifications=\DB::table('notifications')->where('notifiable_id',Auth::id())->latest()->get();
+                $notifications = \DB::table('notifications')->where('notifiable_id', Auth::id())->latest()->get();
 
-            $notifications = NotificationResource::collection($notifications);
-            
-            return response()->json([
-                'success'   =>  true,
-                'message'   =>  'Notification List',
-                'type'      =>  'notification',
-                'data'      =>  $notifications,
-            ],200);
+                $notifications = NotificationResource::collection($notifications);
 
-        }
-
-        else
-        {
-              return response()->json([
-                'success'   =>  false,
-                'message'   =>  'unauthorised',
-                'type'      =>  'notification',
-                'data'      =>  [],
-            ],401);
-        }
-
-        }
-        catch(Exception $e)
-        {
+                return response()->json([
+                    'success'   =>  true,
+                    'message'   =>  'Notification List',
+                    'type'      =>  'notification',
+                    'data'      =>  $notifications,
+                ], 200);
+            } else {
+                return response()->json([
+                    'success'   =>  false,
+                    'message'   =>  'unauthorised',
+                    'type'      =>  'notification',
+                    'data'      =>  [],
+                ], 401);
+            }
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

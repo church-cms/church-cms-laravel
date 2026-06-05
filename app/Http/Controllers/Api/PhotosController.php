@@ -12,6 +12,7 @@ class PhotosController extends Controller
 
 	#[OA\Get(
 		path: '/api/v1/gallery/show/{church_id}',
+		tags: ['Gallery'],
 		parameters: [
 			new OA\Parameter(
 				name: 'church_id',

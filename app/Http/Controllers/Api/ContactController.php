@@ -38,6 +38,7 @@ class ContactController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/church/contact',
+        tags: ['Contact'],
         summary: 'Submit a church contact / enquiry form',
         requestBody: new OA\RequestBody(
             required: true,
@@ -55,12 +56,9 @@ class ContactController extends Controller
     )]
     public function userStore(ContactRequest $request)
     {
-        try
-        {
-
+        try {
 
             $contact = new Contact;
-
             $contact->church_id             = Auth::user()->church_id;
             $contact->fullname              = $request->fullname;
             $contact->email                 = $request->email;
@@ -79,25 +77,20 @@ class ContactController extends Controller
 
             $user = User::ByRole(3)->first();
 
-            if(env('MAIL_STATUS') === 'on')
-            {
-
+            if (env('MAIL_STATUS') === 'on') {
             }
 
-            if($contact != null)
-            {
+            if ($contact != null) {
                 $success = true;
                 $message = 'Contact Submitted Successfully';
 
-                 $array = [];
-                 $admin = SiteHelper::getAdmin(Auth::user()->church_id);
-                 $array['user']     =$admin ;
-                 $array['details']  = 'New Contact Received';
+                $array = [];
+                $admin = SiteHelper::getAdmin(Auth::user()->church_id);
+                $array['user']     = $admin;
+                $array['details']  = 'New Contact Received';
 
-                 event(new SingleNotificationEvent($array));
-            }
-            else
-            {
+                event(new SingleNotificationEvent($array));
+            } else {
                 $success = false;
             }
 
@@ -105,11 +98,8 @@ class ContactController extends Controller
                 'status'    =>  $success,
                 'message'   =>  $message,
             ], 200);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

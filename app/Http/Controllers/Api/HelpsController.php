@@ -35,6 +35,7 @@ class HelpsController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/helps',
+        tags: ['Helps'],
         summary: 'List approved help requests from other members',
         responses: [
             new OA\Response(
@@ -47,7 +48,7 @@ class HelpsController extends Controller
     public function index()
     {
         //
-        $help = Help::where([['church_id',Auth::user()->church_id],['status','approve']])->where('user_id','!=',Auth::id())->latest()->get();
+        $help = Help::where([['church_id', Auth::user()->church_id], ['status', 'approve']])->where('user_id', '!=', Auth::id())->latest()->get();
         $help = HelpResource::collection($help);
 
         return $help;
@@ -61,6 +62,7 @@ class HelpsController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/helps/create',
+        tags: ['Helps'],
         summary: 'Submit a new help request',
         requestBody: new OA\RequestBody(
             required: true,
@@ -76,11 +78,10 @@ class HelpsController extends Controller
         ],
         security: [['sanctum' => []]]
     )]
-    public function store(HelpAddRequest $request)//HelpAdd
+    public function store(HelpAddRequest $request) //HelpAdd
     {
         //
-        try
-        {
+        try {
             $help = new Help;
 
             $help->church_id        = Auth::user()->church_id;
@@ -92,21 +93,17 @@ class HelpsController extends Controller
 
             $help->save();
 
-             $array = [];
-             $admin = SiteHelper::getAdmin(Auth::user()->church_id);
-             $array['user']     =$admin ;
-             $array['details']  = 'New Help Request Received';
+            $array = [];
+            $admin = SiteHelper::getAdmin(Auth::user()->church_id);
+            $array['user']     = $admin;
+            $array['details']  = 'New Help Request Received';
 
-             event(new SingleNotificationEvent($array));
+            event(new SingleNotificationEvent($array));
 
-            $res['message']='Help Request Added Successfully';
+            $res['message'] = 'Help Request Added Successfully';
             return $res;
-        }
-
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -118,6 +115,7 @@ class HelpsController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/helps/user',
+        tags: ['Helps'],
         summary: "List the current user's own help requests",
         responses: [
             new OA\Response(
@@ -130,7 +128,7 @@ class HelpsController extends Controller
     public function show()
     {
         //
-        $help = Help::where([['church_id',Auth::user()->church_id],['user_id',Auth::id()]])->get();
+        $help = Help::where([['church_id', Auth::user()->church_id], ['user_id', Auth::id()]])->get();
         $help = HelpUserResource::collection($help);
 
         return $help;
@@ -145,6 +143,7 @@ class HelpsController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/helps/close/{id}',
+        tags: ['Helps'],
         summary: 'Close a help request (mark as resolved)',
         parameters: [
             new OA\Parameter(
@@ -166,30 +165,23 @@ class HelpsController extends Controller
     public function update(Request $request, $id)
     {
         //
-        try
-        {
-            $help = Help::where('id',$id)->first();
+        try {
+            $help = Help::where('id', $id)->first();
 
-            if(Auth::id() === $help->user_id)
-            {
+            if (Auth::id() === $help->user_id) {
                 $help->status           = "close";
                 $help->expired_at       = Carbon::now();
                 $help->closed_by        = Auth::id();
 
                 $help->save();
 
-                $res['message']='Help Request Closed Successfully';
+                $res['message'] = 'Help Request Closed Successfully';
                 return $res;
-            }
-            else
-            {
+            } else {
                 return 'Invalid Request';
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

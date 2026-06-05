@@ -25,6 +25,7 @@ class PrayerRequestsController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/prayer_requests',
+        tags: ['Prayer'],
         summary: 'List active prayer requests on the public board',
         responses: [
             new OA\Response(
@@ -50,6 +51,7 @@ class PrayerRequestsController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/prayer_requests/create',
+        tags: ['Prayer'],
         summary: 'Submit a new prayer request',
         requestBody: new OA\RequestBody(
             required: true,
@@ -101,6 +103,7 @@ class PrayerRequestsController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/prayer_requests/user',
+        tags: ['Prayer'],
         summary: "List the current user's own prayer requests",
         responses: [
             new OA\Response(
@@ -121,6 +124,7 @@ class PrayerRequestsController extends Controller
 
     #[OA\Get(
         path: '/api/v1/prayercategory/list',
+        tags: ['Prayer'],
         summary: 'List active prayer categories',
         responses: [
             new OA\Response(
@@ -144,6 +148,7 @@ class PrayerRequestsController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/prayer_requests/{id}/lift',
+        tags: ['Prayer'],
         summary: 'Prayer Participant request',
         parameters: [
             new OA\Parameter(

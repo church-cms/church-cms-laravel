@@ -20,6 +20,7 @@ class BulletinsController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/bulletin/show',
+        tags: ['Bulletins'],
         summary: 'List church bulletins',
         responses: [
             new OA\Response(
@@ -31,7 +32,7 @@ class BulletinsController extends Controller
     )]
     public function show()
     {
-        $bulletins = Bulletin::where('church_id',Auth::user()->church_id)->latest()->paginate(10);
+        $bulletins = Bulletin::where('church_id', Auth::user()->church_id)->latest()->paginate(10);
         $bulletins = BulletinResource::collection($bulletins);
         return $bulletins;
     }

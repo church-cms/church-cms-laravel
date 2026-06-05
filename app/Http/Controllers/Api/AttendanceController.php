@@ -23,6 +23,7 @@ class AttendanceController extends Controller
 
     #[OA\Get(
         path: '/api/v1/attendance/events',
+        tags: ['EventsAttendance'],
         summary: 'List events assigned to the authenticated staff member with attendance enabled',
         operationId: '0d2f80fb83d5c305051c47b3e28db0c5',
         responses: [
@@ -70,6 +71,7 @@ class AttendanceController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/attendance/session',
+        tags: ['EventsAttendance'],
         summary: 'Open or retrieve an attendance session for an event',
         operationId: '3795511bd2227894dd5bbdc9c58e3927',
         requestBody: new OA\RequestBody(
@@ -137,6 +139,7 @@ class AttendanceController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/attendance/scan',
+        tags: ['EventsAttendance'],
         summary: 'Scan a member QR code and mark them present',
         operationId: '46ef9498ea664f07cdce9e54bdcb51ba',
         requestBody: new OA\RequestBody(
@@ -222,6 +225,7 @@ class AttendanceController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/attendance/session/{id}/lock',
+        tags: ['EventsAttendance'],
         summary: 'Lock an attendance session to prevent further check-ins',
         operationId: 'a039bf0ec2aaaf6915e1efbaf6cead58',
         parameters: [
@@ -266,6 +270,7 @@ class AttendanceController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/attendance/session/{id}',
+        tags: ['EventsAttendance'],
         summary: 'Get the attendee report for a session',
         operationId: 'f89b40e7dca45ed008404928f0593bc7',
         parameters: [

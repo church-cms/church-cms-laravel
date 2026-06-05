@@ -28,6 +28,7 @@ class ChurchDetailsController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/church/details/{church_id}',
+        tags: ['ChurchDetails'],
         summary: 'Get church details by church ID',
         operationId: '21c3f4daa89e704858570f38c70e4eb4',
         parameters: [
@@ -49,26 +50,26 @@ class ChurchDetailsController extends Controller
     public function show($church_id)
     {
         //
-        $church = Church::where('id',$church_id)->first();
+        $church = Church::where('id', $church_id)->first();
         $churchdetail = [];
 
-        $churchdetails  = ChurchDetail::select('meta_key','meta_value')->where('church_id',$church->id)->get();
-        $plucked  = $churchdetails->pluck('meta_value','meta_key');
+        $churchdetails  = ChurchDetail::select('meta_key', 'meta_value')->where('church_id', $church->id)->get();
+        $plucked  = $churchdetails->pluck('meta_value', 'meta_key');
 
         $churchdetail['church_name']    = ucwords($church->name);
-        $churchdetail['church_logo']    = $plucked['church_logo'] === '-' ? '':$this->getFilePath($plucked['church_logo']);
-        $churchdetail['short_summary']  = $plucked['short_summary'] === '-' ? '':$plucked['short_summary'];
-        $churchdetail['long_summary']   = $plucked['long_summary'] === '-' ? '':$plucked['long_summary'];
-        $churchdetail['quotes']         = $plucked['quotes'] === '-' ? '':$plucked['quotes'];
-        $churchdetail['phone']          = $plucked['phone'] === '-' ? '':$plucked['phone'];
-        $churchdetail['email']          = $plucked['email'] === '-' ? '':$plucked['email'];
-        $churchdetail['address']        = $plucked['address'] === '-' ? '':$plucked['address'];
-        $churchdetail['latitude']       = $plucked['latitude'] === '-' ? '':$plucked['latitude'];
-        $churchdetail['longitude']      = $plucked['longitude'] === '-' ? '':$plucked['longitude'];
-        $churchdetail['website']        = $plucked['website'] === '-' ? '':$plucked['website'];
-        $churchdetail['facebook']       = $plucked['facebook'] === '-' ? '':$plucked['facebook'];
-        $churchdetail['twitter']        = $plucked['twitter'] === '-' ? '':$plucked['twitter'];
-        $churchdetail['instagram']      = $plucked['instagram'] === '-' ? '':$plucked['instagram'];
+        $churchdetail['church_logo']    = $plucked['church_logo'] === '-' ? '' : $this->getFilePath($plucked['church_logo']);
+        $churchdetail['short_summary']  = $plucked['short_summary'] === '-' ? '' : $plucked['short_summary'];
+        $churchdetail['long_summary']   = $plucked['long_summary'] === '-' ? '' : $plucked['long_summary'];
+        $churchdetail['quotes']         = $plucked['quotes'] === '-' ? '' : $plucked['quotes'];
+        $churchdetail['phone']          = $plucked['phone'] === '-' ? '' : $plucked['phone'];
+        $churchdetail['email']          = $plucked['email'] === '-' ? '' : $plucked['email'];
+        $churchdetail['address']        = $plucked['address'] === '-' ? '' : $plucked['address'];
+        $churchdetail['latitude']       = $plucked['latitude'] === '-' ? '' : $plucked['latitude'];
+        $churchdetail['longitude']      = $plucked['longitude'] === '-' ? '' : $plucked['longitude'];
+        $churchdetail['website']        = $plucked['website'] === '-' ? '' : $plucked['website'];
+        $churchdetail['facebook']       = $plucked['facebook'] === '-' ? '' : $plucked['facebook'];
+        $churchdetail['twitter']        = $plucked['twitter'] === '-' ? '' : $plucked['twitter'];
+        $churchdetail['instagram']      = $plucked['instagram'] === '-' ? '' : $plucked['instagram'];
 
         return $churchdetail;
     }

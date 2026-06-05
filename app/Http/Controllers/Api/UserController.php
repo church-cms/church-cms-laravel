@@ -30,6 +30,7 @@ class UserController extends Controller
     use SendMessageProcess;
     #[OA\Get(
         path: '/api/v1/member/show/{id}',
+        tags: ['User'],
         summary: 'Get member details',
 
         security: [['sanctum' => []]],
@@ -52,6 +53,7 @@ class UserController extends Controller
 
     #[OA\Post(
         path: '/api/v1/member/updatetoken',
+        tags: ['User'],
         summary: 'Update the authenticated user\'s platform push token',
         operationId: '603c8c888febf5275c533656570b7a9c',
         requestBody: new OA\RequestBody(
@@ -87,6 +89,7 @@ class UserController extends Controller
     }
     #[OA\Post(
         path: '/api/v1/member/changePassword',
+        tags: ['User'],
         summary: 'Change Password',
 
         security: [['sanctum' => []]],
@@ -231,6 +234,7 @@ class UserController extends Controller
 
     #[OA\Post(
         path: '/api/v1/reset/change/password',
+        tags: ['User'],
         summary: 'Change password using OTP-verified reset token',
         operationId: 'f69ef19119f4f1265f8caf3460c30ffc',
         requestBody: new OA\RequestBody(

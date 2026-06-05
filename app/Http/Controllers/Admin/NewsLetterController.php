@@ -53,27 +53,23 @@ class NewsLetterController extends Controller
     public function store(NewsletterRequest $request)
     {
         //
-        try
-        {
-            if($request->to === 1)
-            {
-                $newsletters = NewsLetter::where([['church_id',Auth::user()->church_id],['status',1]])->get();
+        try {
+            if ($request->to === 1) {
+                $newsletters = NewsLetter::where([['church_id', Auth::user()->church_id], ['status', 1]])->get();
             }
 
-            if($request->to === 0)
-            {
-                $newsletters = NewsLetter::where([['church_id',Auth::user()->church_id],['status',0]])->get();
+            if ($request->to === 0) {
+                $newsletters = NewsLetter::where([['church_id', Auth::user()->church_id], ['status', 0]])->get();
             }
 
-            foreach ($newsletters as $newsletter)
-            {
-                Mail::to($newsletter->email)->queue(new NewsletterMail($request->subject,$request->message));
+            foreach ($newsletters as $newsletter) {
+                Mail::to($newsletter->email)->queue(new NewsletterMail($request->subject, $request->message));
 
-                $ip= $this->getRequestIP();
+                $ip = $this->getRequestIP();
                 $this->doActivityLog(
                     $newsletter,
                     Auth::user(),
-                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                     LOGNAME_SEND_NEWSLETTER,
                     'NewsLetter Sent Successfully'
                 );
@@ -81,11 +77,8 @@ class NewsLetterController extends Controller
 
             $res['success'] = 'NewsLetter Sent Successfully';
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -95,21 +88,17 @@ class NewsLetterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function updateMemberStatus(Request $request,$name)
+    public function updateMemberStatus(Request $request, $name)
     {
-        try
-        {
-            $user = User::where('name',$name)->first();
-            $newsletter = NewsLetter::where('email',$user->email)->first();
+        try {
+            $user = User::where('name', $name)->first();
+            $newsletter = NewsLetter::where('email', $user->email)->first();
 
-            if($newsletter != null)
-            {
+            if ($newsletter != null) {
                 $newsletter->status = $request->status;
 
                 $newsletter->save();
-            }
-            else
-            {
+            } else {
                 $newsletter = new NewsLetter;
 
                 $newsletter->church_id  = Auth::user()->church_id;
@@ -120,21 +109,18 @@ class NewsLetterController extends Controller
                 $newsletter->save();
             }
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $newsletter,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_CHANGE_NEWSLETTER_STATUS,
                 'NewsLetter Status Updated Successfully'
             );
 
             return redirect()->back();
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -146,17 +132,18 @@ class NewsLetterController extends Controller
      */
     public function updateStatus(Request $request)
     {
-        try
-        {
-            event (new SubscribeNewsLetterEvent ($request , Auth::user()->church_id , Auth::user() ) );
+        try {
+
+           
+
+            //dd($request);
+            event(new SubscribeNewsLetterEvent($request, Auth::user()->church_id, Auth::user()));
+
 
             $res['message'] = 'NewsLetter Status Updated Successfully';
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

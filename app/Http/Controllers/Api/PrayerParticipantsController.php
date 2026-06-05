@@ -20,6 +20,7 @@ class PrayerParticipantsController extends Controller
      */
     #[OA\Post(
         path: '/api/v1/prayer_participants/{id}',
+        tags: ['Prayer'],
         summary: 'Record that the current user is praying for a prayer request',
         parameters: [
             new OA\Parameter(

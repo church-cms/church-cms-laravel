@@ -30,6 +30,7 @@ class UserprofileController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/member/get/country',
+        tags: ['Location'],
         summary: 'Country List',
         responses: [
             new OA\Response(
@@ -54,6 +55,7 @@ class UserprofileController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/member/get/state/{id}',
+        tags: ['Location'],
         summary: 'State List',
 
         parameters: [
@@ -88,6 +90,7 @@ class UserprofileController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/member/get/city/{id}',
+        tags: ['Location'],
         summary: 'City List',
         parameters: [
             new OA\Parameter(
@@ -121,6 +124,7 @@ class UserprofileController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/member/get/profession',
+        tags: ['User'],
         summary: 'Get profession list',
         operationId: 'daa79a4723c4aeff90d93a583451146c',
         responses: [
@@ -142,6 +146,7 @@ class UserprofileController extends Controller
 
     #[OA\Get(
         path: '/api/v1/member/get/marriage_status',
+        tags: ['User'],
         summary: 'Get marriage status list',
         operationId: 'a83a402aec4f031cf54f0f658963b1c0',
         responses: [
@@ -192,6 +197,7 @@ class UserprofileController extends Controller
 
     #[OA\Post(
         path: '/api/v1/member/edit/{id}',
+        tags: ['User'],
         summary: 'Edit user',
 
         security: [['sanctum' => []]],

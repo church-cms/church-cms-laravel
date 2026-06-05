@@ -25,6 +25,7 @@ class PayaccountContorller extends Controller
 
     #[OA\Get(
         path: '/api/v1/paymentgateway',
+        tags: ['Payment Gateway'],
         summary: 'List all available payment gateways',
         responses: [
             new OA\Response(
@@ -37,17 +38,17 @@ class PayaccountContorller extends Controller
     public function getlist()
     {
 
-        $church_id=Auth::user()->church_id;
+        $church_id = Auth::user()->church_id;
 
-         $payaccounts=Payaccount::where([['church_id',$church_id],['status',1]])->distinct()->pluck('paymentgateway_id');
-         $paymentgateways=Paymentgateway::get();
-         $paymentgateways=PaymentgatewayResource::collection($paymentgateways);
-          return $paymentgateways;
-
+        $payaccounts = Payaccount::where([['church_id', $church_id], ['status', 1]])->distinct()->pluck('paymentgateway_id');
+        $paymentgateways = Paymentgateway::get();
+        $paymentgateways = PaymentgatewayResource::collection($paymentgateways);
+        return $paymentgateways;
     }
 
     #[OA\Get(
         path: '/api/v1/payaccount/{gateway_id}',
+        tags: ['Payaccount'],
         summary: 'Get payment account details for a gateway',
         parameters: [
             new OA\Parameter(
@@ -67,20 +68,19 @@ class PayaccountContorller extends Controller
     )]
     public function showdetails($gateway_id)
     {
-        $church_id=Auth::user()->church_id;
-        $payaccount=Payaccount::where([['church_id',$church_id],['paymentgateway_id',$gateway_id],['status',1]])->first();
-        if($payaccount)
-        return response()->json([
+        $church_id = Auth::user()->church_id;
+        $payaccount = Payaccount::where([['church_id', $church_id], ['paymentgateway_id', $gateway_id], ['status', 1]])->first();
+        if ($payaccount)
+            return response()->json([
                 'success'   =>  true,
                 'message'   =>  'Show Payaccount Details',
                 'data'      =>  new PayaccountResource($payaccount)
-            ],200);
+            ], 200);
         else
-         return response()->json([
-            'success'   =>  false,
-            'message'   =>  'Show Payaccount Details',
-            'data'      =>  []
-        ],200);
+            return response()->json([
+                'success'   =>  false,
+                'message'   =>  'Show Payaccount Details',
+                'data'      =>  []
+            ], 200);
     }
-
 }

@@ -29,6 +29,7 @@ class GroupsController extends Controller
      */
     #[OA\Get(
         path: '/api/v1/groups/list',
+        tags: ['Groups'],
         summary: "List the current user's group memberships",
         responses: [
             new OA\Response(
@@ -51,6 +52,7 @@ class GroupsController extends Controller
 
     #[OA\Get(
         path: '/api/v1/grouppost/list/{group_id}',
+        tags: ['Groups'],
         summary: 'List posts for a group',
         description: 'Returns a paginated list of posts for the given group. Only accessible to authenticated members.',
         parameters: [
@@ -68,7 +70,9 @@ class GroupsController extends Controller
                 description: 'Paginated group post list',
                 content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: 'data', type: 'array',
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
                             items: new OA\Items(
                                 properties: [
                                     new OA\Property(property: 'id', type: 'integer'),
@@ -107,6 +111,7 @@ class GroupsController extends Controller
 
     #[OA\Post(
         path: '/api/v1/group/sendmessage/{group_id}',
+        tags: ['Groups'],
         summary: 'Send a message/post to a group',
         description: 'Creates a new post in the specified group. The authenticated user must be a member of the group. Supports optional image attachment (multipart/form-data).',
         parameters: [
@@ -158,9 +163,13 @@ class GroupsController extends Controller
                 description: 'Not a member of this group',
                 content: new OA\JsonContent(
                     properties: [
-                        new OA\Property(property: 'errors', type: 'object',
+                        new OA\Property(
+                            property: 'errors',
+                            type: 'object',
                             properties: [
-                                new OA\Property(property: 'auth', type: 'array',
+                                new OA\Property(
+                                    property: 'auth',
+                                    type: 'array',
                                     items: new OA\Items(type: 'string', example: 'You are not a member of this group.')
                                 )
                             ]
