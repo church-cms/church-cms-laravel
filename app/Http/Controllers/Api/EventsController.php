@@ -22,6 +22,7 @@ class EventsController extends Controller
 {
     #[OA\Get(
         path: '/api/v1/events/upcoming',
+        tags: ['Events'],
         summary: 'Upcomeing Event List',
 
         responses: [
@@ -41,6 +42,7 @@ class EventsController extends Controller
     }
     #[OA\Get(
         path: '/api/v1/events/past',
+        tags: ['Events'],
         summary: 'Past Event List',
         parameters: [
             new OA\Parameter(
@@ -105,6 +107,7 @@ class EventsController extends Controller
     }
     #[OA\Get(
         path: '/api/v1/event/show/{id}',
+        tags: ['Events'],
         summary: 'Event Details',
 
         parameters: [
