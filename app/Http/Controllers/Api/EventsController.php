@@ -42,7 +42,32 @@ class EventsController extends Controller
     #[OA\Get(
         path: '/api/v1/events/past',
         summary: 'Past Event List',
-
+        parameters: [
+            new OA\Parameter(
+                name: 'month',
+                in: 'query',
+                required: false,
+                description: 'Month (1-12)',
+                schema: new OA\Schema(
+                    type: 'integer',
+                    minimum: 1,
+                    maximum: 12,
+                    example: 5
+                )
+            ),
+            new OA\Parameter(
+                name: 'year',
+                in: 'query',
+                required: false,
+                description: 'Year',
+                schema: new OA\Schema(
+                    type: 'integer',
+                    minimum: 2000,
+                    maximum: 2050,
+                    example: 2026
+                )
+            )
+        ],
         responses: [
             new OA\Response(
                 response: 200,
