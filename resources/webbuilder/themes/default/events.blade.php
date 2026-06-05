@@ -73,31 +73,32 @@
         @if(count($completed))
 
         @php
-            $completedJs = [];
-            foreach($completed as $year => $months) {
-                foreach($months as $month => $events) {
-                    $key = $year . '::' . $month;
-                    $completedJs[$key] = collect($events)->map(function($e) {
-                        $image = null;
-                        if ($e->image) {
-                            $image = Str::startsWith($e->image, ['http://', 'https://'])
-                                ? $e->image
-                                : \Storage::url($e->image);
-                        }
-                        return [
-                            'id'       => $e->id,
-                            'title'    => $e->title,
-                            'date'     => \Carbon\Carbon::parse($e->start_date)->format('d M Y, g:i A'),
-                            'location' => $e->location,
-                            'image'    => $image,
-                        ];
-                    })->values()->all();
-                }
-            }
+        $completedJs = [];
+        foreach($completed as $year => $months) {
+        foreach($months as $month => $events) {
+        $key = $year . '::' . $month;
+        $completedJs[$key] = collect($events)->map(function($e) {
+        $image = null;
+        if ($e->image) {
+        $image = Str::startsWith($e->image, ['http://', 'https://'])
+        ? $e->image
+        : \Storage::url($e->image);
+        }
+        return [
+        'id' => $e->id,
+        'title' => $e->title,
+        'date' => \Carbon\Carbon::parse($e->start_date)->format('d M Y, g:i A'),
+        'location' => $e->location,
+        'image' => $image,
+        ];
+        })->values()->all();
+        }
+        }
         @endphp
         <script>
             window.__completedEvents = @json($completedJs);
-            window.__eventRouteBase = '{{ url('/events') }}';
+            window.__eventRouteBase = '{{ url(' / events ') }}';
+            window.__eventRouteBases = '{{ url(' / event ') }}';
         </script>
 
         <div x-data="{
@@ -169,7 +170,7 @@
 
                 <div class="grid grid-cols-1 gap-3">
                     <template x-for="event in events" :key="event.id">
-                        <a :href="window.__eventRouteBase + '/' + event.id"
+                        <a :href="window.__eventRouteBases + '/' + event.id"
                             class="flex gap-3 bg-gray-50 hover:bg-white border border-gray-100 hover:border-indigo-200 rounded-lg shadow-sm hover:shadow transition overflow-hidden">
                             {{-- Thumbnail --}}
                             <div class="w-20 flex-shrink-0">
