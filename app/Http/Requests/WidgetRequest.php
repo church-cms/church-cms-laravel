@@ -24,6 +24,7 @@ class WidgetRequest extends FormRequest
     public function rules()
     {
         return [
+            'page'    => 'required', 
             'content'    => 'required' 
         ];
     }
@@ -31,7 +32,8 @@ class WidgetRequest extends FormRequest
     public function messages()
     {
         return[
-            'content.required'  => 'Content field is required' 
+            'content.required'  => 'Content field is required',
+             'page.required'  => 'Please select page' 
         ];
     }
 }
