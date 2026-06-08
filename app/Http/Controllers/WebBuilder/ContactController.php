@@ -15,7 +15,7 @@ class ContactController extends Controller
 {
     public function show()
     {
-        $widgets = Widget::where('page', 'faq')
+        $widgets = Widget::where('page', 'contact')
             ->orderBy('display_order')
             ->get();
 
