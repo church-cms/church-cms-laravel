@@ -45,7 +45,8 @@ class Widget extends Model
         'display_order',
         'content',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'position'
     ];
 
     public function userInfo()

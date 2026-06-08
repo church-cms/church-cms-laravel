@@ -8,13 +8,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactMail;
 use App\Models\User;
+use App\Models\Widget;
 use App\Rules\ValidRecaptcha;
 
 class ContactController extends Controller
 {
     public function show()
     {
-        return view('theme::contact');
+        $widgets = Widget::where('page', 'faq')
+            ->orderBy('display_order')
+            ->get();
+
+        $topwidget = $widgets->where('position', 'top');
+        $bottomwidget = $widgets->where('position', 'bottom');
+
+
+        return view('theme::contact', compact('topwidget', 'bottomwidget'));
     }
 
     public function store(Request $request)

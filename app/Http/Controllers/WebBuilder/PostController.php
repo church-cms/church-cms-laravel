@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\PostComment;
+use App\Models\Widget;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -15,9 +16,9 @@ class PostController extends Controller
         $church = request()->attributes->get('_church');
 
         $categories = PostCategory::withCount(['posts' => function ($q) use ($church) {
-                $q->where('is_posted', 1)->where('status', 'posted');
-                if ($church) $q->where('church_id', $church->id);
-            }])
+            $q->where('is_posted', 1)->where('status', 'posted');
+            if ($church) $q->where('church_id', $church->id);
+        }])
             ->where('status', 1)
             ->when($church, fn($q) => $q->where('church_id', $church->id))
             ->having('posts_count', '>', 0)
@@ -37,7 +38,14 @@ class PostController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('theme::post_index', compact('posts', 'categories', 'activeCategoryId', 'activeTag'));
+        $widgets = Widget::where('page', 'post')
+            ->orderBy('display_order')
+            ->get();
+
+        $topwidget = $widgets->where('position', 'top');
+        $bottomwidget = $widgets->where('position', 'bottom');
+
+        return view('theme::post_index', compact('posts', 'categories', 'activeCategoryId', 'activeTag', 'topwidget', 'bottomwidget'));
     }
 
     public function show(Request $request, $id)

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->foreign('church_id')->references('id')->on('church');
             $table->string('slug');
             $table->string('page')->default('home');
+            $table->enum('position', ['top', 'bottom'])->nullable();
             $table->unsignedSmallInteger('display_order')->default(0);
             $table->longText('content');
             $table->integer('created_by')->unsigned();
