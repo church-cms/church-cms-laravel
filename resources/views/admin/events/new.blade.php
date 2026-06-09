@@ -24,7 +24,7 @@
                 <div class="flex gap-3 flex-wrap" id="event-type-group">
                     @foreach(['private' => ['label' => 'Private', 'icon' => 'fa-lock', 'desc' => 'Members only'],
                     'public' => ['label' => 'Public', 'icon' => 'fa-globe', 'desc' => 'Open to all'],
-                    'online' => ['label' => 'Online', 'icon' => 'fa-video', 'desc' => 'Virtual event']] as $val => $opt)
+                    ] as $val => $opt)
                     @php $selType = old('select_type', 'public') === $val; @endphp
                     <label class="ev-pill flex-1 min-w-[140px] cursor-pointer border-2 rounded-lg px-4 py-3 flex items-center gap-3 transition select-none
                         {{ $selType ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50' }}">
@@ -360,7 +360,7 @@
 
                 @php
                 $toggles = [
-                ['name' => 'enable_attendance', 'id' => 'toggle_attendance', 'label' => 'Attendance Tracking', 'desc' => 'Enable QR check-in for this event', 'default' => false],
+                ['name' => 'enable_attendance', 'id' => 'toggle_attendance', 'label' => 'Attendance Tracking', 'desc' => 'Enable QR check-in for this event', 'default' => true],
                 ['name' => 'publish_to_web', 'id' => 'toggle_web', 'label' => 'Publish to Website', 'desc' => 'Show on the public website', 'default' => true],
                 ['name' => 'enable_gallery', 'id' => 'toggle_gallery', 'label' => 'Enable Gallery', 'desc' => 'Allow photo uploads for this event', 'default' => true],
                 ];
@@ -619,6 +619,58 @@
         });
         toggleDowRow();
         toggleMonthRow();
+
+        // ── Toggle switches (visual + attendance panel) ──────────────────────
+        document.querySelectorAll('.ev-toggle-input').forEach(function(input) {
+            input.addEventListener('change', function() {
+                var track = input.closest('.ev-toggle-track');
+                var thumb = track ? track.querySelector('.ev-toggle-thumb') : null;
+                if (track) track.style.background = input.checked ? '#2563EB' : '#D1D5DB';
+                if (thumb) thumb.style.left = input.checked ? '23px' : '3px';
+                if (input.name === 'enable_attendance') {
+                    var panel = document.getElementById('attendance-scope-panel');
+                    if (panel) panel.classList.toggle('hidden', !input.checked);
+                }
+            });
+        });
+
+        // ── Attendance scope pills ───────────────────────────────────────────
+        var attScopeGroup = document.getElementById('att-scope-group');
+        var attGroupSelect = document.getElementById('att-group-select');
+
+        function activateAttScope(activeLbl) {
+            if (!attScopeGroup) return;
+            attScopeGroup.querySelectorAll('label.att-scope-pill').forEach(function(lbl) {
+                var on = lbl === activeLbl;
+                lbl.classList.toggle('border-blue-600', on);
+                lbl.classList.toggle('bg-blue-50', on);
+                lbl.classList.toggle('border-gray-200', !on);
+                lbl.classList.toggle('bg-white', !on);
+                lbl.classList.toggle('hover:border-blue-300', !on);
+                lbl.classList.toggle('hover:bg-blue-50', !on);
+                var icon = lbl.querySelector('i.fas');
+                if (icon) {
+                    icon.classList.toggle('text-blue-500', on);
+                    icon.classList.toggle('text-gray-400', !on);
+                }
+                var span = lbl.querySelector('span');
+                if (span) {
+                    span.classList.toggle('text-blue-700', on);
+                    span.classList.toggle('text-gray-700', !on);
+                }
+            });
+        }
+
+        if (attScopeGroup) {
+            attScopeGroup.addEventListener('change', function(e) {
+                if (e.target.type === 'radio' && e.target.checked) {
+                    activateAttScope(e.target.closest('label'));
+                    if (attGroupSelect) attGroupSelect.classList.toggle('hidden', e.target.value !== 'group');
+                }
+            });
+            var attChecked = attScopeGroup.querySelector('input[type=radio]:checked');
+            if (attChecked) activateAttScope(attChecked.closest('label'));
+        }
 
         // Pill toggle on click
         dowCheckboxes.forEach(function(cb) {
