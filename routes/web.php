@@ -85,7 +85,15 @@ Route::group(['prefix' => 'member', 'middleware' => ['auth', 'churchmember'], 'n
     Route::get('/mygroup/{group_id}', 'MemberController@groupDetails')->name('member.mygroupdetails');
     Route::delete('/group/remove/{group_id}', 'MemberController@removeGroup')->name('member.group.remove');
     Route::post('/group/sendmessage/{group_id}', 'MemberController@sendGroupMessage')->name('member.group.sendmessage');
+
+    Route::get('/donate', 'DonationController@index')->name('member.donate');
+    Route::post('/donate', 'DonationController@store')->name('member.donate.store');
+    Route::post('/donate/verify', 'DonationController@verify')->name('member.donate.verify');
+    Route::post('/donate/mpesa-stk', 'DonationController@mpesaStk')->name('member.donate.mpesa-stk');
 });
+
+// M-Pesa callback is unauthenticated (called by Safaricom servers)
+Route::post('/member/donate/mpesa-callback', 'Member\DonationController@mpesaCallback')->name('member.donate.mpesa-callback');
 
 
 

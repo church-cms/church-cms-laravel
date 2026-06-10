@@ -68,23 +68,56 @@ class PayaccountContorller extends Controller
     public function store(PayaccountAddRequest $request)
     {
         //
-        if ($request->paymentgateway_id === 'bank') {
-            $param1 = $request->account_name;
-            $param2 = $request->account_number;
-            $param3 = $request->bank_name;
-            $param4 = $request->branch_address;
-            $param5 = $request->ifsc_code;
-            $param6 = $request->branch_name;
+        [$param1, $param2, $param3, $param4, $param5, $param6] = array_fill(0, 6, null);
+
+        switch ($request->paymentgateway_id) {
+            case 'bank':
+                $param1 = $request->account_name;
+                $param2 = $request->account_number;
+                $param3 = $request->bank_name;
+                $param4 = $request->branch_address;
+                $param5 = $request->ifsc_code;
+                $param6 = $request->branch_name;
+                break;
+            case 'gpay':
+                $param1 = $request->gpay_number;
+                break;
+            case 'upi':
+                $param1 = $request->upi_id;
+                break;
+            case 'cheque':
+                $param1 = $request->payee_name;
+                break;
+            case 'paystack':
+                $param1 = $request->public_key;   // public key (exposed to frontend)
+                $param2 = $request->secret_key;   // secret key (server-side only)
+                break;
+            case 'flutterwave':
+                $param1 = $request->public_key;
+                $param2 = $request->secret_key;
+                $param3 = $request->encryption_key;
+                break;
+            case 'mpesa':
+                $param1 = $request->consumer_key;
+                $param2 = $request->consumer_secret;
+                $param3 = $request->shortcode;
+                $param4 = $request->passkey;
+                break;
+            case 'gcash':
+                $param1 = $request->public_key;
+                $param2 = $request->secret_key;
+                break;
+            case 'pix':
+                $param1 = $request->pix_key;
+                break;
+            case 'telebirr':
+                $param1 = $request->app_id;
+                $param2 = $request->app_key;
+                $param3 = $request->public_key;
+                $param4 = $request->short_code;
+                break;
         }
-        if ($request->paymentgateway_id === 'gpay') {
-            $param1 = $request->gpay_number;
-        }
-        if ($request->paymentgateway_id === 'upi') {
-            $param1 = $request->upi_id;
-        }
-        if ($request->paymentgateway_id === 'cheque') {
-            $param1 = $request->payee_name;
-        }
+
         $paymentgateway = Paymentgateway::where('gatewayname', $request->paymentgateway_id)->first();
 
         $data = [

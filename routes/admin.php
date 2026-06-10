@@ -776,6 +776,15 @@ Route::group(['middleware' => ['permission:read-funds']], function () {
     Route::delete('/fund/delete/{id}', 'FundController@destroy');
 });
 
+//Donations
+Route::group(['middleware' => ['permission:read-funds']], function () {
+    Route::get('/donations', 'DonationController@index');
+    Route::get('/donation/list', 'DonationController@list');
+    Route::get('/donation/show/{id}', 'DonationController@show');
+    Route::patch('/donation/status/{id}', 'DonationController@updateStatus');
+    Route::delete('/donation/delete/{id}', 'DonationController@destroy');
+});
+
 //reports
 Route::group(['middleware' => ['permission:read-reports']], function () {
     Route::get('/reports', 'ReportsController@report');
@@ -991,4 +1000,17 @@ Route::group(['middleware' => ['permission:read-payments']], function () {
 
     //delete
     Route::delete('/payaccount/delete/{id}', 'Payment\PayaccountContorller@destroy');
+});
+
+//Payment Gateways
+Route::group(['middleware' => ['permission:read-payments']], function () {
+    Route::get('/paymentgateway/list', 'Payment\PaymentgatewayController@getlist');
+    Route::get('/paymentgateways', 'Payment\PaymentgatewayController@index');
+    Route::get('/paymentgateway/create', 'Payment\PaymentgatewayController@create');
+    Route::post('/paymentgateway/create', 'Payment\PaymentgatewayController@store');
+    Route::get('/paymentgateway/editList/{id}', 'Payment\PaymentgatewayController@editList');
+    Route::get('/paymentgateway/edit/{id}', 'Payment\PaymentgatewayController@edit');
+    Route::post('/paymentgateway/update/{id}', 'Payment\PaymentgatewayController@update');
+    Route::post('/paymentgateway/status/{id}/update', 'Payment\PaymentgatewayController@statusUpdate');
+    Route::delete('/paymentgateway/delete/{id}', 'Payment\PaymentgatewayController@destroy');
 });
