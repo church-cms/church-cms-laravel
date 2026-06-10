@@ -46,6 +46,11 @@ Vue.component('payaccount-list', require('./components/payaccount/List.vue').def
 Vue.component('create-payaccount', require('./components/payaccount/Create.vue').default);
 Vue.component('edit-payaccount', require('./components/payaccount/Edit.vue').default);
 
+//paymentgateway
+Vue.component('paymentgateway-list', require('./components/paymentgateway/List.vue').default);
+Vue.component('create-paymentgateway', require('./components/paymentgateway/Create.vue').default);
+Vue.component('edit-paymentgateway', require('./components/paymentgateway/Edit.vue').default);
+
 
 //mailinglist
 Vue.component('list-mailinglist', require('./components/mailinglist/List.vue').default);
@@ -209,6 +214,9 @@ Vue.component('edit-series', require('./components/preacher/sermonlink/Edit.vue'
 Vue.component('list-fund', require('./components/fund/List.vue').default);
 Vue.component('add-fund', require('./components/fund/Create.vue').default);
 Vue.component('edit-fund', require('./components/fund/Edit.vue').default);
+
+//donation
+Vue.component('donation-list', require('./components/donation/List.vue').default);
 
 //page
 Vue.component('newsletter-send', require('./components/newsletter/Send.vue').default);
