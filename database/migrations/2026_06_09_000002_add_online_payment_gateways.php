@@ -16,6 +16,7 @@ class AddOnlinePaymentGateways extends Migration
             ['gatewayname' => 'gcash',       'displayname' => 'GCash',       'instructions' => 'Pay via GCash (Philippines)'],
             ['gatewayname' => 'pix',         'displayname' => 'PIX',         'instructions' => 'Pay via PIX (Brazil)'],
             ['gatewayname' => 'telebirr',    'displayname' => 'Telebirr',    'instructions' => 'Pay via Telebirr (Ethiopia)'],
+            ['gatewayname' => 'stripe',    'displayname' => 'Stripe',    'instructions' => 'Pay via Stripe'],
         ];
 
         foreach ($gateways as $gw) {
@@ -33,7 +34,12 @@ class AddOnlinePaymentGateways extends Migration
     public function down()
     {
         DB::table('paymentgateways')->whereIn('gatewayname', [
-            'paystack', 'flutterwave', 'mpesa', 'gcash', 'pix', 'telebirr',
+            'paystack',
+            'flutterwave',
+            'mpesa',
+            'gcash',
+            'pix',
+            'telebirr',
         ])->delete();
     }
 }

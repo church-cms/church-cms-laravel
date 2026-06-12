@@ -24,60 +24,27 @@ class MpesaService
 
     protected function getAccessToken(): string
     {
-
-        //dd($this->consumerKey . "hhh" . $this->consumerSecret . 'Base' . $this->baseUrl);
-
         $response = Http::withBasicAuth($this->consumerKey, $this->consumerSecret)
-            ->get($this->baseUrl . "/oauth/v1/generate?grant_type=client_credentials");
+            ->get($this->baseUrl . '/oauth/v1/generate?grant_type=client_credentials');
 
-
-
-
-        $token = $response->json()['access_token'] ?? '';
-
-        //dd($token);
-
-        $data = ['token' => $token, 'status' => $response->status(), 'body' => $response->json()];
-
-        // dd($data);
+        $token = trim($response->json()['access_token'] ?? '');
 
         if (!$token) {
             Log::error('M-Pesa auth failed', ['status' => $response->status(), 'body' => $response->json()]);
+            throw new \Exception('M-Pesa authentication failed: could not obtain access token.');
         }
-
-        //dd($token);
 
         return $token;
     }
 
     public function stkPush(string $phone, float $amount, string $ref, string $callbackUrl): array
     {
-        $timestamp = now()->format('YmdHis');
-        //$password  = base64_encode($this->shortcode . $this->passkey . $timestamp);
-
-        $password  = base64_encode('174379' . 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919' . $timestamp);
-
+        $timestamp   = now()->format('YmdHis');
+        $password    = base64_encode($this->shortcode . $this->passkey . $timestamp);
         $accessToken = $this->getAccessToken();
 
-        // dd([
-        //     'phone' => $phone,
-        //     'callbackUrl' => $callbackUrl,
-        //     'timestamp' => $timestamp,
-        //     'password' => $password,
-        // ]);
-
-
-        // dd([
-        //     'consumer_key' => substr($this->consumerKey, 0, 5) . '...',
-        //     'shortcode'    => $this->shortcode,
-        //     'passkey_len'  => strlen($this->passkey),
-        //     'token'        => $accessToken,
-        // ]);
-
-        //dd($this->baseUrl);
-
-        $response = Http::withHeaders(['Authorization' => 'Bearer ' . $accessToken])
-            ->post($this->baseUrl . "/mpesa/stkpush/v1/processrequest", [
+        $response = Http::withToken($accessToken)
+            ->post($this->baseUrl . '/mpesa/stkpush/v1/processrequest', [
                 'BusinessShortCode' => $this->shortcode,
                 'Password'          => $password,
                 'Timestamp'         => $timestamp,
@@ -90,32 +57,6 @@ class MpesaService
                 'AccountReference'  => 'ChurchDonation',
                 'TransactionDesc'   => 'Church Donation ' . $ref,
             ]);
-
-        // $response = Http::withToken($accessToken)
-        //     ->post('https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', [
-        //         'BusinessShortCode' => '174379',
-        //         'Password' => $password,
-        //         'Timestamp' => $timestamp,
-        //         'TransactionType' => 'CustomerPayBillOnline',
-        //         'Amount' => 1,
-        //         'PartyA' => '254708374149',
-        //         'PartyB' => '174379',
-        //         'PhoneNumber' => '254708374149',
-        //         'CallBackURL' => $callbackUrl,
-        //         'AccountReference' => 'Test',
-        //         'TransactionDesc' => 'Test Payment',
-        //     ]);
-
-
-        dd([
-            'status' => $response->status(),
-            'body'   => $response->body(),
-            'callbackUrl' => $callbackUrl,
-        ]);
-
-        dd($response->json());
-
-
 
         $result = $response->json() ?? [];
         Log::info('M-Pesa STK response', ['status' => $response->status(), 'body' => $result]);

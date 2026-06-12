@@ -90,6 +90,9 @@ Route::group(['prefix' => 'member', 'middleware' => ['auth', 'churchmember'], 'n
     Route::post('/donate', 'DonationController@store')->name('member.donate.store');
     Route::post('/donate/verify', 'DonationController@verify')->name('member.donate.verify');
     Route::post('/donate/mpesa-stk', 'DonationController@mpesaStk')->name('member.donate.mpesa-stk');
+    Route::post('/donate/stripe-intent', 'DonationController@stripeIntent')->name('member.donate.stripe-intent');
+    Route::post('/donate/gcash-init', 'DonationController@gcashInit')->name('member.donate.gcash-init');
+    Route::get('/donate/gcash-return', 'DonationController@gcashReturn')->name('member.donate.gcash-return');
 });
 
 // M-Pesa callback is unauthenticated (called by Safaricom servers)

@@ -150,7 +150,7 @@
     {{-- ── Financial ────────────────────────────────────────────────────── --}}
     @php
         $showOfferings = $isAdmin || $user->hasPermission('read-payments') || $user->hasPermission('read-funds');
-        $offeringsActive = in_array(Request::segment('2'), ['payaccounts','payaccount','funds','fund']) ? 'active' : '';
+        $offeringsActive = in_array(Request::segment('2'), ['payaccounts','payaccount','funds','fund','donations','donation','paymentgateways','paymentgateway']) ? 'active' : '';
     @endphp
     @if($showOfferings)
     <li class="relative py-2 px-3 hover:bg-red-900 {{ $offeringsActive }}">
@@ -160,11 +160,25 @@
             <i class="fas fa-chevron-right text-xs ml-auto opacity-50"></i>
         </a>
         <ul class="list-reset sites-sidebar">
+            @if($isAdmin || $user->hasPermission('read-funds'))
+            <li class="py-3 px-3 hover:font-semibold {{ in_array(Request::segment('2'), ['donations','donation']) ? 'active' : '' }}">
+                <a href="{{ url('/admin/donations') }}" class="flex items-center">
+                    <i class="fas fa-heart-circle-plus w-5 text-center text-sm opacity-75"></i>
+                    <span class="mx-3 whitespace-no-wrap">Donations</span>
+                </a>
+            </li>
+            @endif
             @if($isAdmin || $user->hasPermission('read-payments'))
             <li class="py-3 px-3 hover:font-semibold {{ in_array(Request::segment('2'), ['payaccounts','payaccount']) ? 'active' : '' }}">
                 <a href="{{ url('/admin/payaccounts') }}" class="flex items-center">
                     <i class="fas fa-credit-card w-5 text-center text-sm opacity-75"></i>
                     <span class="mx-3 whitespace-no-wrap">Payaccounts</span>
+                </a>
+            </li>
+            <li class="py-3 px-3 hover:font-semibold {{ in_array(Request::segment('2'), ['paymentgateways','paymentgateway']) ? 'active' : '' }}">
+                <a href="{{ url('/admin/paymentgateways') }}" class="flex items-center">
+                    <i class="fas fa-gateway w-5 text-center text-sm opacity-75"></i>
+                    <span class="mx-3 whitespace-no-wrap">Payment Gateways</span>
                 </a>
             </li>
             @endif
