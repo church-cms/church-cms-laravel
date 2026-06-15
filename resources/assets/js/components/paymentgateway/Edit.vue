@@ -32,6 +32,25 @@
             </div>
         </div>
 
+        <!-- Currency select — shown only for gateways that support multiple currencies -->
+        <div class="tw-form-group w-full mt-3" v-if="currencyOptions.length > 0">
+            <div class="lg:mr-8 md:mr-8">
+                <div class="mb-2">
+                    <label class="tw-form-label">
+                        Default Currency
+                        <span v-if="currencyOptions.length === 1" class="text-xs text-gray-400 font-normal ml-1">(fixed for this gateway)</span>
+                    </label>
+                </div>
+                <select v-model="currency" class="tw-form-control w-full" :disabled="currencyOptions.length === 1">
+                    <option value="">— Select currency —</option>
+                    <option v-for="opt in currencyOptions" :key="opt.code" :value="opt.code">
+                        {{ opt.code }} — {{ opt.label }}
+                    </option>
+                </select>
+                <p v-if="errors.currency" class="text-red-500 text-xs mt-1">{{ errors.currency[0] }}</p>
+            </div>
+        </div>
+
         <div class="tw-form-group w-full mt-3">
             <div class="lg:mr-8 md:mr-8">
                 <div class="mb-2">
@@ -57,6 +76,60 @@
 </template>
 
 <script>
+    const GATEWAY_CURRENCIES = {
+        mpesa: [
+            { code: 'KES', label: 'Kenyan Shilling' },
+        ],
+        gcash: [
+            { code: 'PHP', label: 'Philippine Peso' },
+        ],
+        pix: [
+            { code: 'BRL', label: 'Brazilian Real' },
+        ],
+        telebirr: [
+            { code: 'ETB', label: 'Ethiopian Birr' },
+        ],
+        paystack: [
+            { code: 'NGN', label: 'Nigerian Naira' },
+            { code: 'GHS', label: 'Ghanaian Cedi' },
+            { code: 'KES', label: 'Kenyan Shilling' },
+            { code: 'ZAR', label: 'South African Rand' },
+            { code: 'USD', label: 'US Dollar' },
+            { code: 'EGP', label: 'Egyptian Pound' },
+        ],
+        flutterwave: [
+            { code: 'NGN', label: 'Nigerian Naira' },
+            { code: 'GHS', label: 'Ghanaian Cedi' },
+            { code: 'KES', label: 'Kenyan Shilling' },
+            { code: 'UGX', label: 'Ugandan Shilling' },
+            { code: 'TZS', label: 'Tanzanian Shilling' },
+            { code: 'ZAR', label: 'South African Rand' },
+            { code: 'RWF', label: 'Rwandan Franc' },
+            { code: 'MWK', label: 'Malawian Kwacha' },
+            { code: 'ZMW', label: 'Zambian Kwacha' },
+            { code: 'XAF', label: 'Central African CFA Franc' },
+            { code: 'XOF', label: 'West African CFA Franc' },
+            { code: 'USD', label: 'US Dollar' },
+            { code: 'GBP', label: 'British Pound' },
+            { code: 'EUR', label: 'Euro' },
+        ],
+        stripe: [
+            { code: 'USD', label: 'US Dollar' },
+            { code: 'EUR', label: 'Euro' },
+            { code: 'GBP', label: 'British Pound' },
+            { code: 'CAD', label: 'Canadian Dollar' },
+            { code: 'AUD', label: 'Australian Dollar' },
+            { code: 'SGD', label: 'Singapore Dollar' },
+            { code: 'HKD', label: 'Hong Kong Dollar' },
+            { code: 'JPY', label: 'Japanese Yen' },
+            { code: 'CHF', label: 'Swiss Franc' },
+            { code: 'MXN', label: 'Mexican Peso' },
+            { code: 'BRL', label: 'Brazilian Real' },
+            { code: 'INR', label: 'Indian Rupee' },
+            { code: 'NZD', label: 'New Zealand Dollar' },
+        ],
+    };
+
     export default {
         props: ['url', 'gateway_id'],
         data() {
@@ -64,10 +137,24 @@
                 gatewayname: '',
                 displayname: '',
                 instructions: '',
+                currency: '',
                 status: '1',
                 errors: [],
                 success: null,
             }
+        },
+        computed: {
+            currencyOptions() {
+                return GATEWAY_CURRENCIES[this.gatewayname] || [];
+            },
+        },
+        watch: {
+            // Auto-select when only one option available (e.g. mpesa → KES)
+            currencyOptions(options) {
+                if (options.length === 1 && !this.currency) {
+                    this.currency = options[0].code;
+                }
+            },
         },
         methods: {
             getData() {
@@ -76,7 +163,14 @@
                     this.gatewayname  = g.name;
                     this.displayname  = g.display_name;
                     this.instructions = g.instructions;
+                    this.currency     = g.currency || '';
                     this.status       = String(g.status);
+
+                    // Auto-set fixed-currency gateways
+                    const options = GATEWAY_CURRENCIES[g.name] || [];
+                    if (options.length === 1 && !this.currency) {
+                        this.currency = options[0].code;
+                    }
                 });
             },
             submitForm() {
@@ -85,6 +179,7 @@
                     gatewayname:  this.gatewayname,
                     displayname:  this.displayname,
                     instructions: this.instructions,
+                    currency:     this.currency,
                     status:       this.status,
                 }).then(response => {
                     this.success = response.data.success;

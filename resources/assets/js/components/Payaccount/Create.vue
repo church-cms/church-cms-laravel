@@ -161,11 +161,62 @@
                          <input type="text" class="tw-form-control w-full" id="upi_id" v-model="upi_id" name="upi_id" Placeholder="UPI ID">
                     </div>
                     <span v-if="errors.upi_id" class="text-red-500 text-xs font-semibold">{{ errors.upi_id[0] }}</span>
-                </div> 
+                </div>
             </div>
         </div>
 </div>
 <!-- UPI -->
+
+<!-- Stripe -->
+<div v-if="this.paymentgateway_id=='stripe'">
+    <div class="flex flex-col lg:flex-row">
+        <div class="tw-form-group w-full lg:w-1/2">
+            <div class="lg:mr-8 md:mr-8">
+                <div class="mb-2">
+                    <label for="stripe_public_key" class="tw-form-label">Publishable Key<span class="text-red-500">*</span></label>
+                </div>
+                <div class="mb-2">
+                    <input type="text" class="tw-form-control w-full" id="stripe_public_key" v-model="public_key" name="public_key" placeholder="pk_live_...">
+                </div>
+                <span v-if="errors.public_key" class="text-red-500 text-xs font-semibold">{{ errors.public_key[0] }}</span>
+            </div>
+        </div>
+        <div class="tw-form-group w-full lg:w-1/2">
+            <div class="lg:mr-8 md:mr-8">
+                <div class="mb-2">
+                    <label for="stripe_secret_key" class="tw-form-label">Secret Key<span class="text-red-500">*</span></label>
+                </div>
+                <div class="mb-2">
+                    <input type="password" class="tw-form-control w-full" id="stripe_secret_key" v-model="secret_key" name="secret_key" placeholder="sk_live_...">
+                </div>
+                <span v-if="errors.secret_key" class="text-red-500 text-xs font-semibold">{{ errors.secret_key[0] }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col lg:flex-row">
+        <div class="tw-form-group w-full lg:w-1/2">
+            <div class="lg:mr-8 md:mr-8">
+                <div class="mb-2">
+                    <label for="stripe_webhook_secret" class="tw-form-label">Webhook Secret</label>
+                </div>
+                <div class="mb-2">
+                    <input type="text" class="tw-form-control w-full" id="stripe_webhook_secret" v-model="webhook_secret" name="webhook_secret" placeholder="whsec_...">
+                </div>
+            </div>
+        </div>
+        <div class="tw-form-group w-full lg:w-1/2">
+            <div class="lg:mr-8 md:mr-8">
+                <div class="mb-2">
+                    <label for="stripe_currency" class="tw-form-label">Currency</label>
+                </div>
+                <div class="mb-2">
+                    <input type="text" class="tw-form-control w-full" id="stripe_currency" v-model="currency" name="currency" placeholder="usd">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Stripe -->
 
 
         <div class="flex flex-col lg:flex-row">
@@ -215,6 +266,10 @@
                 payee_name:'',
                 gpay_number:'',
                 upi_id:'',
+                public_key:'',
+                secret_key:'',
+                webhook_secret:'',
+                currency:'',
                 comments:'',
                 errors:[],
                 success:null,
@@ -235,6 +290,10 @@
                 this.payee_name='';
                 this.gpay_number='';
                 this.upi_id='';
+                this.public_key='';
+                this.secret_key='';
+                this.webhook_secret='';
+                this.currency='';
                 this.comments='';
 
             },
@@ -257,6 +316,10 @@
                 formData.append('payee_name',this.payee_name);
                 formData.append('gpay_number',this.gpay_number);
                 formData.append('upi_id',this.upi_id);
+                formData.append('public_key',this.public_key);
+                formData.append('secret_key',this.secret_key);
+                formData.append('webhook_secret',this.webhook_secret);
+                formData.append('currency',this.currency);
 
                 axios.post(this.url+'/admin/payaccount/create',formData,{headers: {'Content-Type': 'multipart/form-data'}}).then(response => {     
                     this.success = response.data.success;

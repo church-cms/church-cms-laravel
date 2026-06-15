@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -38,6 +36,16 @@ class Paymentgateway extends Model
      * @var array
      */
      protected $fillable = [
-        'gatewayname' , 'displayname' , 'status','instructions'
+        'gatewayname', 'displayname', 'status', 'instructions', 'currency',
     ];
+
+    /**
+     * Get the default currency for a gateway.
+     * Priority: paymentgateways.currency (DB) → $default
+     */
+    public static function getCurrency(string $gatewayname, string $default = 'USD'): string
+    {
+        $gw = static::where('gatewayname', $gatewayname)->first();
+        return ($gw && $gw->currency) ? $gw->currency : $default;
+    }
 }

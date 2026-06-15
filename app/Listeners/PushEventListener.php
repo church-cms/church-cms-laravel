@@ -29,18 +29,17 @@ class PushEventListener //implements ShouldQueue
      */
     public function handle(PushEvent $event)
     {
-      //dump($event);
+        //dump($event);
 
-        
-        $users=User::where('church_id',$event->data['church_id'])->whereNotNull('platform_token')->get();
+
+        $users = User::where('church_id', $event->data['church_id'])->whereNotNull('platform_token')->get();
         //dd($users);
-        
-    foreach($users as $user)
-    {
-         $user->notify(new SendDeviceNotification($event->data, $user->platform_token));
-       
-        //$this->sendNotification($event->data,$user->platform_token);
-    }
-       // Mail::to($event->queue->to)->queue(new ReminderMail($event->queue));
+
+        foreach ($users as $user) {
+            $user->notify(new SendDeviceNotification($event->data, $user->platform_token));
+
+            //$this->sendNotification($event->data,$user->platform_token);
+        }
+        // Mail::to($event->queue->to)->queue(new ReminderMail($event->queue));
     }
 }

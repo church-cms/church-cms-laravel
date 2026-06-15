@@ -177,7 +177,7 @@
             </li>
             <li class="py-3 px-3 hover:font-semibold {{ in_array(Request::segment('2'), ['paymentgateways','paymentgateway']) ? 'active' : '' }}">
                 <a href="{{ url('/admin/paymentgateways') }}" class="flex items-center">
-                    <i class="fas fa-gateway w-5 text-center text-sm opacity-75"></i>
+                    <i class="fas fa-money-bill-transfer w-5 text-center text-sm opacity-75"></i>
                     <span class="mx-3 whitespace-no-wrap">Payment Gateways</span>
                 </a>
             </li>

@@ -116,6 +116,12 @@ class PayaccountContorller extends Controller
                 $param3 = $request->public_key;
                 $param4 = $request->short_code;
                 break;
+            case 'stripe':
+                $param1 = $request->public_key;    // publishable key (exposed to frontend)
+                $param2 = $request->secret_key;    // secret key (server-side only)
+                $param3 = $request->webhook_secret;
+                $param5 = $request->currency;
+                break;
         }
 
         $paymentgateway = Paymentgateway::where('gatewayname', $request->paymentgateway_id)->first();
@@ -223,6 +229,40 @@ class PayaccountContorller extends Controller
         }
         if ($request->paymentgateway_id === 'cheque') {
             $param1 = $request->payee_name;
+        }
+        if ($request->paymentgateway_id === 'paystack') {
+            $param1 = $request->public_key;
+            $param2 = $request->secret_key;
+        }
+        if ($request->paymentgateway_id === 'flutterwave') {
+            $param1 = $request->public_key;
+            $param2 = $request->secret_key;
+            $param3 = $request->encryption_key;
+        }
+        if ($request->paymentgateway_id === 'mpesa') {
+            $param1 = $request->consumer_key;
+            $param2 = $request->consumer_secret;
+            $param3 = $request->shortcode;
+            $param4 = $request->passkey;
+        }
+        if ($request->paymentgateway_id === 'gcash') {
+            $param1 = $request->public_key;
+            $param2 = $request->secret_key;
+        }
+        if ($request->paymentgateway_id === 'pix') {
+            $param1 = $request->pix_key;
+        }
+        if ($request->paymentgateway_id === 'telebirr') {
+            $param1 = $request->app_id;
+            $param2 = $request->app_key;
+            $param3 = $request->public_key;
+            $param4 = $request->short_code;
+        }
+        if ($request->paymentgateway_id === 'stripe') {
+            $param1 = $request->public_key;
+            $param2 = $request->secret_key;
+            $param3 = $request->webhook_secret;
+            $param5 = $request->currency;
         }
         $paymentgateway = Paymentgateway::where('gatewayname', $request->paymentgateway_id)->first();
 

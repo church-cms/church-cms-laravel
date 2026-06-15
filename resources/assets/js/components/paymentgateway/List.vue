@@ -2,12 +2,7 @@
     <div class="relative">
         <div class="flex lg:items-center md:items-center justify-between flex-col lg:flex-row md:flex-row">
             <h1 class="admin-h1">Payment Gateways</h1>
-            <div class="flex lg:justify-end md:justify-end items-center">
-                <a :href="url+'/admin/paymentgateway/create'" id="upload-btn" class="no-underline text-white px-4 mx-1 flex items-center custom-green py-1 justify-center rounded">
-                    <span class="mx-1 text-sm font-semibold">Add</span>
-                    <img :src="url+'/uploads/icons/plus.svg'" class="w-3 h-3">
-                </a>
-            </div>
+            
         </div>
 
         <div v-if="this.success!=null" class="alert alert-success" id="success-alert">{{ this.success }}</div>

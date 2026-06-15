@@ -14,6 +14,7 @@ use App\Models\Payaccount;
 use App\Models\Donation;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use App\Models\Paymentgateway;
 
 class DonationController extends Controller
 {
@@ -217,8 +218,9 @@ class DonationController extends Controller
         }
 
         try {
+            $gcash_currency = Paymentgateway::getCurrency('gcash',    'PHP');
             $secretKey = $payaccount->param2 ?: config('paymentgateway.gcash.secret_key', '');
-            $currency  = $payaccount->param5 ?: config('paymentgateway.gcash.currency', 'PHP');
+            $currency  = $payaccount->param5 ?: $gcash_currency;
             $svc       = new GCashService($secretKey, $currency);
             $desc      = 'Church Donation — ' . ($request->category ?? 'offering');
 
@@ -322,11 +324,12 @@ class DonationController extends Controller
         if (!$payaccount) {
             return response()->json(['error' => 'Invalid payment account.'], 422);
         }
+        $stripe_currency = Paymentgateway::getCurrency('stripe', 'USD');
 
         try {
             $secretKey  = $payaccount->param2 ?: config('paymentgateway.stripe.secret_key', '');
             $publicKey  = $payaccount->param1 ?: config('paymentgateway.stripe.public_key', '');
-            $currency   = $payaccount->param5 ?: config('paymentgateway.stripe.currency', 'usd');
+            $currency   = $payaccount->param5 ?: $stripe_currency;
             $svc        = new StripeService($secretKey, $publicKey, $currency);
             $desc       = 'Church Donation — ' . ($request->category ?? 'offering');
             $result     = $svc->createIntent((float) $request->amount, $desc);
@@ -381,6 +384,7 @@ class DonationController extends Controller
         'stripe'      => 'STRIPE_PUBLIC_KEY',
         'gcash'       => 'GCASH_PUBLIC_KEY',
     ];
+    // $stripe_currency = Paymentgateway::getCurrency('stripe', 'USD');
 
     private const ENV_CURRENCIES = [
         'paystack'    => 'PAYSTACK_CURRENCY',
@@ -402,7 +406,34 @@ class DonationController extends Controller
                     $dbKey    = $pa->param1 ?? '';
                     $envKey   = isset(self::ENV_PUBLIC_KEYS[$name]) ? env(self::ENV_PUBLIC_KEYS[$name], '') : '';
                     $pubKey   = $dbKey ?: $envKey;
-                    $currency = $pa->param5 ?: (isset(self::ENV_CURRENCIES[$name]) ? env(self::ENV_CURRENCIES[$name], 'NGN') : 'NGN');
+
+                    //dump($name);
+
+                    if ($name == 'mpesa') {
+
+                        $pay_currency = Paymentgateway::getCurrency($name, 'KES');
+                    } else if ($name == 'flutterwave') {
+
+                        $pay_currency = Paymentgateway::getCurrency($name, 'NGN');
+                    } else if ($name == 'paystack') {
+
+                        $pay_currency = Paymentgateway::getCurrency($name, 'NGN');
+
+                        //dd($name . $pay_currency);
+                    } else if ($name == 'stripe') {
+
+                        $pay_currency = Paymentgateway::getCurrency($name, 'USD');
+                    } else if ($name == 'gcash') {
+
+                        $pay_currency = Paymentgateway::getCurrency($name, 'PHP');
+                    } else {
+                        $pay_currency = Paymentgateway::getCurrency($name, 'USD');
+                    }
+
+
+                    $currency = $pa->param5 ?: (isset($pay_currency) ? $pay_currency : 'NGN');
+
+                    // dump($currency);
                 } else {
                     $pubKey   = null;
                     $currency = null;

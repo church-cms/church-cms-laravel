@@ -44,6 +44,7 @@ $gatewayIcons = [
 'cheque' => '📝',
 'gpay' => '🔵',
 'upi' => '⚡',
+'stripe' => '🔒',
 ];
 @endphp
 
@@ -142,9 +143,21 @@ $gatewayIcons = [
                     placeholder="e.g. 0712345678">
             </div>
 
+            {{-- Stripe card element --}}
+            <div class="mt-4" x-show="gatewayName() === 'stripe'" x-cloak>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                    Card Details
+                </label>
+                <div id="stripe-card-element"
+                    class="border border-gray-300 rounded-lg px-4 py-3 bg-white text-sm focus-within:ring-2 focus-within:ring-indigo-400">
+                    {{-- Stripe.js mounts here --}}
+                </div>
+                <p id="stripe-card-errors" class="text-red-500 text-xs mt-1" style="display:none;"></p>
+            </div>
+
             {{-- Offline instructions --}}
             <div class="mt-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-700"
-                x-show="selectedId && !isOnline()" x-cloak>
+                x-show="selectedId && !isOnline() && gatewayName() !== 'stripe'" x-cloak>
                 <p class="font-medium mb-1">Payment Instructions</p>
                 <p class="text-gray-500" x-text="selectedInstructions()"></p>
             </div>
@@ -235,8 +248,12 @@ $gatewayIcons = [
 @push('scripts')
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script src="https://checkout.flutterwave.com/v3.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
 
 <script>
+    var _stripeInstance = null;
+    var _cardElement = null;
+
     function donationApp() {
         var payaccounts = @json($payaccounts);
 
@@ -252,9 +269,67 @@ $gatewayIcons = [
             statusMsg: '',
             statusErr: false,
             amountError: '',
+            stripeReady: false,
 
             boot() {
-                // auto-select single gateway
+                if (this.selectedId) {
+                    var gw = this.selectedGateway();
+                    if (gw && gw.gatewayname === 'stripe') {
+                        var self = this;
+                        this.$nextTick(function() {
+                            self.mountStripeCard(gw.public_key);
+                        });
+                    }
+                }
+            },
+
+            mountStripeCard(publicKey) {
+                this.stripeReady = false;
+                if (!publicKey || typeof Stripe === 'undefined') return;
+                var el = document.getElementById('stripe-card-element');
+                if (!el) return;
+
+                if (_stripeInstance && _cardElement) {
+                    _cardElement.destroy();
+                    _cardElement = null;
+                }
+                _stripeInstance = Stripe(publicKey);
+                var elements = _stripeInstance.elements();
+                _cardElement = elements.create('card', {
+                    style: {
+                        base: {
+                            fontSize: '14px',
+                            color: '#374151',
+                            '::placeholder': {
+                                color: '#9CA3AF'
+                            }
+                        },
+                        invalid: {
+                            color: '#EF4444'
+                        },
+                    },
+                });
+                _cardElement.mount('#stripe-card-element');
+                _cardElement.on('change', function(event) {
+                    var errEl = document.getElementById('stripe-card-errors');
+                    if (event.error) {
+                        errEl.textContent = event.error.message;
+                        errEl.style.display = 'block';
+                    } else {
+                        errEl.textContent = '';
+                        errEl.style.display = 'none';
+                    }
+                });
+                this.stripeReady = true;
+            },
+
+            unmountStripeCard() {
+                if (_cardElement) {
+                    _cardElement.destroy();
+                    _cardElement = null;
+                }
+                _stripeInstance = null;
+                this.stripeReady = false;
             },
 
             pickAmount(val) {
@@ -293,12 +368,22 @@ $gatewayIcons = [
                 this.selectedId = id;
                 this.statusMsg = '';
                 this.statusErr = false;
+                var gw = this.selectedGateway();
+                var self = this;
+                if (gw && gw.gatewayname === 'stripe') {
+                    this.$nextTick(function() {
+                        self.mountStripeCard(gw.public_key);
+                    });
+                } else {
+                    this.unmountStripeCard();
+                }
             },
 
             canSubmit() {
                 if (this.finalAmount() < 1) return false;
                 if (this.payaccounts.length > 0 && !this.selectedId) return false;
                 if (this.gatewayName() === 'mpesa' && !this.mpesaPhone.trim()) return false;
+                if (this.gatewayName() === 'stripe' && !this.stripeReady) return false;
                 return true;
             },
 
@@ -323,6 +408,14 @@ $gatewayIcons = [
                 }
                 if (gw.gatewayname === 'mpesa') {
                     this.payWithMpesa(gw);
+                    return;
+                }
+                if (gw.gatewayname === 'stripe') {
+                    this.payWithStripe(gw);
+                    return;
+                }
+                if (gw.gatewayname === 'gcash') {
+                    this.payWithGCash(gw);
                     return;
                 }
                 this.submitOffline(gw.id);
@@ -350,8 +443,9 @@ $gatewayIcons = [
                 var self = this;
                 var handler = PaystackPop.setup({
                     key: gw.public_key,
-                    email: 'guru198607@gmail.com',
+                    email: '{{ Auth::user()->email }}',
                     amount: Math.round(self.finalAmount() * 100),
+
                     currency: gw.currency || 'NGN',
                     ref: 'DON-' + Date.now(),
                     callback: function(response) {
@@ -384,6 +478,63 @@ $gatewayIcons = [
                     },
                     onclose: function() {},
                 });
+            },
+
+            payWithStripe(gw) {
+                if (!_stripeInstance || !_cardElement) {
+                    this.statusMsg = 'Stripe is not ready. Please try again.';
+                    this.statusErr = true;
+                    return;
+                }
+                this.loading = true;
+                this.statusMsg = '';
+                this.statusErr = false;
+                var self = this;
+
+                fetch('{{ route("member.donate.stripe-intent") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            amount: self.finalAmount(),
+                            payaccount_id: gw.id,
+                            category: self.category,
+                            note: self.note,
+                        }),
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(data) {
+                        if (!data.client_secret) {
+                            self.loading = false;
+                            self.statusMsg = data.error || 'Could not create payment.';
+                            self.statusErr = true;
+                            return;
+                        }
+                        return _stripeInstance.confirmCardPayment(data.client_secret, {
+                            payment_method: {
+                                card: _cardElement
+                            },
+                        }).then(function(result) {
+                            self.loading = false;
+                            if (result.error) {
+                                var errEl = document.getElementById('stripe-card-errors');
+                                errEl.textContent = result.error.message;
+                                errEl.style.display = 'block';
+                            } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+                                self.submitVerify('stripe', result.paymentIntent.id, gw.id);
+                            }
+                        });
+                    })
+                    .catch(function() {
+                        self.loading = false;
+                        self.statusMsg = 'Network error. Please try again.';
+                        self.statusErr = true;
+                    });
             },
 
             payWithMpesa(gw) {
@@ -422,6 +573,45 @@ $gatewayIcons = [
                             self.statusErr = false;
                         } else {
                             self.statusMsg = data.error || 'M-Pesa request failed.';
+                            self.statusErr = true;
+                        }
+                    })
+                    .catch(function() {
+                        self.loading = false;
+                        self.statusMsg = 'Network error. Please try again.';
+                        self.statusErr = true;
+                    });
+            },
+
+            payWithGCash(gw) {
+                this.loading = true;
+                this.statusMsg = '';
+                this.statusErr = false;
+                var self = this;
+
+                fetch('{{ route("member.donate.gcash-init") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            amount: self.finalAmount(),
+                            payaccount_id: gw.id,
+                            category: self.category,
+                            note: self.note,
+                        }),
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(data) {
+                        if (data.checkout_url) {
+                            window.location.href = data.checkout_url;
+                        } else {
+                            self.loading = false;
+                            self.statusMsg = data.error || 'Could not initiate GCash payment.';
                             self.statusErr = true;
                         }
                     })

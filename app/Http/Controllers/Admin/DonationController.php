@@ -25,7 +25,7 @@ class DonationController extends Controller
             $search = $request->search;
             $donations->whereHas('user.userprofile', function ($q) use ($search) {
                 $q->where('firstname', 'LIKE', "%{$search}%")
-                  ->orWhere('lastname', 'LIKE', "%{$search}%");
+                    ->orWhere('lastname', 'LIKE', "%{$search}%");
             });
         }
 
@@ -44,7 +44,7 @@ class DonationController extends Controller
                 return [
                     'id'         => $d->id,
                     'name'       => optional(optional($d->user)->userprofile)->firstname
-                                   . ' ' . optional(optional($d->user)->userprofile)->lastname,
+                        . ' ' . optional(optional($d->user)->userprofile)->lastname,
                     'email'      => optional($d->user)->email,
                     'amount'     => $d->amount,
                     'currency'   => $d->currency,
@@ -82,7 +82,7 @@ class DonationController extends Controller
             $donation->status = $request->status;
             $donation->save();
 
-            return response()->json(['success' => 'Status updated successfully']);
+            return redirect('/admin/donations')->with('successmessage', 'Status updated successfully');
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return response()->json(['error' => 'Failed to update status'], 500);

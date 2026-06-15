@@ -27,10 +27,10 @@ class StripeService
     public function createIntent(float $amount, string $description = 'Church Donation'): array
     {
         $intent = PaymentIntent::create([
-            'amount'               => (int) round($amount * 100), // cents
-            'currency'             => $this->currency,
-            'description'          => $description,
-            'payment_method_types' => ['card'],
+            'amount'      => (int) round($amount * 100), // cents
+            'currency'    => $this->currency,
+            'description' => $description,
+            'automatic_payment_methods' => ['enabled' => true],
         ]);
 
         return [

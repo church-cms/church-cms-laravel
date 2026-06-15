@@ -13,6 +13,8 @@ class GCashService
 
     public function __construct(string $secretKey = '', string $currency = 'PHP')
     {
+
+
         $this->secretKey = $secretKey ?: config('paymentgateway.gcash.secret_key', '');
         $this->currency  = strtoupper($currency ?: 'PHP');
     }

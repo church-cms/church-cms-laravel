@@ -36,6 +36,7 @@
         "spatie/laravel-activitylog": "^4.2",
         "spatie/laravel-medialibrary": "^10.0",
         "spatie/laravel-sitemap": "^6.0",
+        "stripe/stripe-php": "^20.2",
         "tijsverkoyen/css-to-inline-styles": "^2.4",
         "titasgailius/search-relations": "^1.0",
         "twilio/sdk": "^6.9"

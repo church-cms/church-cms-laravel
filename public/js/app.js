@@ -49256,6 +49256,145 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var GATEWAY_CURRENCIES = {
+  mpesa: [{
+    code: 'KES',
+    label: 'Kenyan Shilling'
+  }],
+  gcash: [{
+    code: 'PHP',
+    label: 'Philippine Peso'
+  }],
+  pix: [{
+    code: 'BRL',
+    label: 'Brazilian Real'
+  }],
+  telebirr: [{
+    code: 'ETB',
+    label: 'Ethiopian Birr'
+  }],
+  paystack: [{
+    code: 'NGN',
+    label: 'Nigerian Naira'
+  }, {
+    code: 'GHS',
+    label: 'Ghanaian Cedi'
+  }, {
+    code: 'KES',
+    label: 'Kenyan Shilling'
+  }, {
+    code: 'ZAR',
+    label: 'South African Rand'
+  }, {
+    code: 'USD',
+    label: 'US Dollar'
+  }, {
+    code: 'EGP',
+    label: 'Egyptian Pound'
+  }],
+  flutterwave: [{
+    code: 'NGN',
+    label: 'Nigerian Naira'
+  }, {
+    code: 'GHS',
+    label: 'Ghanaian Cedi'
+  }, {
+    code: 'KES',
+    label: 'Kenyan Shilling'
+  }, {
+    code: 'UGX',
+    label: 'Ugandan Shilling'
+  }, {
+    code: 'TZS',
+    label: 'Tanzanian Shilling'
+  }, {
+    code: 'ZAR',
+    label: 'South African Rand'
+  }, {
+    code: 'RWF',
+    label: 'Rwandan Franc'
+  }, {
+    code: 'MWK',
+    label: 'Malawian Kwacha'
+  }, {
+    code: 'ZMW',
+    label: 'Zambian Kwacha'
+  }, {
+    code: 'XAF',
+    label: 'Central African CFA Franc'
+  }, {
+    code: 'XOF',
+    label: 'West African CFA Franc'
+  }, {
+    code: 'USD',
+    label: 'US Dollar'
+  }, {
+    code: 'GBP',
+    label: 'British Pound'
+  }, {
+    code: 'EUR',
+    label: 'Euro'
+  }],
+  stripe: [{
+    code: 'USD',
+    label: 'US Dollar'
+  }, {
+    code: 'EUR',
+    label: 'Euro'
+  }, {
+    code: 'GBP',
+    label: 'British Pound'
+  }, {
+    code: 'CAD',
+    label: 'Canadian Dollar'
+  }, {
+    code: 'AUD',
+    label: 'Australian Dollar'
+  }, {
+    code: 'SGD',
+    label: 'Singapore Dollar'
+  }, {
+    code: 'HKD',
+    label: 'Hong Kong Dollar'
+  }, {
+    code: 'JPY',
+    label: 'Japanese Yen'
+  }, {
+    code: 'CHF',
+    label: 'Swiss Franc'
+  }, {
+    code: 'MXN',
+    label: 'Mexican Peso'
+  }, {
+    code: 'BRL',
+    label: 'Brazilian Real'
+  }, {
+    code: 'INR',
+    label: 'Indian Rupee'
+  }, {
+    code: 'NZD',
+    label: 'New Zealand Dollar'
+  }]
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['url', 'gateway_id'],
   data: function data() {
@@ -49263,10 +49402,24 @@ __webpack_require__.r(__webpack_exports__);
       gatewayname: '',
       displayname: '',
       instructions: '',
+      currency: '',
       status: '1',
       errors: [],
       success: null
     };
+  },
+  computed: {
+    currencyOptions: function currencyOptions() {
+      return GATEWAY_CURRENCIES[this.gatewayname] || [];
+    }
+  },
+  watch: {
+    // Auto-select when only one option available (e.g. mpesa → KES)
+    currencyOptions: function currencyOptions(options) {
+      if (options.length === 1 && !this.currency) {
+        this.currency = options[0].code;
+      }
+    }
   },
   methods: {
     getData: function getData() {
@@ -49277,7 +49430,14 @@ __webpack_require__.r(__webpack_exports__);
         _this.gatewayname = g.name;
         _this.displayname = g.display_name;
         _this.instructions = g.instructions;
-        _this.status = String(g.status);
+        _this.currency = g.currency || '';
+        _this.status = String(g.status); // Auto-set fixed-currency gateways
+
+        var options = GATEWAY_CURRENCIES[g.name] || [];
+
+        if (options.length === 1 && !_this.currency) {
+          _this.currency = options[0].code;
+        }
       });
     },
     submitForm: function submitForm() {
@@ -49288,6 +49448,7 @@ __webpack_require__.r(__webpack_exports__);
         gatewayname: this.gatewayname,
         displayname: this.displayname,
         instructions: this.instructions,
+        currency: this.currency,
         status: this.status
       }).then(function (response) {
         _this2.success = response.data.success;
@@ -49317,11 +49478,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
 //
 //
 //
@@ -212485,6 +212641,86 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
+    _vm.currencyOptions.length > 0
+      ? _c("div", { staticClass: "tw-form-group w-full mt-3" }, [
+          _c("div", { staticClass: "lg:mr-8 md:mr-8" }, [
+            _c("div", { staticClass: "mb-2" }, [
+              _c("label", { staticClass: "tw-form-label" }, [
+                _vm._v(
+                  "\n                    Default Currency\n                    "
+                ),
+                _vm.currencyOptions.length === 1
+                  ? _c(
+                      "span",
+                      { staticClass: "text-xs text-gray-400 font-normal ml-1" },
+                      [_vm._v("(fixed for this gateway)")]
+                    )
+                  : _vm._e()
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.currency,
+                    expression: "currency"
+                  }
+                ],
+                staticClass: "tw-form-control w-full",
+                attrs: { disabled: _vm.currencyOptions.length === 1 },
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.currency = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
+              [
+                _c("option", { attrs: { value: "" } }, [
+                  _vm._v("— Select currency —")
+                ]),
+                _vm._v(" "),
+                _vm._l(_vm.currencyOptions, function(opt) {
+                  return _c(
+                    "option",
+                    { key: opt.code, domProps: { value: opt.code } },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(opt.code) +
+                          " — " +
+                          _vm._s(opt.label) +
+                          "\n                "
+                      )
+                    ]
+                  )
+                })
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _vm.errors.currency
+              ? _c("p", { staticClass: "text-red-500 text-xs mt-1" }, [
+                  _vm._v(_vm._s(_vm.errors.currency[0]))
+                ])
+              : _vm._e()
+          ])
+        ])
+      : _vm._e(),
+    _vm._v(" "),
     _c("div", { staticClass: "tw-form-group w-full mt-3" }, [
       _c("div", { staticClass: "lg:mr-8 md:mr-8" }, [
         _vm._m(3),
@@ -212633,44 +212869,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "relative" }, [
-    _c(
-      "div",
-      {
-        staticClass:
-          "flex lg:items-center md:items-center justify-between flex-col lg:flex-row md:flex-row"
-      },
-      [
-        _c("h1", { staticClass: "admin-h1" }, [_vm._v("Payment Gateways")]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "flex lg:justify-end md:justify-end items-center" },
-          [
-            _c(
-              "a",
-              {
-                staticClass:
-                  "no-underline text-white px-4 mx-1 flex items-center custom-green py-1 justify-center rounded",
-                attrs: {
-                  href: _vm.url + "/admin/paymentgateway/create",
-                  id: "upload-btn"
-                }
-              },
-              [
-                _c("span", { staticClass: "mx-1 text-sm font-semibold" }, [
-                  _vm._v("Add")
-                ]),
-                _vm._v(" "),
-                _c("img", {
-                  staticClass: "w-3 h-3",
-                  attrs: { src: _vm.url + "/uploads/icons/plus.svg" }
-                })
-              ]
-            )
-          ]
-        )
-      ]
-    ),
+    _vm._m(0),
     _vm._v(" "),
     this.success != null
       ? _c(
@@ -212685,7 +212884,7 @@ var render = function() {
     _vm._v(" "),
     _c("div", { staticClass: "flex-wrap custom-table overflow-auto mt-3" }, [
       _c("table", { staticClass: "w-full" }, [
-        _vm._m(0),
+        _vm._m(1),
         _vm._v(" "),
         _vm.gateways.length
           ? _c(
@@ -212871,12 +213070,25 @@ var render = function() {
               }),
               0
             )
-          : _c("tbody", [_vm._m(1)])
+          : _c("tbody", [_vm._m(2)])
       ])
     ])
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass:
+          "flex lg:items-center md:items-center justify-between flex-col lg:flex-row md:flex-row"
+      },
+      [_c("h1", { staticClass: "admin-h1" }, [_vm._v("Payment Gateways")])]
+    )
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement

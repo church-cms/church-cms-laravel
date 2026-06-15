@@ -32,6 +32,7 @@ class PaymentgatewayController extends Controller
             'displayname'  => 'required|string',
             'status'       => 'required|in:0,1',
             'instructions' => 'nullable|string',
+            'currency'     => 'nullable|string|max:10',
         ]);
 
         Paymentgateway::create([
@@ -39,6 +40,7 @@ class PaymentgatewayController extends Controller
             'displayname'  => $request->displayname,
             'status'       => $request->status,
             'instructions' => $request->instructions,
+            'currency'     => $request->currency,
         ]);
 
         return ['success' => 'Payment gateway created successfully'];
@@ -63,6 +65,7 @@ class PaymentgatewayController extends Controller
             'displayname'  => 'required|string',
             'status'       => 'required|in:0,1',
             'instructions' => 'nullable|string',
+            'currency'     => 'nullable|string|max:10',
         ]);
 
         $gateway = Paymentgateway::findOrFail($id);
@@ -71,6 +74,7 @@ class PaymentgatewayController extends Controller
             'displayname'  => $request->displayname,
             'status'       => $request->status,
             'instructions' => $request->instructions,
+            'currency'     => $request->currency,
         ]);
 
         return ['success' => 'Payment gateway updated successfully'];
