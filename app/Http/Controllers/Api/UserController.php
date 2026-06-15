@@ -276,12 +276,12 @@ class UserController extends Controller
                     Mail::to($user->email)->queue(new ChangePassword($user));
                 }
 
-                $data->mode     = 'notification';
-                $data->subject  = 'Notify Change Password';
-                $data->message  = 'Changed Password Successfully';
-                $data->attachments  = '';
+                // $data->mode     = 'notification';
+                // $data->subject  = 'Notify Change Password';
+                // $data->message  = 'Changed Password Successfully';
+                // $data->attachments  = '';
 
-                $this->sendMessage($data, $user->church_id, $admin->email, $user, $admin);
+                // $this->sendMessage($data, $user->church_id, $admin->email, $user, $admin);
 
                 $res['message'] = "Changed Password Successfully";
             } else {
