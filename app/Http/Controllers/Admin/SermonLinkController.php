@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Exception;
 use Response;
 use Log;
+use App\Events\PushEvent;
 
 class SermonLinkController extends Controller
 {
@@ -59,6 +60,13 @@ class SermonLinkController extends Controller
             if (env('MAIL_STATUS') === 'on') {
                 event(new SermonLinkEvent($sermon));
             }
+            $data = [];
+
+            $data['church_id'] =  Auth::user()->church_id;
+            $data['message'] = 'New SermonLink Created';
+            $data['type'] = 'sermonlink';
+
+            event(new PushEvent($data));
 
             $message = 'Series Uploaded Successfully';
             $ip      = $this->getRequestIP();

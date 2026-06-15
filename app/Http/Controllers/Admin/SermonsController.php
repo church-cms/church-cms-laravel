@@ -15,6 +15,7 @@ use App\Models\Sermon;
 use App\Traits\Common;
 use Exception;
 use Log;
+use App\Events\PushEvent;
 
 /**
  * SermonsController
@@ -112,6 +113,13 @@ class SermonsController extends Controller
             if (env('MAIL_STATUS') === 'on') {
                 event(new SermonEvent($sermon));
             }
+            $data = [];
+
+            $data['church_id'] =  $church_id;
+            $data['message'] = 'New Sermon Created';
+            $data['type'] = 'sermon';
+
+            event(new PushEvent($data));
 
             return redirect('/admin/sermons')->with('successmessage', 'Sermon Created!');
         } catch (Exception $e) {
