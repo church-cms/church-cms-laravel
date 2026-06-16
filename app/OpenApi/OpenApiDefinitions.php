@@ -1428,7 +1428,29 @@ use OpenApi\Attributes as OA;
         )
     ),
 
+    // ── Test Push Notification ────────────────────────────────────────────────
 
+    OA\Schema(
+        schema: 'NotificationCreateRequest',
+        required: ['type'],
+        properties: [
+            new OA\Property(
+                property: 'type',
+                type: 'string',
+                description: 'Record type to create and broadcast',
+                enum: ['event', 'bulletin', 'gallery', 'photos', 'sermon', 'sermonlink'],
+                example: 'event'
+            ),
+        ]
+    ),
+
+    OA\Response(
+        response: 'NotificationCreateResponse',
+        description: 'Test record created and push notification fired',
+        content: new OA\JsonContent(
+            example: ['success' => 'Event Added Successfully']
+        )
+    ),
 
 ]
 class OpenApiDefinitions {}
