@@ -1224,6 +1224,39 @@ use OpenApi\Attributes as OA;
         )
     ),
 
+    OA\Schema(
+        schema: 'ResetPasswordRequest',
+        required: ['mobile_no'],
+        properties: [
+            new OA\Property(property: 'mobile_no', type: 'string', description: 'Registered 10-digit mobile number', example: '0712345678'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'ResetPasswordResponse',
+        description: 'OTP sent via SMS',
+        content: new OA\JsonContent(
+            example: ['success' => true, 'message' => 'Check sms to reset the password']
+        )
+    ),
+
+    OA\Schema(
+        schema: 'StorePasswordRequest',
+        required: ['mobile_no', 'password'],
+        properties: [
+            new OA\Property(property: 'mobile_no', type: 'string', description: 'Registered 10-digit mobile number', example: '0712345678'),
+            new OA\Property(property: 'password',  type: 'string', description: 'OTP token received via SMS',        example: '123456'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'StorePasswordResponse',
+        description: 'OTP verification result',
+        content: new OA\JsonContent(
+            example: ['success' => true, 'message' => 'Password Reset Successfully']
+        )
+    ),
+
     // ── Attendance ────────────────────────────────────────────────────────────
 
     OA\Schema(

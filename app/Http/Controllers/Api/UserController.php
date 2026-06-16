@@ -144,6 +144,24 @@ class UserController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/v1/password/reset',
+        tags: ['User'],
+        summary: 'Request a password reset OTP sent via SMS',
+        operationId: 'a3e1c2d4b5f6e7a8c9d0b1e2f3c4a5d6',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/ResetPasswordRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ResetPasswordResponse'
+            )
+        ]
+    )]
     public function resetPassword(ResetPasswordRequest $request)
     {
         try {
@@ -168,12 +186,28 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    #[OA\Post(
+        path: '/api/v1/password/store',
+        tags: ['User'],
+        summary: 'Verify OTP and mark the account as ready for password change',
+        operationId: 'b4d6e7f8a9c0b1d2e3f4a5b6c7d8e9f0',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/StorePasswordRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/StorePasswordResponse'
+            ),
+            new OA\Response(
+                response: 302,
+                description: 'Password Does Not Match'
+            )
+        ]
+    )]
     public function storePassword(OTPRequest $request)
     {
         //
