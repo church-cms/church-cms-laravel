@@ -14,6 +14,7 @@ use App\Models\Photos;
 use App\Models\Sermon;
 use App\Models\User;
 use OpenApi\Attributes as OA;
+
 /**
  * TestController
  *
@@ -27,29 +28,46 @@ class TestController extends Controller
 {
     public function index()
     {
-        $user=User::get()->groupBy('church_id');
+        $user = User::get()->groupBy('church_id');
         return $user;
     }
 
     public function events()
     {
-        $event=Events::get()->groupBy('church_id');
+        $event = Events::get()->groupBy('church_id');
         return $event;
     }
 
     public function gallery()
     {
-        $gallery=Gallery::get()->groupBy('church_id');
+        $gallery = Gallery::get()->groupBy('church_id');
         return $gallery;
     }
 
+    #[OA\Post(
+        path: '/api/v1/notification/create',
+        tags: ['Test'],
+        summary: 'Create a test record and fire a push notification',
+        operationId: 'c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/NotificationCreateRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/NotificationCreateResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function notification(Request $request)
     {
-        try
-        {
-            if($request->type==='event')
-            {
-                $events= new Events;
+        try {
+            if ($request->type === 'event') {
+                $events = new Events;
 
                 $events->church_id    = Auth::user()->church_id;
                 $events->select_type  = 'public';
@@ -65,7 +83,7 @@ class TestController extends Controller
 
                 $events->save();
 
-                $data=[];
+                $data = [];
 
                 $data['church_id'] = Auth::user()->church_id;
                 $data['message']   = 'New Event created';
@@ -73,11 +91,9 @@ class TestController extends Controller
 
                 event(new PushEvent($data));
 
-                $res['success']='Event Added Successfully';
+                $res['success'] = 'Event Added Successfully';
                 return $res;
-            }
-            elseif($request->type==='bulletin')
-            {
+            } elseif ($request->type === 'bulletin') {
                 $church_id  = Auth::user()->church_id;
                 $created_by = Auth::id();
 
@@ -88,24 +104,22 @@ class TestController extends Controller
                 $bulletin->type = 'week';
                 $bulletin->week = '1';
                 $bulletin->year = '2016';
-                $bulletin->cover_image    ='uploads/images.jpg';
+                $bulletin->cover_image    = 'uploads/images.jpg';
                 $bulletin->path = 'uploads/file.pdf';
                 $bulletin->created_by = $created_by;
                 $bulletin->save();
 
-                $message=('Bulletin Added Successfully');
+                $message = ('Bulletin Added Successfully');
 
-                $data=[];
-                $data['church_id']=Auth::user()->church_id;
-                $data['message']='New Bulletin created';
-                $data['type']='bulletin';
+                $data = [];
+                $data['church_id'] = Auth::user()->church_id;
+                $data['message'] = 'New Bulletin created';
+                $data['type'] = 'bulletin';
                 event(new PushEvent($data));
 
-                $res['success']="Bulletin Added Successfully";
+                $res['success'] = "Bulletin Added Successfully";
                 return $res;
-            }
-            elseif($request->type==='gallery')
-            {
+            } elseif ($request->type === 'gallery') {
                 $church_id      = Auth::user()->church_id;
 
                 $gallery = new Gallery;
@@ -118,19 +132,17 @@ class TestController extends Controller
                 $gallery->updated_by = Auth::id();
                 $gallery->save();
 
-                $data=[];
+                $data = [];
 
-                $data['church_id']=Auth::user()->church_id;
-                $data['message']='New Folder created';
-                $data['type']='gallery';
+                $data['church_id'] = Auth::user()->church_id;
+                $data['message'] = 'New Folder created';
+                $data['type'] = 'gallery';
 
                 event(new PushEvent($data));
 
-                $res['success']="Gallery Added Successfully";
+                $res['success'] = "Gallery Added Successfully";
                 return $res;
-            }
-            elseif($request->type==='photos')
-            {
+            } elseif ($request->type === 'photos') {
                 $church_id      = Auth::user()->church_id;
                 $created_by = Auth::id();
                 $updated_by = Auth::id();
@@ -145,19 +157,17 @@ class TestController extends Controller
 
                 $photo = Photos::create($create);
 
-                $data=[];
+                $data = [];
 
-                $data['church_id']=Auth::user()->church_id;
-                $data['message']='New Photo Added';
-                $data['type']='photos';
+                $data['church_id'] = Auth::user()->church_id;
+                $data['message'] = 'New Photo Added';
+                $data['type'] = 'photos';
 
                 event(new PushEvent($data));
 
-                $res['message']="Uploaded Successfully";
+                $res['message'] = "Uploaded Successfully";
                 return $res;
-            }
-            elseif($request->type==='sermon')
-            {
+            } elseif ($request->type === 'sermon') {
                 $church_id      = Auth::user()->church_id;
                 $user_id        = Auth::id();
 
@@ -171,23 +181,21 @@ class TestController extends Controller
 
                 $sermon->save();
 
-                $data=[];
+                $data = [];
 
-                $data['church_id']=Auth::user()->church_id;
-                $data['message']='New Sermon Created';
-                $data['type']='sermon';
+                $data['church_id'] = Auth::user()->church_id;
+                $data['message'] = 'New Sermon Created';
+                $data['type'] = 'sermon';
 
                 event(new PushEvent($data));
 
-                $res['message']="Sermon Created Successfully";
+                $res['message'] = "Sermon Created Successfully";
                 return $res;
-            }
-            elseif($request->type==='sermonlink')
-            {
+            } elseif ($request->type === 'sermonlink') {
                 $church_id = Auth::user()->church_id;
                 $user_id = Auth::id();
 
-                $sermon=new SermonLink;
+                $sermon = new SermonLink;
                 $sermon->church_id  = $church_id;
                 $sermon->user_id    = $user_id;
                 $sermon->sermons_id = '1';
@@ -198,37 +206,33 @@ class TestController extends Controller
 
                 $sermon->save();
 
-                $data=[];
+                $data = [];
 
-                $data['church_id']=Auth::user()->church_id;
-                $data['message']='New SermonLink Created';
-                $data['type']='sermonlink';
+                $data['church_id'] = Auth::user()->church_id;
+                $data['message'] = 'New SermonLink Created';
+                $data['type'] = 'sermonlink';
 
                 event(new PushEvent($data));
 
-                $res['success']='Series Uploaded Successfully';
+                $res['success'] = 'Series Uploaded Successfully';
                 return $res;
             }
-        }
-        catch(Exception $e)
-        {
-
+        } catch (Exception $e) {
         }
     }
-    
-#[OA\Get(
-    path: "/api/test",
-    summary: "Test API",
-    responses: [
-        new OA\Response(
-            response: 200,
-            description: "OK"
-        )
-    ]
-)]
+
+    #[OA\Get(
+        path: "/api/test",
+        summary: "Test API",
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "OK"
+            )
+        ]
+    )]
     public function test()
     {
         return response()->json(['message' => 'ok']);
     }
-
 }
