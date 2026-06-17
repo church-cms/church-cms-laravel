@@ -1428,6 +1428,38 @@ use OpenApi\Attributes as OA;
         )
     ),
 
+    // ── Activity Log ──────────────────────────────────────────────────────────
+
+    OA\Schema(
+        schema: 'ActivityLogResource',
+        properties: [
+            new OA\Property(property: 'id',          type: 'integer'),
+            new OA\Property(property: 'name',        type: 'string',  description: 'Activity description or related entity name'),
+            new OA\Property(property: 'description', type: 'string',  nullable: true, description: 'Additional context (e.g. group member count)'),
+            new OA\Property(property: 'status',      type: 'string',  nullable: true),
+            new OA\Property(property: 'date',        type: 'string',  description: 'Formatted as d-m-Y h:i A'),
+            new OA\Property(property: 'type',        type: 'string',  description: 'Activity type (e.g. group)'),
+        ]
+    ),
+
+    OA\Response(
+        response: 'ActivityLogResponse',
+        description: 'Paginated activity log for the authenticated member',
+        content: new OA\JsonContent(
+            properties: [
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(ref: '#/components/schemas/ActivityLogResource')
+                ),
+                new OA\Property(property: 'current_page', type: 'integer'),
+                new OA\Property(property: 'last_page',    type: 'integer'),
+                new OA\Property(property: 'per_page',     type: 'integer'),
+                new OA\Property(property: 'total',        type: 'integer'),
+            ]
+        )
+    ),
+
     // ── Test Push Notification ────────────────────────────────────────────────
 
     OA\Schema(

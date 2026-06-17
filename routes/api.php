@@ -106,6 +106,9 @@ Route::group(
 
 
 		Route::post('/member/edit/{id}', 'UserprofileController@update');
+		Route::get('/member/activitylog', 'UserActivityLogController@index');
+
+
 
 		//events
 

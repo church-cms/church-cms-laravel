@@ -42,16 +42,13 @@ class GroupLinksController extends Controller
      */
     public function index($id)
     {
-        $group = Group::where('id',$id)->first();
-        if(Gate::allows('group',$group))
-        {
-            $users = User::where('church_id',Auth::user()->church_id)->ByRole(5)->whereHas('userprofile', function($q){
-                        $q->where('membership_type','member')->where('status','active');
-                    })->get();
+        $group = Group::where('id', $id)->first();
+        if (Gate::allows('group', $group)) {
+            $users = User::where('church_id', Auth::user()->church_id)->ByRole(5)->whereHas('userprofile', function ($q) {
+                $q->where('membership_type', 'member')->where('status', 'active');
+            })->get();
             return ['memberlist' => UserResource::collection($users)];
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
@@ -64,13 +61,10 @@ class GroupLinksController extends Controller
     public function create($group_id)
     {
         //
-        $group = Group::where('id',$group_id)->first();
-        if(Gate::allows('group',$group))
-        {
-            return view('/admin/groups/addMember',['group' => $group]);
-        }
-        else
-        {
+        $group = Group::where('id', $group_id)->first();
+        if (Gate::allows('group', $group)) {
+            return view('/admin/groups/addMember', ['group' => $group]);
+        } else {
             abort(403);
         }
     }
@@ -127,6 +121,16 @@ class GroupLinksController extends Controller
                     'Member Added to Group Successfully'
                 );
 
+                $users = User::where('id', $userId)->first();
+
+                $this->doActivityLog(
+                    $grouplink,
+                    $users,
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
+                    LOGNAME_ADD_MEMBER_TO_GROUP,
+                    'Member Added to Group Successfully'
+                );
+
                 $added++;
             } catch (Exception $e) {
                 Log::info($e->getMessage());
@@ -148,13 +152,10 @@ class GroupLinksController extends Controller
      */
     public function edit($id)
     {
-        $member = GroupLink::with('user.userprofile')->where('id',$id)->first();
-        if(Gate::allows('group',$member))
-        {
+        $member = GroupLink::with('user.userprofile')->where('id', $id)->first();
+        if (Gate::allows('group', $member)) {
             return view('/admin/groups/editMember', ['member' => $member]);
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
@@ -168,8 +169,7 @@ class GroupLinksController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try
-        {
+        try {
             $member = GroupLink::where('id', $id)->first();
             $member->role = $request->role;
             $member->save();
@@ -184,9 +184,7 @@ class GroupLinksController extends Controller
             );
 
             return redirect()->back()->with(['successmessage' => 'Member role updated successfully']);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
         }
     }
@@ -200,34 +198,27 @@ class GroupLinksController extends Controller
     public function destroy($id)
     {
         //
-        try
-        {
-            $member = GroupLink::where('id',$id)->first();
-            if(Gate::allows('group',$member))
-            {
+        try {
+            $member = GroupLink::where('id', $id)->first();
+            if (Gate::allows('group', $member)) {
                 $member->delete();
-                    $message=('Member removed from Group Successfully');
+                $message = ('Member removed from Group Successfully');
 
-                    $ip= $this->getRequestIP();
-                    $this->doActivityLog(
-                        $member,
-                        Auth::user(),
-                        ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
-                        LOGNAME_REMOVE_GROUP_MEMBER,
-                        $message
-                    );
+                $ip = $this->getRequestIP();
+                $this->doActivityLog(
+                    $member,
+                    Auth::user(),
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
+                    LOGNAME_REMOVE_GROUP_MEMBER,
+                    $message
+                );
 
                 return redirect()->back()->with(['successmessage' => 'Member removed from Group Successfully']);
-            }
-            else
-            {
+            } else {
                 abort(403);
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }
