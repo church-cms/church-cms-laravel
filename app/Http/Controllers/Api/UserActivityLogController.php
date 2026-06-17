@@ -28,7 +28,7 @@ class UserActivityLogController extends Controller
     {
         // dd("GG");
 
-        $user_activity = ActivityLog::where('causer_id', Auth::user()->id)->latest()->paginate(10);
+        $user_activity = ActivityLog::where([['description', '!=', 'Logged In'], ['causer_id', Auth::user()->id]])->latest()->paginate(10);
 
         //dd($user_activity);
 
