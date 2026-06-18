@@ -14,102 +14,79 @@ class SendDeviceNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected array $data;
-    protected string $token;
+    public array $data;
+    public string $token;
 
     public function __construct(array $data, string $token)
     {
         $this->queue = 'notification';
-
-        $this->data = $data;
+        $this->data  = $data;
         $this->token = $token;
     }
 
-    /**
-     * Notification channels.
-     */
     public function via($notifiable): array
     {
         return [FcmChannel::class];
     }
 
-    /**
-     * Send FCM notification.
-     */
     public function toFcm($notifiable): FcmMessage
     {
-        $title   = (string) ($this->data['type'] ?? 'Notification');
-        $message = (string) ($this->data['message'] ?? '');
-        $id      = (string) ($this->data['id'] ?? '');
+        try {
+            $type    = $this->data['type'] ?? 'Notification';
+            $message = $this->data['message'] ?? '';
+            $id = $this->data['id'] ?? '';
 
-        Log::info('Sending FCM Notification', [
-            'token' => $this->token,
-            'payload' => [
-                'id' => $id,
-                'type' => $title,
-                'message' => $message,
-            ]
-        ]);
-
-        return FcmMessage::create()
-            ->token($this->token)
-
-            // Custom Data Payload
-            ->data([
-                'id' => $id,
-                'type' => $title,
-                'message' => $message,
-                'click_action' => 'FLUTTER_NOTIFICATION_CLICK',
-            ])
-
-            // Notification Payload
-            ->notification(
-                FcmNotification::create(
-                    $title,
-                    $message
+            return FcmMessage::create()
+                ->token($this->token)
+                ->data([
+                    'id' => $id,
+                    'type' => $type,
+                    'message' => $message,
+                ])
+                ->notification(
+                    FcmNotification::create($type,$message)
                 )
-            )
-
-            ->custom([
-                'android' => [
-                    'priority' => 'high',
-                    'notification' => [
-                        'sound' => 'default',
-                        'channel_id' => 'default',
-                        'color' => '#0A0A0A',
-                    ],
-                ],
-
-                'apns' => [
-                    'headers' => [
-                        'apns-priority' => '10',
-                    ],
-                    'payload' => [
-                        'aps' => [
+                ->custom([
+                    'android' => [
+                        'notification' => [
+                            'color' => '#0A0A0A',
                             'sound' => 'default',
                         ],
+                        'fcm_options' => [
+                            'analytics_label' => 'analytics',
+                        ],
                     ],
-                ],
+                    'apns' => [
+                        'payload' => [
+                            'aps' => [
+                                'sound' => 'default',
+                            ],
+                        ],
+                        'fcm_options' => [
+                            'analytics_label' => 'analytics_ios',
+                        ],
+                    ],
+                ]);
+        } catch (\Exception $e) {
+            Log::error('FCM Notification Error', [
+                'token' => $this->token,
+                'data'  => $this->data,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
+
+            // Optional: prevent job from crashing
+            return FcmMessage::create()
+                ->token($this->token)
+                ->data([
+                    'type'    => 'Error',
+                    'message' => 'Notification failed',
+                ]);
+        }
     }
 
-    /**
-     * Firebase project.
-     */
     public function fcmProject($notifiable, $message): ?string
     {
         return 'app';
-    }
-
-    /**
-     * Failed job handler.
-     */
-    public function failed(\Throwable $exception): void
-    {
-        Log::error('FCM Notification Failed', [
-            'token' => $this->token,
-            'data' => $this->data,
-            'error' => $exception->getMessage(),
-        ]);
     }
 }
