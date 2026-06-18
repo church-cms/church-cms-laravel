@@ -44,7 +44,7 @@ class SendDeviceNotification extends Notification implements ShouldQueue
                     'message' => $message,
                 ])
                 ->notification(
-                    FcmNotification::create($type, $message)
+                    FcmNotification::create($type, $message,$id)
                 )
                 ->custom([
                     'android' => [
