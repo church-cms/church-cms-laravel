@@ -25,7 +25,7 @@ class ActivityLog extends JsonResource
         $name = $this->description;
         $status = '';
         $type = '';
-        $type_id = '';
+        $type_id = null;
 
         if ($this->subject_type == 'App\Models\GroupLink') {
             $grouplinks = GroupLink::where('id', $this->subject_id)->first();
@@ -44,7 +44,7 @@ class ActivityLog extends JsonResource
             'status'         => $status ?? null,
             'date'            => $this->created_at->format('d-m-Y h:i A'),
             'type' => $type ?? null,
-            'type_id' => $type_id ?? null
+            'type_id' => $type_id
         ];
     }
 }
