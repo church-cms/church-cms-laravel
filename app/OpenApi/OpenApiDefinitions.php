@@ -1428,6 +1428,28 @@ use OpenApi\Attributes as OA;
         )
     ),
 
+    // ── Edit Profile Image ────────────────────────────────────────────────────
+
+    OA\Schema(
+        schema: 'EditProfileImgRequest',
+        properties: [
+            new OA\Property(
+                property: 'avatar',
+                type: 'string',
+                format: 'binary',
+                description: 'Profile image file (jpg, jpeg, png, bmp, webp)'
+            ),
+        ]
+    ),
+
+    OA\Response(
+        response: 'EditProfileImgResponse',
+        description: 'Profile image updated',
+        content: new OA\JsonContent(
+            example: ['status' => 'success', 'message' => 'User Profile Image Updated Successfully']
+        )
+    ),
+
     // ── Activity Log ──────────────────────────────────────────────────────────
 
     OA\Schema(
