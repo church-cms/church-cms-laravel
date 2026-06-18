@@ -18,7 +18,7 @@ use App\Models\City;
 use App\Models\User;
 use Exception;
 use Log;
-use OpenApi\Attributes as OA;   // ← add this line
+use OpenApi\Attributes as OA;
 
 
 
@@ -278,6 +278,36 @@ class UserprofileController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/v1/member/editprofileimg/{id}',
+        tags: ['User'],
+        summary: 'Update the profile image for a member',
+        operationId: 'e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    ref: '#/components/schemas/EditProfileImgRequest'
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/EditProfileImgResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function updateprofileImg(EditUserProfileImgRequest $request, $id)
     {
         //
@@ -307,7 +337,7 @@ class UserprofileController extends Controller
 
             return response()->json([
                 'status'            => 'success',
-                'message'           => 'User Profile Imgage Updated Successfully',
+                'message'           => 'User Profile Image Updated Successfully',
             ], 200);
         } catch (Exception $e) {
             Log::info($e->getMessage());
