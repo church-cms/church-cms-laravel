@@ -6,6 +6,7 @@ use App\Http\Resources\API\Country as CountryResource;
 use App\Http\Resources\API\State as StateResource;
 use App\Http\Resources\API\City as CityResource;
 use App\Http\Requests\EditUserDetailRequest;
+use App\Http\Requests\EditUserProfileImgRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\SiteHelper;
@@ -271,6 +272,42 @@ class UserprofileController extends Controller
             return response()->json([
                 'status'            => 'success',
                 'message'           => 'User Details Updated Successfully',
+            ], 200);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+        }
+    }
+
+    public function updateprofileImg(EditUserProfileImgRequest $request, $id)
+    {
+        //
+        try {
+
+            $userprofile = Userprofile::where([['user_id', $id], ['church_id', Auth::user()->church_id]])->first();
+            // if($request->hasFile('avatar'))
+            // {
+            //   $file = $request->file('avatar');
+            //   $path = \Storage::putFile('uploads/admin/member/avatar',$file);
+            //   $userprofile->avatar = $path;
+
+            // }
+
+            if ($request->hasFile('avatar')) {
+
+                $file = $request->file('avatar');
+
+                $path = $file->store('uploads/admin/member/avatar', 'public');
+
+                $userprofile->avatar = $path;
+            } else {
+                $userprofile->avatar = $userprofile->avatar;
+            }
+
+            $userprofile->save();
+
+            return response()->json([
+                'status'            => 'success',
+                'message'           => 'User Profile Imgage Updated Successfully',
             ], 200);
         } catch (Exception $e) {
             Log::info($e->getMessage());

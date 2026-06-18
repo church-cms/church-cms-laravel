@@ -106,6 +106,7 @@ Route::group(
 
 
 		Route::post('/member/edit/{id}', 'UserprofileController@update');
+		Route::post('/member/editprofileimg/{id}', 'UserprofileController@updateprofileImg');
 		Route::get('/member/activitylog', 'UserActivityLogController@index');
 
 
