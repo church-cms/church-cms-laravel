@@ -34,7 +34,7 @@ class SendDeviceNotification extends Notification implements ShouldQueue
         try {
             $type    = $this->data['type'] ?? 'Notification';
             $message = $this->data['message'] ?? '';
-            $id = $this->data['id'] ?? '';
+            $id = '1';
 
             return FcmMessage::create()
                 ->token($this->token)
