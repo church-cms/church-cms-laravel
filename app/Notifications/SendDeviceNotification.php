@@ -34,11 +34,13 @@ class SendDeviceNotification extends Notification implements ShouldQueue
         try {
             $type    = $this->data['type'] ?? 'Notification';
             $message = $this->data['message'] ?? '';
+            $id = $this->data['id'] ?? '';
 
             return FcmMessage::create()
                 ->token($this->token)
                 ->data([
-                    'type'    => $type,
+                    'id' => $id,
+                    'type' => $type,
                     'message' => $message,
                 ])
                 ->notification(
@@ -65,7 +67,6 @@ class SendDeviceNotification extends Notification implements ShouldQueue
                         ],
                     ],
                 ]);
-
         } catch (\Exception $e) {
             Log::error('FCM Notification Error', [
                 'token' => $this->token,

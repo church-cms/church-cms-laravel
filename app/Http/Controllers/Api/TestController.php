@@ -201,7 +201,7 @@ class TestController extends Controller
                 $sermon->sermons_id = '1';
                 $sermon->title       = 'Test document';
                 $sermon->date       = '2019-10-20';
-                $sermon->pdf_link        = 'http://gaylord.com/modi-odio-tenetur-omnis-blanditiis-quam-at-minus';
+                $sermon->pdf_link     = 'http://gaylord.com/modi-odio-tenetur-omnis-blanditiis-quam-at-minus';
 
                 $sermon->save();
 
@@ -210,7 +210,7 @@ class TestController extends Controller
                 $data['church_id'] = Auth::user()->church_id;
                 $data['message'] = 'New SermonLink Created';
                 $data['type'] = 'sermonlink';
-                $data['sermons_id'] = '1';
+                $data['id'] = '1';
 
                 event(new PushEvent($data));
 
