@@ -43,8 +43,8 @@ class ActivityLog extends JsonResource
             'description'    => $description ?? null,
             'status'         => $status ?? null,
             'date'            => $this->created_at->format('d-m-Y h:i A'),
-            'type' => $type,
-            'type_id' => $type_id
+            'type' => $type ?? null,
+            'type_id' => $type_id ?? null
         ];
     }
 }
