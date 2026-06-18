@@ -199,10 +199,9 @@ class TestController extends Controller
                 $sermon->church_id  = $church_id;
                 $sermon->user_id    = $user_id;
                 $sermon->sermons_id = '1';
-                $sermon->type       = 'document';
-                $sermon->location   = 'chennai';
+                $sermon->title       = 'Test document';
                 $sermon->date       = '2019-10-20';
-                $sermon->url        = 'uploads\file.pdf';
+                $sermon->pdf_link        = 'http://gaylord.com/modi-odio-tenetur-omnis-blanditiis-quam-at-minus';
 
                 $sermon->save();
 
