@@ -25,15 +25,16 @@ class ActivityLog extends JsonResource
         $name = $this->description;
         $status = '';
         $type = '';
+        $type_id = '';
 
         if ($this->subject_type == 'App\Models\GroupLink') {
-
             $grouplinks = GroupLink::where('id', $this->subject_id)->first();
             $name = $grouplinks->group->name;
             $groupmember_count = GroupLink::where('group_id', $grouplinks->group_id)->count();
             $description = "Group " . $groupmember_count . ' members active';
             $status = 'active';
             $type = 'group';
+            $type_id = $grouplinks->group_id;
         }
 
         return [
@@ -42,7 +43,8 @@ class ActivityLog extends JsonResource
             'description'    => $description ?? null,
             'status'         => $status ?? null,
             'date'            => $this->created_at->format('d-m-Y h:i A'),
-            'type' => $type
+            'type' => $type,
+            'type_id' => $type_id
         ];
     }
 }
