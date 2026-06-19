@@ -331,6 +331,8 @@ class UserprofileController extends Controller
                 $userprofile->avatar = $userprofile->avatar;
             }
 
+            $avatar='';
+
             if($userprofile->save()){
                 $userpro = Userprofile::where([['user_id', Auth::id()], ['church_id', Auth::user()->church_id]])->first();
                  $avatar = $userpro->AvatarPath;
