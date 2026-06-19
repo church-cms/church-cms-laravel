@@ -65,7 +65,7 @@ class SermonLinkController extends Controller
             $data['church_id'] =  Auth::user()->church_id;
             $data['message'] = 'New SermonLink Created';
             $data['type'] = 'sermonlink';
-            $data['sermons_id'] =$sermons_id;
+            $data['id'] = $sermons_id;
 
             event(new PushEvent($data));
 

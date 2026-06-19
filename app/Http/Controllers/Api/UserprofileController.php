@@ -331,11 +331,19 @@ class UserprofileController extends Controller
                 $userprofile->avatar = $userprofile->avatar;
             }
 
-            $userprofile->save();
+            if($userprofile->save()){
+                $userpro = Userprofile::where([['user_id', Auth::id()], ['church_id', Auth::user()->church_id]])->first();
+                 $avatar = $userpro->AvatarPath;
+            }
+
+
+
+           
 
             return response()->json([
                 'status'            => 'success',
                 'message'           => 'User Profile Image Updated Successfully',
+                'avatar'=>$avatar??null
             ], 200);
         } catch (Exception $e) {
             Log::info($e->getMessage());
