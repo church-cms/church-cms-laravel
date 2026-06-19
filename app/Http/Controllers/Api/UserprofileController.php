@@ -19,7 +19,6 @@ use App\Models\User;
 use Exception;
 use Log;
 use OpenApi\Attributes as OA;
-use Illuminate\Support\Facades\Auth;
 
 
 class UserprofileController extends Controller
