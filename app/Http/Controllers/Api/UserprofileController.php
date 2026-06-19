@@ -19,7 +19,7 @@ use App\Models\User;
 use Exception;
 use Log;
 use OpenApi\Attributes as OA;
-
+use Illuminate\Support\Facades\Auth;
 
 
 class UserprofileController extends Controller
@@ -197,7 +197,7 @@ class UserprofileController extends Controller
     // )]
 
     #[OA\Post(
-        path: '/api/v1/member/edit/{id}',
+        path: '/api/v1/member/edit',
         tags: ['User'],
         summary: 'Edit user',
 
@@ -221,30 +221,29 @@ class UserprofileController extends Controller
         ]
     )]
 
-    public function update(EditUserDetailRequest $request, $id)
+    public function update(EditUserDetailRequest $request)
     {
         //
         try {
 
-            $userprofile = Userprofile::where([['user_id', $id], ['church_id', Auth::user()->church_id]])->first();
+            $userprofile = Userprofile::where([['user_id', Auth::id()], ['church_id', Auth::user()->church_id]])->first();
             // if($request->hasFile('avatar'))
             // {
             //   $file = $request->file('avatar');
             //   $path = \Storage::putFile('uploads/admin/member/avatar',$file);
             //   $userprofile->avatar = $path;
-
             // }
+            #Last Use
+            // if ($request->hasFile('avatar')) {
 
-            if ($request->hasFile('avatar')) {
+            //     $file = $request->file('avatar');
 
-                $file = $request->file('avatar');
+            //     $path = $file->store('uploads/admin/member/avatar', 'public');
 
-                $path = $file->store('uploads/admin/member/avatar', 'public');
-
-                $userprofile->avatar = $path;
-            } else {
-                $userprofile->avatar = $userprofile->avatar;
-            }
+            //     $userprofile->avatar = $path;
+            // } else {
+            //     $userprofile->avatar = $userprofile->avatar;
+            // }
 
             $userprofile->firstname             = $request->firstname;
             $userprofile->lastname              = $request->lastname;
@@ -279,7 +278,7 @@ class UserprofileController extends Controller
     }
 
     #[OA\Post(
-        path: '/api/v1/member/editprofileimg/{id}',
+        path: '/api/v1/member/editprofileimg',
         tags: ['User'],
         summary: 'Update the profile image for a member',
         operationId: 'e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8',
@@ -308,12 +307,12 @@ class UserprofileController extends Controller
         ],
         security: [['sanctum' => []]]
     )]
-    public function updateprofileImg(EditUserProfileImgRequest $request, $id)
+    public function updateprofileImg(EditUserProfileImgRequest $request)
     {
         //
         try {
 
-            $userprofile = Userprofile::where([['user_id', $id], ['church_id', Auth::user()->church_id]])->first();
+            $userprofile = Userprofile::where([['user_id', Auth::id()], ['church_id', Auth::user()->church_id]])->first();
             // if($request->hasFile('avatar'))
             // {
             //   $file = $request->file('avatar');

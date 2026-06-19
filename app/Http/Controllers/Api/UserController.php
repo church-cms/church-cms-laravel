@@ -29,7 +29,7 @@ class UserController extends Controller
     use ResetPasswordProcess;
     use SendMessageProcess;
     #[OA\Get(
-        path: '/api/v1/member/show/{id}',
+        path: '/api/v1/member/show',
         tags: ['User'],
         summary: 'Get member details',
 
@@ -42,7 +42,7 @@ class UserController extends Controller
             )
         ]
     )]
-    public function show($id)
+    public function show()
     {
         $users = User::with('userprofile')->where([['id', Auth::user()->id], ['church_id', Auth::user()->church_id]])->get();
 
