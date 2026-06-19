@@ -32,6 +32,8 @@ class ShowSermonLink extends JsonResource
         return [
             'sermons_id'    =>  $this->sermons_id,
             'title'         =>  $this->sermons->title,
+            'link_title'    =>  $this->title,
+            'date'=> date('d M Y',strtotime($this->date)),
             'total_likes'   =>  $this->sermons->sermonlikevote,
             'total_unlikes' =>  $this->sermons->sermonunlikevote,
             'like'          =>  $this->sermons->likevote,
