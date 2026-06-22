@@ -10,16 +10,20 @@ class NewMessageNotification extends Notification
 {
     use Queueable;
     public $message;
+    public $message_type;
+    public $message_id;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($message)
+    public function __construct($message, $message_type, $message_id)
     {
         //
         $this->message = $message;
+        $this->message_type = $message_type;
+        $this->message_id = $message_id;
     }
 
     /**
@@ -58,6 +62,8 @@ class NewMessageNotification extends Notification
         return [
             //
             'data'  =>  $this->message,
+            'message_type' => $this->message_type,
+            'message_id' => $this->message_id
         ];
     }
 }

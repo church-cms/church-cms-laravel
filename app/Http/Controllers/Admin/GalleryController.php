@@ -39,21 +39,20 @@ class GalleryController extends Controller
 
     public function index(Request $request)
     {
-        $gallery = Gallery::with('photos')->where('church_id',Auth::user()->church_id);
-        $count = Gallery::with('photos')->where('church_id',Auth::user()->church_id)->count();
-       
+        $gallery = Gallery::with('photos')->where('church_id', Auth::user()->church_id);
+        $count = Gallery::with('photos')->where('church_id', Auth::user()->church_id)->count();
+
 
         $query = $request->get('search');
-        if($query != null)
-        {
-            $gallery = $gallery->where('name','LIKE','%'.$query.'%');
+        if ($query != null) {
+            $gallery = $gallery->where('name', 'LIKE', '%' . $query . '%');
         }
 
         $gallery = $gallery->get();
 
         //dd($gallery);
 
-        return view('admin.gallery.index',['count' => $count , 'gallery' => $gallery]);
+        return view('admin.gallery.index', ['count' => $count, 'gallery' => $gallery]);
     }
 
     public function create()
@@ -64,8 +63,7 @@ class GalleryController extends Controller
     public function store(GalleryRequest $request)
     {
 
-        try
-        {
+        try {
             $gallery = new Gallery;
 
             $gallery->church_id    = Auth::user()->church_id;
@@ -78,7 +76,7 @@ class GalleryController extends Controller
             //     $folder = Auth::user()->church_id.'/gallery/covers';
             //     $gallery->path = $this->uploadFile($folder,$file);
             // }
-               if ($request->cover_image_id && str_starts_with($request->cover_image_id, 'media_')) {
+            if ($request->cover_image_id && str_starts_with($request->cover_image_id, 'media_')) {
                 $mediaId    = str_replace('media_', '', $request->cover_image_id);
                 $mediaImage = \App\Models\MediaFile::where([
                     ['id', $mediaId],
@@ -94,58 +92,56 @@ class GalleryController extends Controller
 
             $gallery->save();
 
-            $data=[];
+            $data = [];
 
-            $data['church_id']=Auth::user()->church_id;
-            $data['message']='New Gallery Album Created';
-            $data['type']='gallery';
+            $data['church_id'] = Auth::user()->church_id;
+            $data['message'] = 'New Gallery Album Created';
+            $data['type'] = 'gallery';
 
             event(new PushEvent($data));
 
-            $array=[];
+            $array = [];
 
-            $array['church_id']=Auth::user()->church_id;
-            $array['details']='New Gallery Album Created';
+            $array['church_id'] = Auth::user()->church_id;
+            $array['details'] = 'New Gallery Album Created';
+            $array['message_type'] = 'gallery';
+            $array['message_id'] = $gallery->id;
 
             event(new PushNotificationEvent($array));
 
             $message = 'Gallery Album Created Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $gallery,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_ADD_GALLERY_ALBUM,
                 $message
             );
 
             return redirect('/admin/gallery')->with(['successmessage' => $message]);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
 
             dd($e->getMessage());
-
         }
     }
 
     public function edit($id)
     {
-        $gallery = Gallery::where('id',$id)->first();
+        $gallery = Gallery::where('id', $id)->first();
 
-        return view('admin.gallery.edit',['gallery' => $gallery]);
+        return view('admin.gallery.edit', ['gallery' => $gallery]);
     }
 
-    public function update(GalleryUpdateRequest $request,$id)
+    public function update(GalleryUpdateRequest $request, $id)
     {
-        try
-        {
-        	$gallery = Gallery::where('id',$id)->first();
+        try {
+            $gallery = Gallery::where('id', $id)->first();
 
-        	$gallery->name         = $request->name;
-        	$gallery->description  = $request->description;
+            $gallery->name         = $request->name;
+            $gallery->description  = $request->description;
 
             // $file = $request->file('path');
             // if($file != null)
@@ -171,67 +167,58 @@ class GalleryController extends Controller
             }
             $gallery->path =  $path;
 
-        	$gallery->save();
+            $gallery->save();
 
-            $data=[];
+            $data = [];
 
-            $data['church_id']=Auth::user()->church_id;
-            $data['message']='Gallery Album Updated';
-            $data['type']='gallery';
+            $data['church_id'] = Auth::user()->church_id;
+            $data['message'] = 'Gallery Album Updated';
+            $data['type'] = 'gallery';
 
             event(new PushEvent($data));
 
             $message = 'Gallery Album Updated Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $gallery,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_GALLERY_ALBUM,
                 $message
             );
 
             return redirect('/admin/gallery')->with(['successmessage' => $message]);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function show($id)
     {
-        $gallery = Gallery::where([['id',$id],['church_id',Auth::user()->church_id]])->first();
+        $gallery = Gallery::where([['id', $id], ['church_id', Auth::user()->church_id]])->first();
 
-        if($gallery!=null)
-        {
-            if(Gate::allows('gallery',$gallery))
-            {
+        if ($gallery != null) {
+            if (Gate::allows('gallery', $gallery)) {
                 return view('admin.gallery.show')->with('gallery', $gallery);
-            }
-            else
-            {
+            } else {
                 abort(403);
             }
-        }
-        else
-        {
+        } else {
             abort(403);
         }
     }
 
     public function showdetails($church_id)
     {
-        $gallery = Gallery::where('church_id',$church_id)->get();
+        $gallery = Gallery::where('church_id', $church_id)->get();
         $gallery = ShowGalleryResource::collection($gallery);
 
         //dd()
         return $gallery;
     }
 
-   /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -240,29 +227,25 @@ class GalleryController extends Controller
     public function destroy($id)
     {
         //
-        try
-        {
-            $group = Gallery::where('id',$id)->first();
+        try {
+            $group = Gallery::where('id', $id)->first();
 
             $group->delete();
 
             $message = 'Gallery Album Deleted Successfully';
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $group,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_DELETE_GALLERY_ALBUM,
                 $message
             );
 
             return redirect('/admin/gallery')->with(['successmessage' => $message]);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

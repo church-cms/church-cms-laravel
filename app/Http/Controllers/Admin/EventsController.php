@@ -421,7 +421,9 @@ class EventsController extends Controller
 
                 $array = [
                     'church_id' => Auth::user()->church_id,
-                    'details'   => 'New Event created'
+                    'details'   => 'New Event created',
+                    'message_type' => 'event',
+                    'message_id' => $event->id
                 ];
 
                 event(new PushNotificationEvent($array));

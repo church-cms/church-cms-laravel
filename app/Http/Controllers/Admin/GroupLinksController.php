@@ -16,6 +16,7 @@ use App\Models\Group;
 use App\Models\User;
 use Exception;
 use Log;
+use App\Events\Notification\PushNotificationEvent;
 
 /**
  * GroupLinksController
@@ -112,6 +113,15 @@ class GroupLinksController extends Controller
                     'message'   => 'You have been added to this group',
                     'type'      => 'group',
                 ]));
+
+                $array = [];
+
+                $array['church_id'] = Auth::user()->church_id;
+                $array['details'] = 'You have been added to this group';
+                $array['message_type'] = 'group';
+                $array['message_id'] = $group_id;
+
+                event(new PushNotificationEvent($array));
 
                 $this->doActivityLog(
                     $grouplink,

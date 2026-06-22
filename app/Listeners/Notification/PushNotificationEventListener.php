@@ -28,10 +28,9 @@ class PushNotificationEventListener
     public function handle(PushNotificationEvent $event)
     {
         //
-        $users=User::where('church_id',$event->data['church_id'])->get();
-        foreach($users as $user)
-        {
-          Notification::send($user, new NewMessageNotification($event->data['details']));
+        $users = User::where('church_id', $event->data['church_id'])->get();
+        foreach ($users as $user) {
+            Notification::send($user, new NewMessageNotification($event->data['details'], $event->data['message_type'], $event->data['message_id']));
         }
     }
 }
