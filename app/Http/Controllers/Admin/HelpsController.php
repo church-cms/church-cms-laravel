@@ -166,6 +166,10 @@ class HelpsController extends Controller
      */
     public function update(HelpUpdateRequest $request, $id)
     {
+
+        //dd("kK");
+
+
         try {
             $help = Help::where('church_id', Auth::user()->church_id)->findOrFail($id);
 
@@ -182,12 +186,15 @@ class HelpsController extends Controller
                 'church_id' => Auth::user()->church_id,
                 'message'   => 'Help Request Updated',
                 'type'      => 'help',
+                'id'=>$id
             ]));
 
             event(new PrayerNotificationEvent([
                 'church_id' => Auth::user()->church_id,
                 'user_id'   => $help->user_id,
                 'details'   => 'Your help request status has been updated',
+                'message_type'=> 'help',
+                'message_id'=>$id
             ]));
 
             $ip = $this->getRequestIP();
