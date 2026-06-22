@@ -115,7 +115,6 @@ class GroupLinksController extends Controller
                 ]));
 
                 $array = [];
-
                 $array['church_id'] = Auth::user()->church_id;
                 $array['details'] = 'You have been added to this group';
                 $array['message_type'] = 'group';
