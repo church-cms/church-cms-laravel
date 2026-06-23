@@ -132,8 +132,9 @@ class SendMessageController extends Controller
                     'success'   =>  true,
                     'message'   =>  'Notification List',
                     'type'      =>  'notification',
-                    'data'      =>  $notifications,
-                    'unread_count' => $unread_notifications
+                    'unread_count' => $unread_notifications,
+                    'data'      =>  $notifications
+
                 ], 200);
             } else {
                 return response()->json([
