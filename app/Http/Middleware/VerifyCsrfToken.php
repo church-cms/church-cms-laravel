@@ -18,6 +18,7 @@ class VerifyCsrfToken extends Middleware
         '/testwebhook',
         'allgallary',
         '/member/donate/mpesa-callback',
+        '/donate/mpesa-callback',
     ];
 
 }
