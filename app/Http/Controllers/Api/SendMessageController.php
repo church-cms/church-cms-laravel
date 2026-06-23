@@ -123,11 +123,17 @@ class SendMessageController extends Controller
 
                 $notifications = NotificationResource::collection($notifications);
 
+                $unread_notifications = \DB::table('notifications')
+                    ->whereNull('read_at')
+                    ->where('notifiable_id', Auth::id())
+                    ->count();
+
                 return response()->json([
                     'success'   =>  true,
                     'message'   =>  'Notification List',
                     'type'      =>  'notification',
                     'data'      =>  $notifications,
+                    'unread_count' => $unread_notifications
                 ], 200);
             } else {
                 return response()->json([
