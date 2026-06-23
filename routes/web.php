@@ -45,6 +45,18 @@ Route::group([
     Route::get('/contact',          'ContactController@show')->name('web.contact');
     Route::post('/contact',         'ContactController@store')->name('web.contact.store')->middleware('throttle:5,1');
 
+    Route::get('/donate', 'DonationController@index')->name('donate');
+    Route::post('/donate', 'DonationController@store')->name('donate.store');
+    Route::post('/donate/verify', 'DonationController@verify')->name('donate.verify');
+    Route::post('/donate/mpesa-stk', 'DonationController@mpesaStk')->name('donate.mpesa-stk');
+    Route::post('/donate/stripe-intent', 'DonationController@stripeIntent')->name('donate.stripe-intent');
+    Route::post('/donate/gcash-init', 'DonationController@gcashInit')->name('donate.gcash-init');
+    Route::get('/donate/gcash-return', 'DonationController@gcashReturn')->name('donate.gcash-return');
+
+    // M-Pesa callback is unauthenticated (called by Safaricom servers)
+    Route::post('/member/donate/mpesa-callback', 'Member\DonationController@mpesaCallback')->name('donate.mpesa-callback');
+
+
     // Guest web auth
     Route::get('/guest/register',  'GuestAuthController@showRegister')->name('web.guest.register');
     Route::post('/guest/register', 'GuestAuthController@register')->name('web.guest.register.store')->middleware('throttle:5,1');
@@ -95,8 +107,18 @@ Route::group(['prefix' => 'member', 'middleware' => ['auth', 'churchmember'], 'n
     Route::get('/donate/gcash-return', 'DonationController@gcashReturn')->name('member.donate.gcash-return');
 });
 
+
+
+Route::get('/donate', 'DonationController@index')->name('donate');
+Route::post('/donate', 'DonationController@store')->name('donate.store');
+Route::post('/donate/verify', 'DonationController@verify')->name('donate.verify');
+Route::post('/donate/mpesa-stk', 'DonationController@mpesaStk')->name('donate.mpesa-stk');
+Route::post('/donate/stripe-intent', 'DonationController@stripeIntent')->name('donate.stripe-intent');
+Route::post('/donate/gcash-init', 'DonationController@gcashInit')->name('donate.gcash-init');
+Route::get('/donate/gcash-return', 'DonationController@gcashReturn')->name('donate.gcash-return');
+
 // M-Pesa callback is unauthenticated (called by Safaricom servers)
-Route::post('/member/donate/mpesa-callback', 'Member\DonationController@mpesaCallback')->name('member.donate.mpesa-callback');
+Route::post('/member/donate/mpesa-callback', 'Member\DonationController@mpesaCallback')->name('donate.mpesa-callback');
 
 
 
