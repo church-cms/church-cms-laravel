@@ -233,6 +233,32 @@ class SendMessageController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/v1/notification/read/{id}',
+        tags: ['Notification'],
+        summary: 'Mark a single notification as read',
+        operationId: 'b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Notification UUID',
+                schema: new OA\Schema(type: 'string')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ReadNotificationResponse'
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthorised'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function readNotification(Request $request, $id)
     {
         //   

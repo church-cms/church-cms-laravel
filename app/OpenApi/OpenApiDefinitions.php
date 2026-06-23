@@ -1023,6 +1023,14 @@ use OpenApi\Attributes as OA;
     ),
 
     OA\Response(
+        response: 'ReadNotificationResponse',
+        description: 'Notification marked as read',
+        content: new OA\JsonContent(
+            example: ['success' => true, 'message' => 'Notification has been read successfully']
+        )
+    ),
+
+    OA\Response(
         response: 'BulkReadNotificationResponse',
         description: 'Selected notifications marked as read',
         content: new OA\JsonContent(
