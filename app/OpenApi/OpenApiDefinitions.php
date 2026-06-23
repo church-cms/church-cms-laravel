@@ -1456,11 +1456,12 @@ use OpenApi\Attributes as OA;
         schema: 'ActivityLogResource',
         properties: [
             new OA\Property(property: 'id',          type: 'integer'),
-            new OA\Property(property: 'name',        type: 'string',  description: 'Activity description or related entity name'),
-            new OA\Property(property: 'description', type: 'string',  nullable: true, description: 'Additional context (e.g. group member count)'),
-            new OA\Property(property: 'status',      type: 'string',  nullable: true),
+            new OA\Property(property: 'name',        type: 'string',  description: 'Entity name (event title, sermon title, group name)'),
+            new OA\Property(property: 'description', type: 'string',  nullable: true, description: 'Additional context'),
+            new OA\Property(property: 'status',      type: 'string',  nullable: true, description: '"soon" for events, "new" for sermons, "active" for groups'),
             new OA\Property(property: 'date',        type: 'string',  description: 'Formatted as d-m-Y h:i A'),
-            new OA\Property(property: 'type',        type: 'string',  description: 'Activity type (e.g. group)'),
+            new OA\Property(property: 'type',        type: 'string',  description: 'Record type: event | sermon | group'),
+            new OA\Property(property: 'type_id',     type: 'integer', description: 'ID of the related record'),
         ]
     ),
 
