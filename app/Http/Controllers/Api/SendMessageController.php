@@ -268,10 +268,15 @@ class SendMessageController extends Controller
 
             if ($user) {
 
-                $notification = \DB::table('notifications')->where('id', $id)->first();
+                // $notification = \DB::table('notifications')->where('id', $id)->first();
 
-                $notification->read_at = date('Y-m-d H:i:s');
-                $notification->save();
+                // $notification->read_at = date('Y-m-d H:i:s');
+                // $notification->save();
+
+                 $updated = \DB::table('notifications')
+                ->where('id', $request->id)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
 
                 return response()->json([
                     'success'   =>  true,
