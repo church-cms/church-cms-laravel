@@ -1009,6 +1009,36 @@ use OpenApi\Attributes as OA;
     // ── Notifications ─────────────────────────────────────────────────────────
 
     OA\Schema(
+        schema: 'BulkReadNotificationRequest',
+        required: ['ids'],
+        properties: [
+            new OA\Property(
+                property: 'ids',
+                type: 'array',
+                items: new OA\Items(type: 'string'),
+                description: 'Array of notification UUIDs to mark as read',
+                example: ['uuid-1', 'uuid-2']
+            ),
+        ]
+    ),
+
+    OA\Response(
+        response: 'BulkReadNotificationResponse',
+        description: 'Selected notifications marked as read',
+        content: new OA\JsonContent(
+            example: ['success' => true, 'message' => 'Selected notifications marked as read', 'updated' => 3]
+        )
+    ),
+
+    OA\Response(
+        response: 'AllReadNotificationResponse',
+        description: 'All notifications marked as read',
+        content: new OA\JsonContent(
+            example: ['success' => true, 'message' => 'All notifications marked as read', 'updated' => 5]
+        )
+    ),
+
+    OA\Schema(
         schema: 'NotificationResource',
         properties: [
             new OA\Property(property: 'id',               type: 'string',  description: 'UUID'),

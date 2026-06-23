@@ -208,6 +208,9 @@ Route::group(
 		Route::get('/messages', 'SendMessageController@index');
 
 		Route::get('/notifications', 'SendMessageController@notificationList');
+		Route::post('/notification/read/{id}', 'SendMessageController@readNotification');
+		Route::post('/notification/allread', 'SendMessageController@allreadNotification');
+		Route::post('/notification/bulkread', 'SendMessageController@bulkReadNotification');
 
 		Route::post('/message/read/{id}', 'SendMessageController@readMessage');
 
