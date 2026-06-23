@@ -268,7 +268,7 @@ class SendMessageController extends Controller
 
             if ($user) {
 
-                $notification = \DB::table('notifications')->where([['id', $id], ['notifiable_id', Auth::id()]])->first();
+                $notification = \DB::table('notifications')->where('id', $id)->first();
 
                 $notification->read_at = date('Y-m-d H:i:s');
                 $notification->save();
