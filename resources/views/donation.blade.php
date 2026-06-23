@@ -246,6 +246,7 @@ $gatewayIcons = [
             </div>
             @endforeach
         </div>
+        
     </div>
     @endif
 
