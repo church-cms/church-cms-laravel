@@ -211,6 +211,7 @@ Route::group(
 		Route::post('/notification/read/{id}', 'SendMessageController@readNotification');
 		Route::post('/notification/allread', 'SendMessageController@allreadNotification');
 		Route::post('/notification/bulkread', 'SendMessageController@bulkReadNotification');
+		Route::post('/notification/bulkremove', 'SendMessageController@bulkRemoveNotification');
 
 		Route::post('/message/read/{id}', 'SendMessageController@readMessage');
 

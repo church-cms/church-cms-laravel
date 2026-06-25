@@ -234,6 +234,53 @@ class SendMessageController extends Controller
     }
 
     #[OA\Post(
+        path: '/api/v1/notification/bulkremove',
+        tags: ['Notification'],
+        summary: 'Mark a selected list of notifications as remove',
+        operationId: 'a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d1',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/BulkRemoveNotificationRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/BulkRemoveNotificationResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function bulkRemoveNotification(Request $request)
+    {
+        try {
+            $request->validate([
+                'ids'   => 'required|array|min:1',
+                'ids.*' => 'required|string',
+            ]);
+
+           $deleted = \DB::table('notifications')
+    ->whereIn('id', $request->ids)
+    ->where('notifiable_id', Auth::id())
+    ->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Selected notifications deleted',
+                'updated' => $deleted,
+            ], 200);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete notifications',
+            ], 500);
+        }
+    }
+
+    #[OA\Post(
         path: '/api/v1/notification/read/{id}',
         tags: ['Notification'],
         summary: 'Mark a single notification as read',

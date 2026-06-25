@@ -1038,6 +1038,26 @@ use OpenApi\Attributes as OA;
         )
     ),
 
+    OA\Schema(
+        schema: 'BulkRemoveNotificationRequest',
+        required: ['ids'],
+        properties: [
+            new OA\Property(
+                property: 'ids',
+                type: 'array',
+                items: new OA\Items(type: 'string'),
+                description: 'Array of notification UUIDs to mark as delete',
+                example: ['uuid-1', 'uuid-2']
+            ),
+        ]
+      ),
+     OA\Response(
+        response: 'BulkRemoveNotificationResponse',
+        description: 'Selected notifications marked as read',
+        content: new OA\JsonContent(
+            example: ['success' => true, 'message' => 'Selected notifications marked as delete', 'updated' => 3]
+        )
+    ),
     OA\Response(
         response: 'AllReadNotificationResponse',
         description: 'All notifications marked as read',
