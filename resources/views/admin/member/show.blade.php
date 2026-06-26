@@ -94,7 +94,6 @@
                                     class="capitalize text-gray-700 px-4 py-2 font-medium verify hover:bg-gray-50" id="verify_mail">Verify Email</a>
                                 @endif
                                 @endif
-
                                 @if ($status == 0)
                                 <a href="#" rel="{{ url('/admin/member/subscribe/' . $user->name) }}"
                                     class="capitalize text-teal-600 px-4 py-2 font-medium subscribe hover:bg-gray-50"
@@ -226,10 +225,16 @@
 
             {{-- ── Tab 1 : My Profile ─────────────────────── --}}
             <div id="tab-myprofile" class="tab-panel p-6">
-                @php $profile = $user->userprofile; @endphp
+                @php $profile = $user->userprofile; 
+                  $profile_age=date('Y')-date('Y',strtotime(optional($user->userprofile)->date_of_birth));
+                @endphp
                 <ul class="space-y-3 text-sm">
+
+                  
+
+
                     @foreach([
-                    ['age.svg', 'Age', $profile->age ?? '--'],
+                    ['age.svg', 'Age', $profile_age ?? '--'],
                     ['marriage.svg', 'Marriage Status', ucfirst($profile->marriage_status ?? '--')],
                     ['date.svg', 'Marriage Date', $profile->marriage_date ? date('d M Y', strtotime($profile->marriage_date)) : '--'],
                     ['member-ship.svg','Membership Type', ucfirst($profile->membership_type ?? '--')],
@@ -556,6 +561,7 @@
                     entity_name="user"
                     church_id="{{ $user->church_id }}">
                 </notes>
+
             </div>
             {{-- ── Tab 6 : Notes  (ID Card) ── --}}
             <div id="tab-idcard" class="tab-panel hidden p-4">
