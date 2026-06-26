@@ -245,80 +245,162 @@
             </div>
 
             {{-- ── Tab 2 : Timeline ───────────────────────── --}}
-            <div id="tab-timeline" class="tab-panel hidden p-4">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs">
-                        <thead class="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Date & Time</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Action</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Description</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">IP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($activitylog as $log)
-                            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                <td class="px-3 py-2">{{ $log->created_at ? $log->created_at->format('d M Y H:i') : '--' }}</td>
-                                <td class="px-3 py-2 font-medium">{{ $log->log_name ?? '--' }}</td>
-                                <td class="px-3 py-2">{{ $log->description ?? '--' }}</td>
-                                <td class="px-3 py-2 text-gray-400">
-                                    @php $props = is_array($log->properties) ? $log->properties : json_decode($log->properties, true); @endphp
-                                    {{ $props['ip'] ?? '--' }}
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="4" class="px-3 py-6 text-center text-gray-400">No records found</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                @if($activitylog)
-                <div class="px-4 py-3">{{ $activitylog->appends(request()->except('timeline_page'))->links() }}</div>
-                @endif
+         <div id="tab-timeline" class="tab-panel hidden p-4">
+
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <table class="w-full table-fixed text-sm">
+            <colgroup>
+                <col style="width:45%">
+                <col style="width:15%">
+                <col style="width:30%">
+                <col style="width:10%">
+            </colgroup>
+
+            <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        Date & Time
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        Action
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        Description
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        IP Address
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-100 bg-white">
+                @forelse($activitylog as $log)
+
+                    @php
+                        $props = is_array($log->properties)
+                            ? $log->properties
+                            : json_decode($log->properties, true);
+                    @endphp
+
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 text-left whitespace-nowrap">
+                            {{ $log->created_at ? $log->created_at->format('d M Y h:i A') : '--' }}
+                        </td>
+
+                        <td class="px-4 py-3 text-left">
+                            {{ ucfirst($log->log_name ?? '--') }}
+                        </td>
+
+                        <td class="px-4 py-3 text-left">
+                            {{ $log->description ?? '--' }}
+                        </td>
+
+                        <td class="px-4 py-3 text-left whitespace-nowrap">
+                            {{ $props['ip'] ?? '--' }}
+                        </td>
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                            No activity records found.
+                        </td>
+                    </tr>
+
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    @if($activitylog->count())
+        <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-gray-500">
+                Showing
+                {{ $activitylog->firstItem() }}
+                to
+                {{ $activitylog->lastItem() }}
+                of
+                {{ $activitylog->total() }}
+                entries
             </div>
 
-            {{-- ── Tab 3 : Family ─────────────────────────── --}}
-            <div id="tab-family" class="tab-panel hidden p-4">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs">
-                        <thead class="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Family Member</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Relation</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($family_members as $member)
-                            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                <td class="px-3 py-2">
-                                    <div class="flex items-center gap-2">
-                                        <img src="{{ $member->userprofile->AvatarPath }}" class="w-8 h-8 rounded-full object-cover">
-                                        <a href="{{ url('/admin/member/show/'.$member->name) }}"
-                                            class="text-indigo-600 hover:underline font-medium">
-                                            {{ $member->FullName }}
-                                        </a>
-                                    </div>
-                                </td>
-                                <td class="px-3 py-2 capitalize">{{ $member->userprofile->relation ?? '--' }}</td>
-                                <td class="px-3 py-2">
-                                    <a href="{{ url('/admin/member/edit/'.$member->name) }}">
-                                        <img src="{{ url('uploads/icons/pencil.svg') }}" class="w-3.5 h-3.5">
-                                    </a>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="3" class="px-3 py-6 text-center text-gray-400">No family members found</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+            <div>
+                {{ $activitylog->appends(request()->except('timeline_page'))->links() }}
             </div>
+        </div>
+    @endif
+
+</div>
+
+            {{-- ── Tab 3 : Family ─────────────────────────── --}}
+            
+   
+
+<div id="tab-family" class="tab-panel hidden p-4">
+
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+
+        <table class="family-table">
+
+            <thead>
+                <tr>
+                    <th>Family Member</th>
+                    <th>Relation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($family_members as $member)
+
+                    <tr>
+
+                        <td>
+                            <div class="member-info">
+                                <img src="{{ $member->userprofile->AvatarPath }}"
+                                     alt="{{ $member->FullName }}"
+                                     class="member-avatar w-8 h-8">
+
+                                <a href="{{ url('/admin/member/show/'.$member->name) }}"
+                                   class="member-name">
+                                    {{ $member->FullName }}
+                                </a>
+                            </div>
+                        </td>
+
+                        <td class="capitalize">
+                            {{ $member->userprofile->relation ?? '--' }}
+                        </td>
+
+                        <td>
+                            <a href="{{ url('/admin/member/edit/'.$member->name) }}">
+                                <img src="{{ url('uploads/icons/pencil.svg') }}"
+                                     alt="Edit"
+                                     class="action-icon">
+                            </a>
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="3" style="text-align:center;padding:25px;color:#9ca3af;">
+                            No family members found
+                        </td>
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
             {{-- ── Tab 4 : Assigned Groups ─────────────────── --}}
             <div id="tab-groups" class="tab-panel hidden p-4">
@@ -352,53 +434,119 @@
             {{-- ── Tab 5 : Messages ───────────────────────── --}}
             <div id="tab-messages" class="tab-panel hidden p-4">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-xs">
-                        <thead class="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Mode</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Subject</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Message</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Attachments</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Sent On</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Status</th>
-                                <th class="text-left px-3 py-2 font-semibold text-gray-500">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($messages as $msg)
-                            <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                <td class="px-3 py-2 capitalize">{{ $msg->mode ?? '--' }}</td>
-                                <td class="px-3 py-2">{{ $msg->subject ?? '--' }}</td>
-                                <td class="px-3 py-2 max-w-xs truncate">{{ $msg->message ?? '--' }}</td>
-                                <td class="px-3 py-2">
-                                    @if($msg->attachments)
-                                    <a href="{{ $msg->attachments }}" target="_blank" class="text-indigo-600 hover:underline">Download</a>
-                                    @else --
-                                    @endif
-                                </td>
-                                <td class="px-3 py-2">{{ $msg->executed_at ? \Carbon\Carbon::parse($msg->executed_at)->format('d M Y H:i') : '--' }}</td>
-                                <td class="px-3 py-2">
-                                    <span class="px-2 py-0.5 rounded-full text-xs font-medium
-                                        {{ $msg->status === 'sent' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
-                                        {{ ucfirst($msg->status ?? '--') }}
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2">
-                                    <a href="{{ url('/admin/message/show/'.$msg->id) }}"
-                                        class="text-indigo-600 hover:underline">View</a>
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7" class="px-3 py-6 text-center text-gray-400">No messages found</td>
-                            </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                @if($messages)
-                <div class="px-4 py-3">{{ $messages->appends(request()->except('msg_page'))->links() }}</div>
-                @endif
+    <table class="w-full table-fixed text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+                <th class="w-[10%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Mode
+                </th>
+
+                <th class="w-[20%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Subject
+                </th>
+
+                <th class="w-[30%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Message
+                </th>
+
+                <th class="w-[10%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Attachments
+                </th>
+
+                <th class="w-[15%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Sent On
+                </th>
+
+                <th class="w-[8%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Status
+                </th>
+
+                <th class="w-[7%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Action
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @forelse($messages as $msg)
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+
+                    <!-- Mode -->
+                    <td class="px-3 py-3 align-top">
+                        {{ ucfirst($msg->mode ?? '--') }}
+                    </td>
+
+                    <!-- Subject -->
+                    <td class="px-3 py-3 align-top">
+                        <div class="break-words">
+                            {{ $msg->subject ?? '--' }}
+                        </div>
+                    </td>
+
+                    <!-- Message -->
+                    <td class="px-3 py-3 align-top">
+                        <div class="break-words">
+                            {{ $msg->message ?? '--' }}
+                        </div>
+                    </td>
+
+                    <!-- Attachment -->
+                    <td class="px-3 py-3 align-top">
+                        @if($msg->attachments)
+                            <a href="{{ $msg->attachments }}"
+                               target="_blank"
+                               class="text-indigo-600 hover:underline">
+                                Download
+                            </a>
+                        @else
+                            --
+                        @endif
+                    </td>
+
+                    <!-- Sent On -->
+                    <td class="px-3 py-3 align-top whitespace-nowrap">
+                        {{ $msg->executed_at
+                            ? \Carbon\Carbon::parse($msg->executed_at)->format('d M Y H:i')
+                            : '--'
+                        }}
+                    </td>
+
+                    <!-- Status -->
+                    <td class="px-3 py-3 align-top">
+                        <span
+                            class="inline-flex px-2 py-1 rounded-full text-xs font-medium
+                            {{ $msg->status == 'sent'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-yellow-100 text-yellow-700' }}">
+                            {{ ucfirst($msg->status ?? '--') }}
+                        </span>
+                    </td>
+
+                    <!-- Action -->
+                    <td class="px-3 py-3 align-top">
+                        <a href="{{ url('/admin/message/show/'.$msg->id) }}"
+                           class="text-indigo-600 hover:underline">
+                            View
+                        </a>
+                    </td>
+
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="py-6 text-center text-gray-400">
+                        No messages found.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+@if($messages->count())
+    <div class="px-4 py-3">
+        {{ $messages->appends(request()->except('msg_page'))->links() }}
+    </div>
+@endif
             </div>
 
             {{-- ── Tab 6 : Notes  (keep Vue — complex CRUD) ── --}}
@@ -672,6 +820,90 @@
     }
 </style>
 
+         <style>
+    #tab-family .family-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    #tab-family .family-table thead {
+        background: #f9fafb;
+    }
+
+    #tab-family .family-table th {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    #tab-family .family-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
+    }
+
+    #tab-family .family-table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    /* Column widths */
+    #tab-family .family-table th:nth-child(1),
+    #tab-family .family-table td:nth-child(1) {
+        width: 60%;
+    }
+
+    #tab-family .family-table th:nth-child(2),
+    #tab-family .family-table td:nth-child(2) {
+        width: 25%;
+    }
+
+    #tab-family .family-table th:nth-child(3),
+    #tab-family .family-table td:nth-child(3) {
+        width: 15%;
+        text-align: center;
+    }
+
+    #tab-family .member-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #tab-family .member-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    #tab-family .member-name {
+        color: #4f46e5;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    #tab-family .member-name:hover {
+        text-decoration: underline;
+    }
+
+    #tab-family .action-icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+    }
+
+    @media (max-width:768px) {
+        #tab-family .family-table {
+            min-width: 650px;
+        }
+    }
+</style>
+
 <script>
     function switchTab(id) {
         // hide all panels
@@ -694,4 +926,6 @@
         }
     }
 </script>
+
+
 @endpush
