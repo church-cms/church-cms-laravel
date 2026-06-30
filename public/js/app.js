@@ -203737,51 +203737,55 @@ var render = function() {
             ]
           ),
           _vm._v(" "),
-          _c(
-            "li",
-            {
-              staticClass: "px-2 mx-3 py-2",
-              class: [{ active: _vm.profile_tab === "7" }]
-            },
-            [
-              _c(
-                "a",
+          _vm.type == "member"
+            ? _c(
+                "li",
                 {
-                  staticClass: "text-gray-700 font-medium",
-                  attrs: { href: "#" },
-                  on: {
-                    click: function($event) {
-                      return _vm.setProfileTab("7")
-                    }
-                  }
+                  staticClass: "px-2 mx-3 py-2",
+                  class: [{ active: _vm.profile_tab === "7" }]
                 },
-                [_vm._v("Family tree")]
+                [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "text-gray-700 font-medium",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          return _vm.setProfileTab("7")
+                        }
+                      }
+                    },
+                    [_vm._v("Family tree")]
+                  )
+                ]
               )
-            ]
-          ),
+            : _vm._e(),
           _vm._v(" "),
-          _c(
-            "li",
-            {
-              staticClass: "px-2 mx-3 py-2",
-              class: [{ active: _vm.profile_tab === "3" }]
-            },
-            [
-              _c(
-                "a",
+          _vm.type == "member"
+            ? _c(
+                "li",
                 {
-                  staticClass: "text-gray-700 font-medium",
-                  attrs: { href: "#" },
-                  on: {
-                    click: function($event) {
-                      return _vm.setProfileTab("3")
-                    }
-                  }
+                  staticClass: "px-2 mx-3 py-2",
+                  class: [{ active: _vm.profile_tab === "3" }]
                 },
-                [_vm._v("Family")]
+                [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "text-gray-700 font-medium",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          return _vm.setProfileTab("3")
+                        }
+                      }
+                    },
+                    [_vm._v("Family")]
+                  )
+                ]
               )
-            ]
-          ),
+            : _vm._e(),
           _vm._v(" "),
           _vm.type == "member"
             ? _c(
@@ -203808,28 +203812,30 @@ var render = function() {
               )
             : _vm._e(),
           _vm._v(" "),
-          _c(
-            "li",
-            {
-              staticClass: "px-2 mx-3 py-2",
-              class: [{ active: _vm.profile_tab === "8" }]
-            },
-            [
-              _c(
-                "a",
+          _vm.type == "member"
+            ? _c(
+                "li",
                 {
-                  staticClass: "text-gray-700 font-medium",
-                  attrs: { href: "#" },
-                  on: {
-                    click: function($event) {
-                      return _vm.setProfileTab("8")
-                    }
-                  }
+                  staticClass: "px-2 mx-3 py-2",
+                  class: [{ active: _vm.profile_tab === "8" }]
                 },
-                [_vm._v("Messages")]
+                [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "text-gray-700 font-medium",
+                      attrs: { href: "#" },
+                      on: {
+                        click: function($event) {
+                          return _vm.setProfileTab("8")
+                        }
+                      }
+                    },
+                    [_vm._v("Messages")]
+                  )
+                ]
               )
-            ]
-          ),
+            : _vm._e(),
           _vm._v(" "),
           _c(
             "li",
