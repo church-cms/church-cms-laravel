@@ -13,64 +13,162 @@
 <div class="alert alert-danger mb-4">{{ session('error') }}</div>
 @endif
 
-<div class="bg-white rounded-lg shadow overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+
+    <table class="w-full table-fixed">
+
+        <thead class="bg-gray-50 border-b border-gray-200">
+
             <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">CSS Class</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prayers</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+
+                <th class="w-20 px-5 py-4 text-left text-xs uppercase text-gray-400">
+                    ORDER
+                </th>
+
+                <th class="w-[38%] px-5 py-4 text-left text-xs uppercase text-gray-400">
+                    CATEGORY
+                </th>
+
+                <th class="w-32 px-5 py-4 text-left text-xs uppercase text-gray-400">
+                    CSS CLASS
+                </th>
+
+                <th class="w-24 px-5 py-4 text-left text-xs uppercase text-gray-400">
+                    PRAYERS
+                </th>
+
+                <th class="w-24 px-5 py-4 text-left text-xs uppercase text-gray-400">
+                    STATUS
+                </th>
+
+                <th class="w-40 px-5 py-4 text-right text-xs uppercase text-gray-400">
+                    ACTIONS
+                </th>
+
             </tr>
+
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-            @forelse($categories as $cat)
-            <tr>
-                <td class="px-4 py-3 text-sm text-gray-600">{{ $cat->sort_order }}</td>
-                <td class="px-4 py-3">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl">{{ $cat->emoji }}</span>
-                        <div>
-                            <div class="font-medium text-gray-900">{{ $cat->name }}</div>
-                            @if($cat->description)
-                            <div class="text-xs text-gray-500">{{ Str::limit($cat->description, 60) }}</div>
-                            @endif
+
+        <tbody class="divide-y divide-gray-100">
+
+            @foreach($categories as $cat)
+
+            <tr class="hover:bg-gray-50">
+
+                <!-- Order -->
+                <td class="px-5 py-8 align-middle">
+                    {{ $cat->sort_order }}
+                </td>
+
+                <!-- Category -->
+                <td class="px-5 py-8">
+
+                    <div class="flex items-center">
+
+                        <span class="text-3xl mr-5">
+                            {{ $cat->emoji }}
+                        </span>
+
+                        <div class="flex-1">
+
+                            <h3 class="text-xl font-medium text-gray-800">
+                                {{ $cat->name }}
+                            </h3>
+
+                            <p class="text-sm text-gray-400">
+                                {{ $cat->description }}
+                            </p>
+
                         </div>
-                        <span class="ml-2 w-5 h-5 rounded-full border border-gray-200 flex-shrink-0"
-                              style="background-color: {{ $cat->display_color }}"></span>
+
+                        <span
+                            class="w-5 h-5 rounded-full ml-6"
+                            style="background:{{ $cat->display_color }}">
+                        </span>
+
                     </div>
+
                 </td>
-                <td class="px-4 py-3 text-sm text-gray-600 font-mono">{{ $cat->css_class }}</td>
-                <td class="px-4 py-3 text-sm text-gray-700">
-                    <span class="text-yellow-700">{{ $cat->prayers()->where('status', 'PENDING')->count() }} pending</span> /
-                    <span class="text-green-700">{{ $cat->prayers()->where('status', 'ACTIVE')->count() }} active</span>
+
+                <!-- CSS -->
+                <td class="px-5 py-8 text-gray-500 leading-6">
+                    {!! str_replace('-', '-<br>', e($cat->css_class)) !!}
                 </td>
-                <td class="px-4 py-3">
+
+                <!-- Prayer -->
+                <td class="px-5 py-8">
+
+                    <div class="text-black leading-6">
+
+                        <div>
+                            {{ $cat->prayers()->where('status','PENDING')->count() }}
+                            pending
+                        </div>
+
+                        <div class="text-green-600">
+                            /
+                            {{ $cat->prayers()->where('status','ACTIVE')->count() }}
+                            active
+                        </div>
+
+                    </div>
+
+                </td>
+
+                <!-- Status -->
+                <td class="px-5 py-8">
+
                     @if($cat->is_active)
-                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+
+                        <span class="inline-flex px-4 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
+                            Active
+                        </span>
+
                     @else
-                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">Inactive</span>
+
+                        <span class="inline-flex px-4 py-1 rounded-full bg-gray-100 text-gray-600 text-sm font-semibold">
+                            Inactive
+                        </span>
+
                     @endif
+
                 </td>
-                <td class="px-4 py-3 text-right whitespace-nowrap">
-                    <a href="{{ url('/admin/prayercategory/edit/' . $cat->id) }}" class="btn btn-sm btn-secondary mr-2">Edit</a>
-                    <form method="POST" action="{{ url('/admin/prayercategory/delete/' . $cat->id) }}" class="inline"
-                          onsubmit="return confirm('Delete category \'{{ addslashes($cat->name) }}\'? This cannot be undone.')">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                    </form>
+
+                <!-- Actions -->
+                <td class="px-5 py-8 text-right">
+
+                    <div class="flex justify-end items-center gap-2">
+
+                        <a href="{{ url('/admin/prayercategory/edit/'.$cat->id) }}"
+                            class="px-5 py-2 text-sm rounded border border-gray-400 bg-gray-100 text-gray-700 hover:bg-gray-200">
+                            Edit
+                        </a>
+
+                        <form method="POST"
+                            action="{{ url('/admin/prayercategory/delete/'.$cat->id) }}"
+                            class="inline">
+
+                            @csrf
+                            @method('DELETE')
+
+                            <button
+                                class="px-5 py-2 text-sm rounded border border-red-400 bg-white text-red-600 hover:bg-red-50">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
                 </td>
+
             </tr>
-            @empty
-            <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-gray-400">No categories yet.
-                    <a href="{{ url('/admin/prayercategory/create') }}" class="text-indigo-600 hover:underline">Add one</a>.
-                </td>
-            </tr>
-            @endforelse
+
+            @endforeach
+
         </tbody>
+
     </table>
+
 </div>
 @endsection
