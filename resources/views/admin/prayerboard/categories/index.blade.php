@@ -3,7 +3,10 @@
 @section('content')
 <div class="flex flex-row justify-between items-center mb-4">
     <h1 class="admin-h1">Prayer Categories</h1>
-    <a href="{{ url('/admin/prayercategory/create') }}" class="btn btn-primary">+ Add Category</a>
+   <a href="{{ url('/admin/prayercategory/create') }}"
+   class="inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+    + Add Category
+</a>
 </div>
 
 @if(session('success'))
