@@ -191,6 +191,16 @@ defined('LOGNAME_UNLIKE_POST') or define('LOGNAME_UNLIKE_POST','unlike_post');
 defined('LOGNAME_SAVE_POST') or define('LOGNAME_SAVE_POST','save_post');
 defined('LOGNAME_UNSAVE_POST') or define('LOGNAME_UNSAVE_POST','unsave_post');
 
+//page
+defined('LOGNAME_ADD_PAGE') or define('LOGNAME_ADD_PAGE','add_page');
+defined('LOGNAME_EDIT_PAGE') or define('LOGNAME_EDIT_PAGE','edit_page');
+defined('LOGNAME_DELETE_PAGE') or define('LOGNAME_DELETE_PAGE','delete_page');
+defined('LOGNAME_FOLLOW_PAGE') or define('LOGNAME_FOLLOW_PAGE','follow_page');
+defined('LOGNAME_LIKE_PAGE') or define('LOGNAME_LIKE_PAGE','like_page');
+defined('LOGNAME_UNLIKE_PAGE') or define('LOGNAME_UNLIKE_PAGE','unlike_page');
+defined('LOGNAME_ADD_PAGE_ATTACHMENT') or define('LOGNAME_ADD_PAGE_ATTACHMENT','add_page_attachment');
+defined('LOGNAME_DELETE_PAGE_ATTACHMENT') or define('LOGNAME_DELETE_PAGE_ATTACHMENT','delete_page_attachment');
+
 //post category
 defined('LOGNAME_ADD_POST_CATEGORY') or define('LOGNAME_ADD_POST_CATEGORY','add_post_category');
 defined('LOGNAME_EDIT_POST_CATEGORY') or define('LOGNAME_EDIT_POST_CATEGORY','edit_post_category');
