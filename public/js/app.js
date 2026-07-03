@@ -183445,16 +183445,23 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.errors.length > 0
-      ? _c("div", { staticClass: "alert alert-danger" }, [
-          _c(
-            "ul",
-            { staticClass: "mb-0" },
-            _vm._l(_vm.errors, function(e) {
-              return _c("li", { key: e }, [_vm._v(_vm._s(e))])
-            }),
-            0
-          )
-        ])
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "alert alert-danger bg-red-100 text-red-600 text-sm p-2 rounded mb-4"
+          },
+          [
+            _c(
+              "ul",
+              { staticClass: "mb-0" },
+              _vm._l(_vm.errors, function(e) {
+                return _c("li", { key: e }, [_vm._v(_vm._s(e))])
+              }),
+              0
+            )
+          ]
+        )
       : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "bg-white shadow rounded mb-5" }, [
@@ -183623,16 +183630,23 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.errors.length > 0
-      ? _c("div", { staticClass: "alert alert-danger" }, [
-          _c(
-            "ul",
-            { staticClass: "mb-0" },
-            _vm._l(_vm.errors, function(e) {
-              return _c("li", { key: e }, [_vm._v(_vm._s(e))])
-            }),
-            0
-          )
-        ])
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "alert alert-danger bg-red-100 text-red-600 text-sm p-2 rounded mb-4"
+          },
+          [
+            _c(
+              "ul",
+              { staticClass: "mb-0" },
+              _vm._l(_vm.errors, function(e) {
+                return _c("li", { key: e }, [_vm._v(_vm._s(e))])
+              }),
+              0
+            )
+          ]
+        )
       : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "mb-4" }, [
@@ -209041,16 +209055,23 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.errors.length > 0
-      ? _c("div", { staticClass: "alert alert-danger" }, [
-          _c(
-            "ul",
-            { staticClass: "mb-0" },
-            _vm._l(_vm.errors, function(e) {
-              return _c("li", { key: e }, [_vm._v(_vm._s(e))])
-            }),
-            0
-          )
-        ])
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "alert alert-danger bg-red-100 text-red-600 text-sm p-2 rounded mb-4"
+          },
+          [
+            _c(
+              "ul",
+              { staticClass: "mb-0" },
+              _vm._l(_vm.errors, function(e) {
+                return _c("li", { key: e }, [_vm._v(_vm._s(e))])
+              }),
+              0
+            )
+          ]
+        )
       : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "bg-white shadow rounded mb-5" }, [
@@ -209357,16 +209378,23 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.errors.length > 0
-      ? _c("div", { staticClass: "alert alert-danger" }, [
-          _c(
-            "ul",
-            { staticClass: "mb-0" },
-            _vm._l(_vm.errors, function(e) {
-              return _c("li", { key: e }, [_vm._v(_vm._s(e))])
-            }),
-            0
-          )
-        ])
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "alert alert-danger bg-red-100 text-red-600 text-sm p-2 rounded mb-4"
+          },
+          [
+            _c(
+              "ul",
+              { staticClass: "mb-0" },
+              _vm._l(_vm.errors, function(e) {
+                return _c("li", { key: e }, [_vm._v(_vm._s(e))])
+              }),
+              0
+            )
+          ]
+        )
       : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "mb-4" }, [
@@ -218080,16 +218108,23 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.errors.length > 0
-      ? _c("div", { staticClass: "alert alert-danger" }, [
-          _c(
-            "ul",
-            { staticClass: "mb-0" },
-            _vm._l(_vm.errors, function(e) {
-              return _c("li", { key: e }, [_vm._v(_vm._s(e))])
-            }),
-            0
-          )
-        ])
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "alert alert-danger bg-red-100 text-red-600 text-sm p-2 rounded mb-4"
+          },
+          [
+            _c(
+              "ul",
+              { staticClass: "mb-0" },
+              _vm._l(_vm.errors, function(e) {
+                return _c("li", { key: e }, [_vm._v(_vm._s(e))])
+              }),
+              0
+            )
+          ]
+        )
       : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "bg-white shadow rounded mb-5" }, [
@@ -218293,16 +218328,23 @@ var render = function() {
       : _vm._e(),
     _vm._v(" "),
     _vm.errors.length > 0
-      ? _c("div", { staticClass: "alert alert-danger" }, [
-          _c(
-            "ul",
-            { staticClass: "mb-0" },
-            _vm._l(_vm.errors, function(e) {
-              return _c("li", { key: e }, [_vm._v(_vm._s(e))])
-            }),
-            0
-          )
-        ])
+      ? _c(
+          "div",
+          {
+            staticClass:
+              "alert alert-danger bg-red-100 text-red-600 text-sm p-2 rounded mb-4"
+          },
+          [
+            _c(
+              "ul",
+              { staticClass: "mb-0" },
+              _vm._l(_vm.errors, function(e) {
+                return _c("li", { key: e }, [_vm._v(_vm._s(e))])
+              }),
+              0
+            )
+          ]
+        )
       : _vm._e(),
     _vm._v(" "),
     _c("div", { staticClass: "mb-4" }, [
