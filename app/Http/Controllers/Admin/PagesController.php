@@ -45,8 +45,8 @@ class PagesController extends Controller
     {
         //
         $pages = Page::where([
-            ['church_id',Auth::user()->church_id],
-            ['status',1],
+            ['church_id', Auth::user()->church_id],
+            ['status', 1],
         ])->latest()->paginate(10);
         $pages = PageResource::collection($pages);
 
@@ -84,8 +84,7 @@ class PagesController extends Controller
     public function store(PageAddRequest $request)
     {
         //
-        try
-        {
+        try {
             $page = new Page;
 
             $page->church_id        = Auth::user()->church_id;
@@ -115,30 +114,27 @@ class PagesController extends Controller
 
             $page->save();
 
-            $message = trans('messages.add_success_msg',['module' => 'Page']);
+            $message = trans('messages.add_success_msg', ['module' => 'Page']);
 
-            $ip= $this->getRequestIP();
-            $this->doActivityLog(
-                $page,
-                Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
-                LOGNAME_ADD_PAGE,
-                $message
-            );
+            $ip = $this->getRequestIP();
+            // $this->doActivityLog(
+            //     $page,
+            //     Auth::user(),
+            //     ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+            //     LOGNAME_ADD_PAGE,
+            //     $message
+            // );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
     public function storeImage(Request $request)
     {
-        if($request->hasFile('file')) {
+        if ($request->hasFile('file')) {
             //get filename with extension
             $filenamewithextension = $request->file('file')->getClientOriginalName();
 
@@ -149,17 +145,18 @@ class PagesController extends Controller
             $extension = $request->file('file')->getClientOriginalExtension();
 
             //filename to store
-            $filenametostore = $filename.'_'.time().'.'.$extension;
+            $filenametostore = $filename . '_' . time() . '.' . $extension;
 
             //Upload File
             $file =  $request->file('file');
 
-            $pathName = $this->uploadFile('uploads/trix',$file);
+            $pathName = $this->uploadFile('uploads/trix', $file);
 
             // you can save image path below in database
             $path = asset($pathName);
 
-            echo $path;exit;
+            echo $path;
+            exit;
         }
     }
 
@@ -172,7 +169,7 @@ class PagesController extends Controller
     public function showList($id)
     {
         //
-        $page = Page::where('id',$id)->first();
+        $page = Page::where('id', $id)->first();
 
         $array = [];
 
@@ -181,12 +178,11 @@ class PagesController extends Controller
         $array['category']      = $page->category_id;
         $array['description']   = $page->description;
         $array['cover_image']   = $page->CoverImagePath;
-        $array['like_count']    = $page->pageDetail()->where('like',1)->count();
-        $array['unlike_count']  = $page->pageDetail()->where('dislike',1)->count();
-        $array['follow_count']  = $page->pageDetail()->where('is_following',1)->count();
-        $pagedetail = PageDetail::where([['user_id',Auth::id()],['page_id',$page->id]])->first();
-        if($pagedetail != null)
-        {
+        $array['like_count']    = $page->pageDetail()->where('like', 1)->count();
+        $array['unlike_count']  = $page->pageDetail()->where('dislike', 1)->count();
+        $array['follow_count']  = $page->pageDetail()->where('is_following', 1)->count();
+        $pagedetail = PageDetail::where([['user_id', Auth::id()], ['page_id', $page->id]])->first();
+        if ($pagedetail != null) {
             $array['is_following']  =  $pagedetail->is_following;
             $array['like']          =  $pagedetail->like;
             $array['dislike']       =  $pagedetail->dislike;
@@ -204,11 +200,11 @@ class PagesController extends Controller
     public function show($id)
     {
         //
-        $page = Page::where('id',$id)->first();
+        $page = Page::where('id', $id)->first();
         $entity_id      = $page->id;
         $entity_name    = 'App\Models\Page';
 
-        return view('/admin/page/show' , [ 'page' => $page , 'entity_id' => $entity_id , 'entity_name' => $entity_name ]);
+        return view('/admin/page/show', ['page' => $page, 'entity_id' => $entity_id, 'entity_name' => $entity_name]);
     }
 
     /**
@@ -220,7 +216,7 @@ class PagesController extends Controller
     public function editList($id)
     {
         //
-        $page = Page::where('id',$id)->first();
+        $page = Page::where('id', $id)->first();
 
         $array = [];
 
@@ -250,9 +246,9 @@ class PagesController extends Controller
     public function edit($id)
     {
         //
-        $page = Page::where('id',$id)->first();
+        $page = Page::where('id', $id)->first();
 
-        return view('/admin/page/edit', [ 'page' => $page ]);
+        return view('/admin/page/edit', ['page' => $page]);
     }
 
     /**
@@ -265,9 +261,8 @@ class PagesController extends Controller
     public function update(PageUpdateRequest $request, $id)
     {
         //
-        try
-        {
-            $page = Page::where('id',$id)->first();
+        try {
+            $page = Page::where('id', $id)->first();
 
             $page->page_name         = $request->page_name;
             $page->category_id       = $request->category;
@@ -286,10 +281,9 @@ class PagesController extends Controller
             }
 
             $file = $request->file('cover_image');
-            if($file)
-            {
+            if ($file) {
                 $folder = Auth::user()->church_id . '/pages';
-                $path   = $this->uploadFile($folder,$file);
+                $path   = $this->uploadFile($folder, $file);
                 $page->cover_image = $path;
             }
 
@@ -306,24 +300,21 @@ class PagesController extends Controller
                 'saved_by'        => Auth::id(),
             ]);
 
-            $message = trans('messages.update_success_msg',['module' => 'Page']);
+            $message = trans('messages.update_success_msg', ['module' => 'Page']);
 
-            $ip= $this->getRequestIP();
+            $ip = $this->getRequestIP();
             $this->doActivityLog(
                 $page,
                 Auth::user(),
-                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_PAGE,
                 $message
             );
 
             $res['success'] = $message;
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -336,36 +327,29 @@ class PagesController extends Controller
     public function destroy($id)
     {
         //
-        try
-        {
-            $page = Page::where('id',$id)->first();
-            if(Gate::allows('page',$page))
-            {
+        try {
+            $page = Page::where('id', $id)->first();
+            if (Gate::allows('page', $page)) {
                 $page->delete();
 
-                $message=trans('messages.delete_success_msg',['module' => 'Page']);
+                $message = trans('messages.delete_success_msg', ['module' => 'Page']);
 
 
-                $ip= $this->getRequestIP();
+                $ip = $this->getRequestIP();
                 $this->doActivityLog(
                     $page,
                     Auth::user(),
-                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT']],
                     LOGNAME_DELETE_PAGE,
                     $message
                 );
                 $res['success'] = $message;
                 return $res;
-            }
-            else
-            {
+            } else {
                 abort(403);
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 

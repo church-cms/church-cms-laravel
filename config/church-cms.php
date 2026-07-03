@@ -182,6 +182,15 @@ defined('LOGNAME_ADD_WEBHOOK') or define('LOGNAME_ADD_WEBHOOK','add_webhook');
 defined('LOGNAME_EDIT_WEBHOOK') or define('LOGNAME_EDIT_WEBHOOK','edit_webhook');
 defined('LOGNAME_DELETE_WEBHOOK') or define('LOGNAME_DELETE_WEBHOOK','delete_webhook');
 
+//post
+defined('LOGNAME_ADD_POST') or define('LOGNAME_ADD_POST','add_post');
+defined('LOGNAME_EDIT_POST') or define('LOGNAME_EDIT_POST','edit_post');
+defined('LOGNAME_DELETE_POST') or define('LOGNAME_DELETE_POST','delete_post');
+defined('LOGNAME_LIKE_POST') or define('LOGNAME_LIKE_POST','like_post');
+defined('LOGNAME_UNLIKE_POST') or define('LOGNAME_UNLIKE_POST','unlike_post');
+defined('LOGNAME_SAVE_POST') or define('LOGNAME_SAVE_POST','save_post');
+defined('LOGNAME_UNSAVE_POST') or define('LOGNAME_UNSAVE_POST','unsave_post');
+
 //post category
 defined('LOGNAME_ADD_POST_CATEGORY') or define('LOGNAME_ADD_POST_CATEGORY','add_post_category');
 defined('LOGNAME_EDIT_POST_CATEGORY') or define('LOGNAME_EDIT_POST_CATEGORY','edit_post_category');
