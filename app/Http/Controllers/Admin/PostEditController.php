@@ -45,6 +45,7 @@ class PostEditController extends Controller
 
             $array['title']             = $post->title;
             $array['description']       = $post->description;
+            $array['category']       = $post->category_id;
 
             /*if($post->visibility === 'select_class')
             {
@@ -54,6 +55,7 @@ class PostEditController extends Controller
             {
             	$array['visible_for']   = '';
             }*/
+
             $array['post_created_at']   = date('d-m-Y H:i:s', strtotime($post->post_created_at));
             $array['is_posted']         = $post->is_posted;
             if ($post->is_posted === 1) {
@@ -61,7 +63,7 @@ class PostEditController extends Controller
             } else {
                 $array['post_later'] = 1;
             }
-            $array['attachment']        = $post->AttachmentPath;
+            $array['attachment']  = $post->AttachmentPath;
 
             return $array;
         } else {
@@ -105,6 +107,7 @@ class PostEditController extends Controller
 
             $post->title            = $request->title;
             $post->description      = $request->description;
+            $post->category_id      = $request->category;
 
             if ($request->post_later === 'true') {
                 $post->post_created_at = date('Y-m-d H:i:s', strtotime($request->posted_at));
