@@ -116,7 +116,7 @@
             {{-- Col 4: Contact Info --}}
             <div>
                 <h4 class="text-white text-sm font-semibold uppercase tracking-widest mb-5">Site QR Code</h4>
-                <ul class="space-y-4 text-sm">
+                <ul class="mr-20">
                   
                     <li class="pt-2">
                          @include('member.site_domain_qrcode')
