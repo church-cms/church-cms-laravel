@@ -15,11 +15,15 @@ $to = [0, 0, 255];
                                     @endphp
 
          
-        <img src="data:image/png;base64, {!! base64_encode(QrCode::eye('square')->format('png')
-    ->eye('circle')
-    ->color(0, 0, 0)  
-    ->margin(1)
-    ->generate($url)) !!} " class="" style="width: 120px; height: auto;margin-left:auto;">
+       
+
+    <img src="data:image/png;base64,{!! base64_encode(
+    QrCode::format('png')
+        ->color(244, 197, 66)      // Gold
+        ->backgroundColor(31, 36, 48) // Dark Navy
+        ->margin(1)
+        ->generate($url)
+) !!}" width="120">
 
         
         <!--  <div class="qr">
