@@ -6,7 +6,7 @@
             {{-- Col 1: Brand --}}
             <div class="lg:col-span-1">
                 @if(!empty($_churchdetail['church_logo']))
-                    <img src="{{ url($_churchdetail['church_logo']) }}"
+                    <img src="{{ \Storage::url($_churchdetail['church_logo']) }}"
                          alt="{{ $_church->name ?? config('app.name') }}"
                          class="h-10 w-auto mb-4 brightness-0 invert opacity-80">
                 @endif
