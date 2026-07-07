@@ -12,7 +12,7 @@
 @endif
 
 @if(!empty($_churchdetail['favicon']))
-<link rel="icon" href="{{ url($_churchdetail['favicon']) }}">
+<link rel="icon" href="{{ \Storage::url($_churchdetail['favicon']) }}">
 @endif
 
 @stack('meta')
