@@ -15,7 +15,7 @@
         <span class="bg-gray-100 px-2 py-1 rounded">{{ ucfirst($event->category) }}</span>
         <span class="bg-gray-100 px-2 py-1 rounded">{{ \Carbon\Carbon::parse($event->start_date)->format('d M Y') }}</span>
         @if($event->repeats === 'yes')
-            <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">Recurring</span>
+        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">Recurring</span>
         @endif
     </div>
 
@@ -57,11 +57,11 @@
                     <td class="px-4 py-2 font-semibold">{{ $session->attendees_count }}</td>
                     <td class="px-4 py-2">
                         @if($session->locked_at)
-                            <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs">
-                                Locked {{ \Carbon\Carbon::parse($session->locked_at)->format('d M H:i') }}
-                            </span>
+                        <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs">
+                            Locked {{ \Carbon\Carbon::parse($session->locked_at)->format('d M H:i') }}
+                        </span>
                         @else
-                            <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs">Open</span>
+                        <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs">Open</span>
                         @endif
                     </td>
                     <td class="px-4 py-2 flex gap-2 flex-wrap">
@@ -70,18 +70,18 @@
                         <a href="{{ route('admin.attendance.export', $session->id) }}"
                             class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">Export CSV</a>
                         @can('update-attendance')
-                            @if($session->locked_at)
-                                <form action="{{ route('admin.attendance.unlock', $session->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    <button class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Unlock</button>
-                                </form>
-                            @else
-                                <form action="{{ route('admin.attendance.lock', $session->id) }}" method="POST" class="inline"
-                                    onsubmit="return confirm('Lock this session? No further check-ins will be allowed.')">
-                                    @csrf
-                                    <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Lock</button>
-                                </form>
-                            @endif
+                        @if($session->locked_at)
+                        <form action="{{ route('admin.attendance.unlock', $session->id) }}" method="POST" class="inline">
+                            @csrf
+                            <button class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Unlock</button>
+                        </form>
+                        @else
+                        <form action="{{ route('admin.attendance.lock', $session->id) }}" method="POST" class="inline"
+                            onsubmit="return confirm('Lock this session? No further check-ins will be allowed.')">
+                            @csrf
+                            <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Lock</button>
+                        </form>
+                        @endif
                         @endcan
                     </td>
                 </tr>
@@ -98,7 +98,7 @@
     @can('update-attendance')
     <div class="mt-6">
         <a href="{{ route('admin.event.managers', $event->id) }}"
-            class="text-sm text-blue-600 underline">Manage Staff Assignments →</a>
+            class="text-sm text-blue-600 underline">Manage Church Member Assignments →</a>
     </div>
     @endcan
 </div>
