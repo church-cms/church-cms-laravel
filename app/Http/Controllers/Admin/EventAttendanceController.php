@@ -165,7 +165,7 @@ class EventAttendanceController extends Controller
         $assigned = EventManager::where('event_id', $event_id)->with('staff')->get();
 
         $subadmins = User::where('church_id', Auth::user()->church_id)
-            ->where('usergroup_id', 4)
+            ->where('usergroup_id', 5)
             ->whereNotIn('id', $assigned->pluck('user_id'))
             ->get();
 

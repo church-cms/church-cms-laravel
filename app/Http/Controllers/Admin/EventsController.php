@@ -25,6 +25,8 @@ use App\Models\Attendance;
 use App\Events\PushEvent;
 use App\Traits\Common;
 use App\Models\Events;
+use App\Models\GroupLink;
+use App\Models\EventManager;
 use App\Models\User;
 use Exception;
 use Log;
@@ -208,6 +210,10 @@ class EventsController extends Controller
 
     public function newForm()
     {
+
+        //dd("kK");
+        //$this->setEventAttendance('45', '7');
+
         $categories = [
             'Culturals'  => 'Culturals',
             'Education'  => 'Education',
@@ -441,6 +447,10 @@ class EventsController extends Controller
                     LOGNAME_ADD_EVENT,
                     'Event Added: ' . $event->title
                 );
+
+                if ($event->enable_attendance == '1' && $event->attendance_scope == 'group' && $event->attendance_group_id != '') {
+                    $this->setEventAttendance($event->id, $event->attendance_group_id);
+                }
             }
 
             // =====================================================
@@ -610,6 +620,23 @@ class EventsController extends Controller
         }
     }
 
+    public function setEventAttendance($event_id, $group_id)
+    {
+        $group_admin = GroupLink::where([['group_id', $group_id], ['role', 'group_admin']])->get();
+
+        if (count($group_admin) > 0) {
+            foreach ($group_admin as $admin) {
+                $data = [
+                    'user_id' => $admin->user_id,
+                    'event_id' => $event_id
+                ];
+                EventManager::create($data);
+            }
+        }
+
+        return true;
+    }
+
     private function saveRecurringEvent($request, $eventDate)
     {
         $startDateTime = $eventDate->format('Y-m-d')
@@ -698,6 +725,10 @@ class EventsController extends Controller
         }
 
         $event->save();
+
+        if ($event->enable_attendance == '1' && $event->attendance_scope == 'group' && $event->attendance_group_id != '') {
+            $this->setEventAttendance($event->id, $event->attendance_group_id);
+        }
     }
 
     /**dd
