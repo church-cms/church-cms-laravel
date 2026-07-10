@@ -23,6 +23,7 @@ class Kernel extends HttpKernel
         \Illuminate\Session\Middleware\StartSession::class,
         \Nckg\Impersonate\Impersonate::class,
         \App\Http\Middleware\SecureHeaders::class,
+        \App\Http\Middleware\CheckMaintenanceMode::class
 
     ];
 
@@ -67,8 +68,8 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'churchmember' => \App\Http\Middleware\MustBeChurchMember::class,
         'churchadmin' => \App\Http\Middleware\MustBeChurchAdmin::class,
+        'churchmember' => \App\Http\Middleware\MustBeChurchMember::class,
         'admingroup' => \App\Http\Middleware\AdminOnly::class,
         'permission' => \App\Http\Middleware\AdminOrPermission::class,
         'webguest'   => \App\Http\Middleware\WebGuestAuth::class,

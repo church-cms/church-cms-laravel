@@ -15,18 +15,18 @@ class MustBeChurchMember
      */
     public function handle($request, Closure $next)
     {
-        if(\Auth::user()->usergroup_id == 5)
-        {
-            return $next($request);
-        }
+        if (\Auth::user()->usergroup_id == 3 || \Auth::user()->usergroup_id == 4) {
 
-        if(\Auth::user()->usergroup_id == 3 || \Auth::user()->usergroup_id == 4)
-        {
             return redirect('/admin/dashboard');
         }
 
-        if(\Auth::user()->usergroup_id == 1 || \Auth::user()->usergroup_id == 2)
-        {
+        if (\Auth::user()->usergroup_id == 5) {
+            return $next($request);
+        }
+
+
+
+        if (\Auth::user()->usergroup_id == 1 || \Auth::user()->usergroup_id == 2) {
             return redirect('/portal');
         }
 

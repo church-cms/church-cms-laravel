@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 //use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Traits\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * LoginController
@@ -35,7 +36,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/member/home';
+    //protected $redirectTo = '/admin/dashboard';
 
 
     /**
@@ -55,5 +56,22 @@ class LoginController extends Controller
         }
 
         return view('auth.login', ['blocked' => false]);
+    }
+
+    protected function redirectTo()
+    {
+        $user = Auth::user();
+
+
+        if ($user->usergroup_id == 3 || $user->usergroup_id == 4) {
+
+            return '/admin/dashboard';
+        }else{
+
+        return '/member/home';
+
+        }
+
+        
     }
 }
