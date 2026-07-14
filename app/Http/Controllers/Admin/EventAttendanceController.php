@@ -79,9 +79,39 @@ class EventAttendanceController extends Controller
             ->orderBy('scanned_at')
             ->get();
 
+        $notAttendees = EventAttendee::where('session_id', $session_id)
+            ->with(['member.userprofile', 'scannedBy'])
+            ->orderBy('scanned_at')
+            ->pluck('user_id')->toArray();
+
+        $not_attendees = User::with('userprofile')
+            ->select('id', 'name', 'mobile_no')
+            ->where('church_id', $session->church_id)
+            ->ByRole('5')
+            ->whereHas('userprofile', function ($q) {
+                $q->where('membership_type', 'member')
+                    ->orWhereNull('membership_type');
+            })
+            ->whereNotIn('id', $notAttendees)
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'member_id'   => $user->id,
+                    'member_name' => $user->name,
+                    'avatar_url'  => $user->userprofile?->avatar
+                        ? \Storage::disk('public')->url($user->userprofile->avatar)
+                        : null,
+                    'mobile_no'   => $user->mobile_no,
+                ];
+            });
+
+        $total_count = ($not_attendees->count() + $attendees->count());
+        $absent_count = $not_attendees->count();
+        $present_count = $attendees->count();
+
         //dd($attendees);
 
-        return view('admin.attendance.session', compact('session', 'attendees'));
+        return view('admin.attendance.session', compact('session', 'attendees', 'not_attendees', 'total_count'));
     }
 
     public function lock($session_id)
