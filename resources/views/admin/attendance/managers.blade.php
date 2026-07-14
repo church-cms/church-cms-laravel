@@ -25,7 +25,7 @@
                     <select name="user_id" class="border border-gray-300 rounded px-3 py-2 text-sm w-full mb-3">
                         <option value="">Select church member…</option>
                         @foreach($subadmins as $staff)
-                        <option value="{{ $staff->id }}">{{ $staff->name }}</option>
+                        <option value="{{ $staff->id }}">{{ $staff->fullname }}</option>
                         @endforeach
                     </select>
                     <button type="submit" class="blue-bg text-white text-sm px-4 py-2 rounded w-full">
