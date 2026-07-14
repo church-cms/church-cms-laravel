@@ -1,6 +1,6 @@
 @php
-    $isAdmin = auth()->user()->usergroup_id == 3;
-    $user    = auth()->user();
+$isAdmin = auth()->user()->usergroup_id == 3;
+$user = auth()->user();
 @endphp
 <ul class="list-reset tracking-wide font-navigation text-xs">
 
@@ -14,8 +14,8 @@
 
     {{-- ── People ──────────────────────────────────────────────────────── --}}
     @php
-        $showUsers = $isAdmin || $user->hasPermission('read-members');
-        $usersActive = in_array(Request::segment('2'), ['members','member','guests','guest','subadmins','subadmin']) ? 'active' : '';
+    $showUsers = $isAdmin || $user->hasPermission('read-members');
+    $usersActive = in_array(Request::segment('2'), ['members','member','guests','guest','subadmins','subadmin']) ? 'active' : '';
     @endphp
     @if($showUsers)
     <li class="relative py-2 px-3 hover:bg-red-900 {{ $usersActive }}">
@@ -149,8 +149,8 @@
 
     {{-- ── Financial ────────────────────────────────────────────────────── --}}
     @php
-        $showOfferings = $isAdmin || $user->hasPermission('read-payments') || $user->hasPermission('read-funds');
-        $offeringsActive = in_array(Request::segment('2'), ['payaccounts','payaccount','funds','fund','donations','donation','paymentgateways','paymentgateway']) ? 'active' : '';
+    $showOfferings = $isAdmin || $user->hasPermission('read-payments') || $user->hasPermission('read-funds');
+    $offeringsActive = in_array(Request::segment('2'), ['payaccounts','payaccount','funds','fund','donations','donation','paymentgateways','paymentgateway']) ? 'active' : '';
     @endphp
     @if($showOfferings)
     <li class="relative py-2 px-3 hover:bg-red-900 {{ $offeringsActive }}">
@@ -197,8 +197,8 @@
     {{-- ── Communication ────────────────────────────────────────────────── --}}
     @if($isAdmin || $user->hasPermission('manage-email-blaster'))
     @php
-        $emailArray = ['campaigns','emails','email','campaign','subscribers','subscriber','mailinglists','email-templates','mailinglist','mailqueues','mailqueue','smtps','smtp','newsletter','rules','rule','mails-delivered','mail-delivered','webhooks','webhook'];
-        $emailActive = in_array(Request::segment('2'), $emailArray) ? 'active' : '';
+    $emailArray = ['campaigns','emails','email','campaign','subscribers','subscriber','mailinglists','email-templates','mailinglist','mailqueues','mailqueue','smtps','smtp','newsletter','rules','rule','mails-delivered','mail-delivered','webhooks','webhook'];
+    $emailActive = in_array(Request::segment('2'), $emailArray) ? 'active' : '';
     @endphp
     <li class="relative py-3 px-3 hover:font-semibold {{ $emailActive }}">
         <a href="#" class="flex items-center whitespace-no-wrap text-white">
@@ -238,8 +238,8 @@
                 </a>
             </li>
             @php
-                $emailSettingsArray = ['rules','rule','mails-delivered','mail-delivered','mailqueues','mailqueue','smtps','smtp','webhooks','webhook'];
-                $emailSettingsActive = in_array(Request::segment('2'), $emailSettingsArray) ? 'active' : '';
+            $emailSettingsArray = ['rules','rule','mails-delivered','mail-delivered','mailqueues','mailqueue','smtps','smtp','webhooks','webhook'];
+            $emailSettingsActive = in_array(Request::segment('2'), $emailSettingsArray) ? 'active' : '';
             @endphp
             <li class="py-3 px-3 hover:font-semibold {{ $emailSettingsActive }}">
                 <a href="#" class="flex items-center">
@@ -323,8 +323,8 @@
     {{-- ── WebCMS (admin + manage-cms subadmin) ────────────────────────── --}}
     @if($isAdmin || $user->hasPermission('manage-cms'))
     @php
-        $webCmsArray = ['pages','page','page-categories','pageCategory','posts','post','post-categories','postCategory','faq','faq-categories','widgets','google-analytics'];
-        $webCmsActive = in_array(Request::segment('2'), $webCmsArray) ? 'active' : '';
+    $webCmsArray = ['pages','page','page-categories','pageCategory','posts','post','post-categories','postCategory','faq','faq-categories','widgets','google-analytics'];
+    $webCmsActive = in_array(Request::segment('2'), $webCmsArray) ? 'active' : '';
     @endphp
     <li class="relative py-2 px-3 hover:bg-red-900 {{ $webCmsActive }}">
         <a href="#" class="flex items-center">
@@ -376,58 +376,58 @@
                     <span class="mx-3 whitespace-no-wrap">FAQ Categories</span>
                 </a>
             </li>
-            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'google-analytics' ? 'active' : '' }}">
-                <a href="{{ url('/admin/google-analytics') }}" class="flex items-center">
-                    <i class="fas fa-chart-line w-5 text-center text-sm opacity-75"></i>
-                    <span class="mx-3 whitespace-no-wrap">Google Analytics</span>
-                </a>
-            </li>
-        </ul>
-    </li>
-    @endif
+            {{--<li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'google-analytics' ? 'active' : '' }}">
+            <a href="{{ url('/admin/google-analytics') }}" class="flex items-center">
+                <i class="fas fa-chart-line w-5 text-center text-sm opacity-75"></i>
+                <span class="mx-3 whitespace-no-wrap">Google Analytics</span>
+            </a>
+    </li>--}}
+</ul>
+</li>
+@endif
 
-    {{-- ── Settings (admin only) ──────────────────────────────────────── --}}
-    @if($isAdmin)
-    <li class="py-2 px-3 {{ Request::segment('2') == 'settings' ? 'active' : '' }}">
-        <a href="{{ url('/admin/settings/generalsettings') }}" class="flex items-center">
-            <i class="fas fa-gear w-5 text-center text-sm opacity-75"></i>
-            <span class="mx-3 whitespace-no-wrap">Settings</span>
-        </a>
-    </li>
-    @endif
+{{-- ── Settings (admin only) ──────────────────────────────────────── --}}
+@if($isAdmin)
+<li class="py-2 px-3 {{ Request::segment('2') == 'settings' ? 'active' : '' }}">
+    <a href="{{ url('/admin/settings/generalsettings') }}" class="flex items-center">
+        <i class="fas fa-gear w-5 text-center text-sm opacity-75"></i>
+        <span class="mx-3 whitespace-no-wrap">Settings</span>
+    </a>
+</li>
+@endif
 
-    {{-- ── Config (admin only) ─────────────────────────────────────────── --}}
-    @if($isAdmin)
-    @php
-        $masterDataActive = in_array(Request::segment('2'), ['countries','country','states','state','cities','city']) ? 'active' : '';
-    @endphp
-    <li class="relative py-2 px-3 hover:bg-red-900 {{ $masterDataActive }}">
-        <a href="#" class="flex items-center">
-            <i class="fas fa-database w-5 text-center text-sm opacity-75"></i>
-            <span class="ml-3 whitespace-no-wrap flex items-center justify-between w-10/12">Master Data</span>
-            <i class="fas fa-chevron-right text-xs ml-auto opacity-50"></i>
-        </a>
-        <ul class="list-reset sites-sidebar" style="bottom: 0; top: auto;">
-            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'countries' ? 'active' : '' }}">
-                <a href="{{ url('/admin/countries') }}" class="flex items-center">
-                    <i class="fas fa-earth-americas w-5 text-center text-sm opacity-75"></i>
-                    <span class="mx-3 whitespace-no-wrap">Countries</span>
-                </a>
-            </li>
-            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'states' ? 'active' : '' }}">
-                <a href="{{ url('/admin/states') }}" class="flex items-center">
-                    <i class="fas fa-map w-5 text-center text-sm opacity-75"></i>
-                    <span class="mx-3 whitespace-no-wrap">States</span>
-                </a>
-            </li>
-            <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'cities' ? 'active' : '' }}">
-                <a href="{{ url('/admin/cities') }}" class="flex items-center">
-                    <i class="fas fa-city w-5 text-center text-sm opacity-75"></i>
-                    <span class="mx-3 whitespace-no-wrap">Cities</span>
-                </a>
-            </li>
-        </ul>
-    </li>
-    @endif
+{{-- ── Config (admin only) ─────────────────────────────────────────── --}}
+@if($isAdmin)
+@php
+$masterDataActive = in_array(Request::segment('2'), ['countries','country','states','state','cities','city']) ? 'active' : '';
+@endphp
+<li class="relative py-2 px-3 hover:bg-red-900 {{ $masterDataActive }}">
+    <a href="#" class="flex items-center">
+        <i class="fas fa-database w-5 text-center text-sm opacity-75"></i>
+        <span class="ml-3 whitespace-no-wrap flex items-center justify-between w-10/12">Master Data</span>
+        <i class="fas fa-chevron-right text-xs ml-auto opacity-50"></i>
+    </a>
+    <ul class="list-reset sites-sidebar" style="bottom: 0; top: auto;">
+        <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'countries' ? 'active' : '' }}">
+            <a href="{{ url('/admin/countries') }}" class="flex items-center">
+                <i class="fas fa-earth-americas w-5 text-center text-sm opacity-75"></i>
+                <span class="mx-3 whitespace-no-wrap">Countries</span>
+            </a>
+        </li>
+        <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'states' ? 'active' : '' }}">
+            <a href="{{ url('/admin/states') }}" class="flex items-center">
+                <i class="fas fa-map w-5 text-center text-sm opacity-75"></i>
+                <span class="mx-3 whitespace-no-wrap">States</span>
+            </a>
+        </li>
+        <li class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'cities' ? 'active' : '' }}">
+            <a href="{{ url('/admin/cities') }}" class="flex items-center">
+                <i class="fas fa-city w-5 text-center text-sm opacity-75"></i>
+                <span class="mx-3 whitespace-no-wrap">Cities</span>
+            </a>
+        </li>
+    </ul>
+</li>
+@endif
 
 </ul>
