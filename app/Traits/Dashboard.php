@@ -15,6 +15,7 @@ use App\Models\Prayer;
 use App\Models\User;
 use App\Models\Userprofile;
 use Carbon\Carbon;
+use App\Models\EventAttendanceSession;
 
 trait Dashboard
 {
@@ -91,6 +92,17 @@ trait Dashboard
                 ->take(4)
                 ->get();
         });
+        // $event_attendance=return EventAttendanceSession::where('church_id', $church_id)
+        //         ->orderBy('attendance_date', 'DESC')
+        //         ->take(4)
+        //         ->get();
+
+
+
+        $array['EventAttendance'] = EventAttendanceSession::with('attendees')->where('church_id', $church_id)
+            ->orderBy('attendance_date', 'DESC')
+            ->take(4)
+            ->get();
 
         $array['pendingPrayers'] = Cache::remember('pendingPrayers' . $church_id, env('CACHE_TIME'), function () use ($church_id) {
             return Prayer::forChurch($church_id)

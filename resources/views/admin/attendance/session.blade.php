@@ -85,18 +85,22 @@
                 <tr class="border-b hover:bg-gray-50">
                     <td class="px-4 py-2 text-gray-400">{{ $i + 1 }}</td>
                     <td class="px-4 py-2 flex items-center gap-2">
-                        @if($attendee->userprofile && $attendee->userprofile->avatar)
-                        <img src="{{ \Storage::disk('public')->url($attendee->userprofile->avatar) }}"
-                            class="w-7 h-7 rounded-full object-cover">
-                        @else
-                        <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
-                            {{ strtoupper(substr($attendee->member->name, 0, 1)) }}
-                        </div>
-                        @endif
-                        <div>
-                            <p class="font-medium">{{ optional($attendee->userprofile)->firstname }} {{ optional($attendee->userprofile)->lastname }}</p>
-                            <p class="text-xs text-gray-400">{{ $attendee->member->name }}</p>
-                        </div>
+                        <a href="{{ url('/admin/member/show/'.$attendee->member->name) }}"
+                            class="flex items-center gap-3 p-3 rounded border border-gray-100 hover:bg-gray-50 transition">
+                            @if($attendee->userprofile && $attendee->userprofile->avatar)
+                            <img src="{{ \Storage::disk('public')->url($attendee->userprofile->avatar) }}"
+                                class="w-7 h-7 rounded-full object-cover">
+                            @else
+                            <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
+                                {{ strtoupper(substr($attendee->member->name, 0, 1)) }}
+                            </div>
+                            @endif
+
+                            <div>
+                                <p class="font-medium">{{ optional($attendee->userprofile)->firstname }} {{ optional($attendee->userprofile)->lastname }}</p>
+                                <p class="text-xs text-gray-400">{{ $attendee->member->name }}</p>
+                            </div>
+                        </a>
                     </td>
                     <td class="px-4 py-2 text-gray-500">{{ $attendee->member->mobile_no }}</td>
                     <td class="px-4 py-2">
@@ -127,20 +131,29 @@
             </thead>
             <tbody>
                 @forelse($not_attendees as $i => $member)
+                @php
+                $mem=url('admin/member/show/'.$member['member_name']);
+                @endphp
                 <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-2 text-gray-400">{{ $i + 1 }}</td>
+                    <td class="px-4 py-2 text-gray-400">{{ $i + 1 }} </td>
                     <td class="px-4 py-2 flex items-center gap-2">
-                        @if($member['avatar_url'])
-                        <img src="{{ $member['avatar_url'] }}"
-                            class="w-7 h-7 rounded-full object-cover">
-                        @else
-                        <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
-                            {{ strtoupper(substr($member['member_name'], 0, 1)) }}
-                        </div>
-                        @endif
-                        <div>
-                            <p class="font-medium">{{ $member['member_name'] }}</p>
-                        </div>
+                        <a href="{{ $mem }}"
+                            class="flex items-center gap-3 p-3 rounded border border-gray-100 hover:bg-gray-50 transition">
+                            @if($member['avatar_url'])
+                            <img src="{{ $member['avatar_url'] }}"
+                                class="w-7 h-7 rounded-full object-cover">
+                            @else
+                            <div class="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
+                                {{ strtoupper(substr($member['member_name'], 0, 1)) }}
+                            </div>
+                            @endif
+
+                            <div>
+
+                                <p class="font-medium">{{ $member['member_name'] }}</p>
+
+                            </div>
+                        </a>
                     </td>
                     <td class="px-4 py-2 text-gray-500">{{ $member['mobile_no'] }}</td>
                     <td class="px-4 py-2 text-gray-400">—</td>
