@@ -342,12 +342,19 @@ class AttendanceController extends Controller
                 ];
             });
 
+        $total_count = ($not_attendees->count() + $attendees->count());
+        $absent_count = $not_attendees->count();
+        $present_count = $attendees->count();
+
+
         return response()->json([
             'session_id'      => $session->id,
             'event_title'     => $session->event->title,
             'attendance_date' => $session->attendance_date,
             'is_locked'       => !is_null($session->locked_at),
-            'total'           => $attendees->count(),
+            'total'           => $total_count,
+            'present_count' => $present_count,
+            'absent_count' => $absent_count,
             'attendees'       => $attendees,
             'not_attendees' => $not_attendees
         ]);
