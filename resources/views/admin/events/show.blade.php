@@ -261,251 +261,178 @@ $isAdmin = auth()->user()->usergroup_id == 3;
     </div>
     @endif
 
-    {{-- ── Attendees tab ─────────────────────────────────────────────── --}}
-    @if($expired)
-    {{--<div class="ev-tab-panel px-6 py-5" data-tab="attendees">
+    {{-- ── Attendance tab ─────────────────────────────────────────────── --}}
+    @if($event->enable_attendance)
+    <div class="ev-tab-panel px-6 py-5" data-tab="attendance">
 
-        {{-- Sub-tabs --}}
-    <div class="flex gap-3 mb-4">
-        <button class="att-sub-btn text-sm px-3 py-1.5 rounded border transition" data-att="attended">
-            <i class="fas fa-check-circle mr-1 text-green-500"></i>
-            Attended <span class="text-xs text-gray-400">({{ $attended->count() }})</span>
-        </button>
-        <button class="att-sub-btn text-sm px-3 py-1.5 rounded border transition" data-att="not_attended">
-            <i class="fas fa-times-circle mr-1 text-red-400"></i>
-            Not Attended <span class="text-xs text-gray-400">({{ $notAttended->count() }})</span>
-        </button>
-    </div>
-
-    <div class="att-sub-panel" data-att="attended">
-        @if($attended->isEmpty())
-        <p class="text-sm text-gray-400 italic">No attendance records.</p>
-        @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            @foreach($attended as $record)
-            @php
-            $profile = $record->user?->userprofile;
-            $fullname = $profile ? trim($profile->firstname . ' ' . $profile->lastname) : $record->user?->name;
-            $avatar = $profile?->AvatarPath;
-            @endphp
-            <a href="{{ url('/admin/member/show/' . $record->user?->name) }}"
-                class="flex items-center gap-3 p-3 rounded border border-gray-100 hover:bg-gray-50 transition">
-                @if($avatar)
-                <img src="{{ $avatar }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
-                @else
-                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <span class="text-green-600 text-xs font-semibold">{{ strtoupper(substr($fullname ?? '?', 0, 1)) }}</span>
-                </div>
-                @endif
-                <span class="text-sm text-gray-700">{{ $fullname }}</span>
-            </a>
-            @endforeach
+        {{-- Open / start a session --}}
+        @can('create-attendance')
+        @if($event->repeats == 1)
+        {{-- Recurring: date picker pre-filled with next occurrence --}}
+        @php
+        $existingDates = $sessions->pluck('attendance_date')
+        ->map(fn($d) => \Carbon\Carbon::parse($d)->toDateString())->toArray();
+        $upcomingOcc = $event->upcomingOccurrences($existingDates, 5);
+        $nextOcc = $upcomingOcc[0] ?? null;
+        @endphp
+        @if($nextOcc)
+        <div class="mb-5 p-4 rounded-lg border border-gray-100 bg-gray-50">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Open Attendance Session</p>
+            {{-- Quick-select occurrence pills --}}
+            @if(count($upcomingOcc) > 1)
+            <div class="flex flex-wrap gap-2 mb-3" id="occ-pills">
+                @foreach($upcomingOcc as $i => $occ)
+                <button type="button"
+                    class="occ-pill text-sm px-3 py-1.5 rounded-lg border transition"
+                    data-date="{{ $occ->toDateString() }}">
+                    {{ $occ->format('D, d M') }}
+                </button>
+                @endforeach
+            </div>
+            @endif
+            <form action="{{ route('admin.attendance.open', $event->id) }}" method="POST"
+                class="flex flex-wrap items-center gap-3">
+                @csrf
+                <input type="date" name="attendance_date" id="occ-date-input"
+                    value="{{ $nextOcc->toDateString() }}"
+                    class="tw-form-control text-sm">
+                <button type="submit"
+                    class="text-sm px-4 py-2 rounded btn btn-primary submit-btn flex items-center gap-2">
+                    <i class="fas fa-plus text-xs"></i> Open Session
+                </button>
+            </form>
         </div>
-        @endif
-    </div>
-
-    <div class="att-sub-panel" data-att="not_attended">
-        @if($notAttended->isEmpty())
-        <p class="text-sm text-gray-400 italic">No records.</p>
         @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            @foreach($notAttended as $record)
-            @php
-            $profile = $record->user?->userprofile;
-            $fullname = $profile ? trim($profile->firstname . ' ' . $profile->lastname) : $record->user?->name;
-            $avatar = $profile?->AvatarPath;
-            @endphp
-            <a href="{{ url('/admin/member/show/' . $record->user?->name) }}"
-                class="flex items-center gap-3 p-3 rounded border border-gray-100 hover:bg-gray-50 transition">
-                @if($avatar)
-                <img src="{{ $avatar }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
-                @else
-                <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <span class="text-red-500 text-xs font-semibold">{{ strtoupper(substr($fullname ?? '?', 0, 1)) }}</span>
-                </div>
-                @endif
-                <span class="text-sm text-gray-700">{{ $fullname }}</span>
-            </a>
-            @endforeach
-        </div>
+        <p class="text-sm text-gray-400 italic mb-5">No upcoming occurrences — series may have ended.</p>
         @endif
-    </div>
-
-</div>--}}
-@endif
-
-{{-- ── Attendance tab ─────────────────────────────────────────────── --}}
-@if($event->enable_attendance)
-<div class="ev-tab-panel px-6 py-5" data-tab="attendance">
-
-    {{-- Open / start a session --}}
-    @can('create-attendance')
-    @if($event->repeats == 1)
-    {{-- Recurring: date picker pre-filled with next occurrence --}}
-    @php
-    $existingDates = $sessions->pluck('attendance_date')
-    ->map(fn($d) => \Carbon\Carbon::parse($d)->toDateString())->toArray();
-    $upcomingOcc = $event->upcomingOccurrences($existingDates, 5);
-    $nextOcc = $upcomingOcc[0] ?? null;
-    @endphp
-    @if($nextOcc)
-    <div class="mb-5 p-4 rounded-lg border border-gray-100 bg-gray-50">
-        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Open Attendance Session</p>
-        {{-- Quick-select occurrence pills --}}
-        @if(count($upcomingOcc) > 1)
-        <div class="flex flex-wrap gap-2 mb-3" id="occ-pills">
-            @foreach($upcomingOcc as $i => $occ)
+        @else
+        {{-- Non-recurring: simple "open for today" --}}
+        <a href="{{ url('admin/event/'.$event->id.'/managers') }}">
             <button type="button"
-                class="occ-pill text-sm px-3 py-1.5 rounded-lg border transition"
-                data-date="{{ $occ->toDateString() }}">
-                {{ $occ->format('D, d M') }}
+                class="text-sm px-4 py-2 rounded btn btn-primary submit-btn flex items-center gap-2">
+                <i class="fas fa-plus text-xs"></i> Set Attendance Manager
             </button>
-            @endforeach
-        </div>
-        @endif
-        <form action="{{ route('admin.attendance.open', $event->id) }}" method="POST"
-            class="flex flex-wrap items-center gap-3">
+        </a>
+
+        @php $todaySession = $sessions->firstWhere(fn($s) => \Carbon\Carbon::parse($s->attendance_date)->toDateString() === now()->toDateString()); @endphp
+        @if(!$todaySession)
+        <form action="{{ route('admin.attendance.open', $event->id) }}" method="POST" class="mb-5">
             @csrf
-            <input type="date" name="attendance_date" id="occ-date-input"
-                value="{{ $nextOcc->toDateString() }}"
-                class="tw-form-control text-sm">
+            <input type="hidden" name="attendance_date" value="{{ now()->toDateString() }}">
             <button type="submit"
                 class="text-sm px-4 py-2 rounded btn btn-primary submit-btn flex items-center gap-2">
-                <i class="fas fa-plus text-xs"></i> Open Session
+                <i class="fas fa-plus text-xs"></i> Open Session for Today
             </button>
         </form>
-    </div>
-    @else
-    <p class="text-sm text-gray-400 italic mb-5">No upcoming occurrences — series may have ended.</p>
-    @endif
-    @else
-    {{-- Non-recurring: simple "open for today" --}}
-    <a href="{{ url('admin/event/'.$event->id.'/managers') }}">
-        <button type="button"
-            class="text-sm px-4 py-2 rounded btn btn-primary submit-btn flex items-center gap-2">
-            <i class="fas fa-plus text-xs"></i> Set Attendance Manager
-        </button>
-    </a>
+        @else
+        <div class="mb-5 flex items-center gap-3">
+            <span class="text-sm text-green-700 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                <i class="fas fa-circle text-green-400 text-xs"></i> Session open for today
+            </span>
+            <a href="{{ route('admin.attendance.checkin', $todaySession->id) }}"
+                class="text-sm px-4 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-1.5">
+                <i class="fas fa-mobile-alt text-xs"></i> Start Check-in
+            </a>
+        </div>
+        @endif
+        @endif
+        @endcan
 
-    @php $todaySession = $sessions->firstWhere(fn($s) => \Carbon\Carbon::parse($s->attendance_date)->toDateString() === now()->toDateString()); @endphp
-    @if(!$todaySession)
-    <form action="{{ route('admin.attendance.open', $event->id) }}" method="POST" class="mb-5">
-        @csrf
-        <input type="hidden" name="attendance_date" value="{{ now()->toDateString() }}">
-        <button type="submit"
-            class="text-sm px-4 py-2 rounded btn btn-primary submit-btn flex items-center gap-2">
-            <i class="fas fa-plus text-xs"></i> Open Session for Today
-        </button>
-    </form>
-    @else
-    <div class="mb-5 flex items-center gap-3">
-        <span class="text-sm text-green-700 bg-green-50 border border-green-200 px-3 py-1.5 rounded-lg flex items-center gap-2">
-            <i class="fas fa-circle text-green-400 text-xs"></i> Session open for today
-        </span>
-        <a href="{{ route('admin.attendance.checkin', $todaySession->id) }}"
-            class="text-sm px-4 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-1.5">
-            <i class="fas fa-mobile-alt text-xs"></i> Start Check-in
-        </a>
-    </div>
-    @endif
-    @endif
-    @endcan
-
-    {{-- Sessions list --}}
-    @if($sessions->isEmpty())
-    <p class="text-sm text-gray-400 italic">No attendance sessions yet.</p>
-    @else
-    <div class="space-y-2">
-        @foreach($sessions as $sess)
-        @php $isLocked = (bool) $sess->locked_at; @endphp
-        <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
-            {{-- Date --}}
-            <div class="flex-shrink-0 w-12 text-center bg-gray-100 rounded-lg py-1.5">
-                <p class="text-xs font-bold text-gray-700 uppercase leading-none">
-                    {{ \Carbon\Carbon::parse($sess->attendance_date)->format('M') }}
-                </p>
-                <p class="text-lg font-bold text-gray-800 leading-tight">
-                    {{ \Carbon\Carbon::parse($sess->attendance_date)->format('d') }}
-                </p>
-            </div>
-
-            {{-- Info --}}
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span class="text-sm font-medium text-gray-700">
-                        {{ \Carbon\Carbon::parse($sess->attendance_date)->format('D, d M Y') }}
-                    </span>
-                    @if($isLocked)
-                    <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Locked</span>
-                    @else
-                    <span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Open</span>
-                    @endif
+        {{-- Sessions list --}}
+        @if($sessions->isEmpty())
+        <p class="text-sm text-gray-400 italic">No attendance sessions yet.</p>
+        @else
+        <div class="space-y-2">
+            @foreach($sessions as $sess)
+            @php $isLocked = (bool) $sess->locked_at; @endphp
+            <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
+                {{-- Date --}}
+                <div class="flex-shrink-0 w-12 text-center bg-gray-100 rounded-lg py-1.5">
+                    <p class="text-xs font-bold text-gray-700 uppercase leading-none">
+                        {{ \Carbon\Carbon::parse($sess->attendance_date)->format('M') }}
+                    </p>
+                    <p class="text-lg font-bold text-gray-800 leading-tight">
+                        {{ \Carbon\Carbon::parse($sess->attendance_date)->format('d') }}
+                    </p>
                 </div>
-                <p class="text-xs text-gray-400 mt-0.5">
-                    {{ $sess->attendees_count }} {{ Str::plural('member', $sess->attendees_count) }} checked in
-                </p>
-            </div>
 
-            {{-- Actions --}}
-            <div class="flex items-center gap-2 flex-shrink-0">
-                @if(!$isLocked)
-                @can('create-attendance')
-                <a href="{{ route('admin.attendance.checkin', $sess->id) }}"
-                    class="text-xs px-2.5 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-1">
-                    <i class="fas fa-mobile-alt text-xs"></i> Check-in
-                </a>
-                @endcan
-                @endif
-                <a href="{{ route('admin.attendance.session', $sess->id) }}"
-                    class="text-xs px-2.5 py-1.5 rounded border border-gray-200 text-gray-600 hover:bg-gray-100 transition">
-                    View
-                </a>
+                {{-- Info --}}
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-sm font-medium text-gray-700">
+                            {{ \Carbon\Carbon::parse($sess->attendance_date)->format('D, d M Y') }}
+                        </span>
+                        @if($isLocked)
+                        <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Locked</span>
+                        @else
+                        <span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Open</span>
+                        @endif
+                    </div>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        {{ $sess->attendees_count }} {{ Str::plural('member', $sess->attendees_count) }} checked in
+                    </p>
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    @if(!$isLocked)
+                    @can('create-attendance')
+                    <a href="{{ route('admin.attendance.checkin', $sess->id) }}"
+                        class="text-xs px-2.5 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-1">
+                        <i class="fas fa-mobile-alt text-xs"></i> Check-in
+                    </a>
+                    @endcan
+                    @endif
+                    <a href="{{ route('admin.attendance.session', $sess->id) }}"
+                        class="text-xs px-2.5 py-1.5 rounded border border-gray-200 text-gray-600 hover:bg-gray-100 transition">
+                        View
+                    </a>
+                </div>
             </div>
+            @endforeach
         </div>
-        @endforeach
+        @endif
+
     </div>
     @endif
 
-</div>
-@endif
+    {{-- ── Notes tab ─────────────────────────────────────────────────── --}}
+    <div class="ev-tab-panel px-6 py-5" data-tab="notes">
 
-{{-- ── Notes tab ─────────────────────────────────────────────────── --}}
-<div class="ev-tab-panel px-6 py-5" data-tab="notes">
+        {{-- Add note form --}}
+        <form id="note-form" class="mb-5">
+            @csrf
+            <input type="hidden" name="entity_id" value="{{ $event->id }}">
+            <input type="hidden" name="entity_name" value="event">
+            <input type="hidden" name="church_id" value="{{ $event->church_id }}">
+            <input type="hidden" name="id" value="">
+            <label class="tw-form-label block mb-1">Add Note</label>
+            <textarea name="notes" id="note-input" rows="3" placeholder="Write a note…"
+                class="tw-form-control w-full mb-2"></textarea>
+            <button type="submit"
+                class="text-sm px-3 py-1.5 rounded btn btn-primary submit-btn flex items-center gap-1.5">
+                <i class="fas fa-paper-plane text-xs"></i> Save Note
+            </button>
+        </form>
 
-    {{-- Add note form --}}
-    <form id="note-form" class="mb-5">
-        @csrf
-        <input type="hidden" name="entity_id" value="{{ $event->id }}">
-        <input type="hidden" name="entity_name" value="event">
-        <input type="hidden" name="church_id" value="{{ $event->church_id }}">
-        <input type="hidden" name="id" value="">
-        <label class="tw-form-label block mb-1">Add Note</label>
-        <textarea name="notes" id="note-input" rows="3" placeholder="Write a note…"
-            class="tw-form-control w-full mb-2"></textarea>
-        <button type="submit"
-            class="text-sm px-3 py-1.5 rounded btn btn-primary submit-btn flex items-center gap-1.5">
-            <i class="fas fa-paper-plane text-xs"></i> Save Note
-        </button>
-    </form>
-
-    {{-- Notes list --}}
-    <div id="notes-list">
-        @forelse($notes as $note)
-        <div class="note-item flex items-start justify-between gap-3 py-3 border-b border-gray-100 last:border-0"
-            data-id="{{ $note->id }}">
-            <div>
-                <p class="text-sm text-gray-700 leading-relaxed">{{ $note->notes }}</p>
-                <p class="text-xs text-gray-400 mt-1">{{ $note->created_at->format('d M Y, h:i A') }}</p>
+        {{-- Notes list --}}
+        <div id="notes-list">
+            @forelse($notes as $note)
+            <div class="note-item flex items-start justify-between gap-3 py-3 border-b border-gray-100 last:border-0"
+                data-id="{{ $note->id }}">
+                <div>
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ $note->notes }}</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ $note->created_at->format('d M Y, h:i A') }}</p>
+                </div>
+                <button class="note-delete-btn flex-shrink-0 text-gray-300 hover:text-red-500 transition text-lg leading-none"
+                    data-id="{{ $note->id }}" title="Delete note">&times;</button>
             </div>
-            <button class="note-delete-btn flex-shrink-0 text-gray-300 hover:text-red-500 transition text-lg leading-none"
-                data-id="{{ $note->id }}" title="Delete note">&times;</button>
+            @empty
+            <p class="text-sm text-gray-400 italic" id="notes-empty">No notes yet.</p>
+            @endforelse
         </div>
-        @empty
-        <p class="text-sm text-gray-400 italic" id="notes-empty">No notes yet.</p>
-        @endforelse
-    </div>
 
-</div>
+    </div>
 
 </div>
 
