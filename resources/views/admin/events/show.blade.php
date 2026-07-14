@@ -380,7 +380,7 @@ $isAdmin = auth()->user()->usergroup_id == 3;
         @endif
         @else
         {{-- Non-recurring: simple "open for today" --}}
-        <a href="{{ url('admin/event/'.$event->id'./managers') }}">
+        <a href="{{ url('admin/event/'.$event->id.'/managers') }}">
             <button type="button"
                 class="text-sm px-4 py-2 rounded btn btn-primary submit-btn flex items-center gap-2">
                 <i class="fas fa-plus text-xs"></i> Set Attendance Manager
