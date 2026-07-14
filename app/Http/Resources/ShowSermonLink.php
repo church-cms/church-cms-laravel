@@ -34,7 +34,7 @@ class ShowSermonLink extends JsonResource
             'sermon_date'   =>  date('M d Y', strtotime($this->date)),
             'video_link' => $this->video_link,
             'audio_link' => $this->audio_link,
-            'pdf_link' => $this->PdfUrlPath,
+            'pdf_link' => $this->PdfUrlPath ?? null,
         ];
     }
 }
