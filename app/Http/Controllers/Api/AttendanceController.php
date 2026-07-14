@@ -62,6 +62,8 @@ class AttendanceController extends Controller
                 ];
             });
 
+
+
         return response()->json(['data' => $events]);
     }
 
@@ -314,6 +316,32 @@ class AttendanceController extends Controller
                 ];
             });
 
+        $notAttendees = EventAttendee::where('session_id', $session_id)
+            ->with(['member.userprofile', 'scannedBy'])
+            ->orderBy('scanned_at')
+            ->pluck('user_id')->toArray();
+
+        $not_attendees = User::with('userprofile')
+            ->select('id', 'name', 'mobile_no')
+            ->where('church_id', $session->church_id)
+            ->ByRole('5')
+            ->whereHas('userprofile', function ($q) {
+                $q->where('membership_type', 'member')
+                    ->orWhereNull('membership_type');
+            })
+            ->whereNotIn('id', $notAttendees)
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'member_id'   => $user->id,
+                    'member_name' => $user->name,
+                    'avatar_url'  => $user->userprofile?->avatar
+                        ? Storage::disk('public')->url($user->userprofile->avatar)
+                        : null,
+                    'mobile_no'   => $user->mobile_no,
+                ];
+            });
+
         return response()->json([
             'session_id'      => $session->id,
             'event_title'     => $session->event->title,
@@ -321,6 +349,7 @@ class AttendanceController extends Controller
             'is_locked'       => !is_null($session->locked_at),
             'total'           => $attendees->count(),
             'attendees'       => $attendees,
+            'not_attendees' => $not_attendees
         ]);
     }
 }
