@@ -173,16 +173,7 @@ $isAdmin = auth()->user()->usergroup_id == 3;
             @endif
         </button>
         @endif
-        @if($expired)
-        <button class="ev-tab-btn px-5 py-3 text-sm font-medium whitespace-nowrap transition border-b-2"
-            data-tab="attendees">
-            <i class="fas fa-users mr-1.5 text-xs"></i>
-            Attendees
-            @if($attended->count())
-            <span class="ml-1 text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded-full">{{ $attended->count() }}</span>
-            @endif
-        </button>
-        @endif
+
         @if($event->enable_attendance)
         <button class="ev-tab-btn px-5 py-3 text-sm font-medium whitespace-nowrap transition border-b-2"
             data-tab="attendance">
