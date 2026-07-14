@@ -30,7 +30,12 @@ class AttendanceEventListener implements ShouldQueue
     public function handle(AttendanceEvent $event)
     {
         //
-        $users=User::where('church_id',$event->church_id)->ByRole('5')->pluck('id')->toArray();
+        // $users=User::where('church_id',$event->church_id)->ByRole('5')->pluck('id')->toArray();
+
+       $users=User::where('church_id',$event->church_id)->ByRole('5')
+        ->whereHas('userprofile', function ($q) {
+                $q->where('membership_type', 'member')->orWhereNull('membership_type');
+            })->pluck('id')->toArray();
 
         foreach ($users as $user_id) 
         {
