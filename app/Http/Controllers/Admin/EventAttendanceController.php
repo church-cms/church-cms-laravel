@@ -105,6 +105,7 @@ class EventAttendanceController extends Controller
                 ];
             });
 
+
         $total_count = ($not_attendees->count() + $attendees->count());
         $absent_count = $not_attendees->count();
         $present_count = $attendees->count();
