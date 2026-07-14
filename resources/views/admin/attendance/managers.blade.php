@@ -48,7 +48,7 @@
                         class="w-8 h-8 rounded-full object-cover">
                     @else
                     <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-500">
-                        {{ strtoupper(substr($manager->staff->name, 0, 1)) }}
+                        {{ strtoupper(substr($manager->staff->fullname, 0, 1)) }}
                     </div>
                     @endif
                     <div>
