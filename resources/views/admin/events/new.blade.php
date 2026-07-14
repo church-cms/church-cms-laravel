@@ -413,7 +413,7 @@
                 class="{{ $attEnabled ? '' : 'hidden' }} px-6 pb-5 pt-1 border-t border-gray-100">
                 <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Who can be checked in?</p>
                 <div class="flex flex-wrap gap-3 mb-3" id="att-scope-group">
-                    @foreach(['all' => ['label' => 'All Members', 'icon' => 'fa-users'], 'group' => ['label' => 'A Group', 'icon' => 'fa-layer-group']] as $val => $opt)
+                    @foreach(['all' => ['label' => 'All Members', 'icon' => 'fa-users']] as $val => $opt)
                     <label class="att-scope-pill cursor-pointer border-2 rounded-lg px-4 py-2.5 flex items-center gap-2.5 transition select-none
                         {{ $oldScope === $val ? 'border-blue-600 bg-blue-50' : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50' }}">
                         <input type="radio" name="attendance_scope" value="{{ $val }}" class="sr-only"
@@ -423,7 +423,7 @@
                     </label>
                     @endforeach
                 </div>
-                <div id="att-group-select" class="{{ $oldScope === 'group' ? '' : 'hidden' }} max-w-xs">
+                <!-- <div id="att-group-select" class="{{ $oldScope === 'group' ? '' : 'hidden' }} max-w-xs">
                     <select name="attendance_group_id" class="tw-form-control w-full text-sm">
                         <option value="">Select a group…</option>
                         @foreach($groups as $g)
@@ -432,7 +432,7 @@
                         </option>
                         @endforeach
                     </select>
-                </div>
+                </div> -->
             </div>
         </div>
 
