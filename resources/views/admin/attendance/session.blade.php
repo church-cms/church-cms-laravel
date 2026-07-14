@@ -155,7 +155,8 @@
         </table>
     </div>
 </div>
-
+@endsection
+@push('scripts')
 <script>
     (function() {
         var ACTIVE_SUB = 'bg-blue-600 text-white border-blue-600';
@@ -184,4 +185,4 @@
         });
     })();
 </script>
-@endsection
+@endpush
