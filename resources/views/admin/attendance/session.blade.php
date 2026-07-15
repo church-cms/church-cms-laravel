@@ -119,6 +119,11 @@
 
     {{-- Not attendees table --}}
     <div class="att-sub-panel overflow-x-auto hidden" data-att="not_attendees">
+        <div class="flex justify-end mb-3">
+            <button type="button" class="blue-bg text-white text-sm px-4 py-2 rounded">
+                Send Message
+            </button>
+        </div>
         <table class="w-full text-sm text-left table-fixed">
             <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
