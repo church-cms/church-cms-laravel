@@ -39,50 +39,52 @@
 
     {{-- Sessions table --}}
     <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
+        <table class="w-full text-sm text-left table-fixed">
             <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
                 <tr>
-                    <th class="px-4 py-2">Date</th>
-                    <th class="px-4 py-2">Opened By</th>
-                    <th class="px-4 py-2">Attendees</th>
-                    <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2 w-1/6">Date</th>
+                    <th class="px-4 py-2 w-1/6">Opened By</th>
+                    <th class="px-4 py-2 w-1/6">Attendees</th>
+                    <th class="px-4 py-2 w-1/4">Status</th>
                     <th class="px-4 py-2">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($sessions as $session)
                 <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-2">{{ \Carbon\Carbon::parse($session->attendance_date)->format('d M Y') }}</td>
-                    <td class="px-4 py-2">{{ optional($session->openedBy)->name }}</td>
-                    <td class="px-4 py-2 font-semibold">{{ $session->attendees_count }}</td>
-                    <td class="px-4 py-2">
+                    <td class="px-4 py-2 align-middle">{{ \Carbon\Carbon::parse($session->attendance_date)->format('d M Y') }}</td>
+                    <td class="px-4 py-2 align-middle">{{ optional($session->openedBy)->name }}</td>
+                    <td class="px-4 py-2 align-middle font-semibold">{{ $session->attendees_count }}</td>
+                    <td class="px-4 py-2 align-middle">
                         @if($session->locked_at)
-                        <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs">
+                        <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs whitespace-nowrap">
                             Locked {{ \Carbon\Carbon::parse($session->locked_at)->format('d M H:i') }}
                         </span>
                         @else
                         <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs">Open</span>
                         @endif
                     </td>
-                    <td class="px-4 py-2 flex gap-2 flex-wrap">
-                        <a href="{{ route('admin.attendance.session', $session->id) }}"
-                            class="text-xs blue-bg text-white px-2 py-1 rounded">View</a>
-                        <a href="{{ route('admin.attendance.export', $session->id) }}"
-                            class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">Export CSV</a>
-                        @can('update-attendance')
-                        @if($session->locked_at)
-                        <form action="{{ route('admin.attendance.unlock', $session->id) }}" method="POST" class="inline">
-                            @csrf
-                            <button class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Unlock</button>
-                        </form>
-                        @else
-                        <form action="{{ route('admin.attendance.lock', $session->id) }}" method="POST" class="inline"
-                            onsubmit="return confirm('Lock this session? No further check-ins will be allowed.')">
-                            @csrf
-                            <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Lock</button>
-                        </form>
-                        @endif
-                        @endcan
+                    <td class="px-4 py-2 align-middle">
+                        <div class="flex gap-2 flex-wrap items-center">
+                            <a href="{{ route('admin.attendance.session', $session->id) }}"
+                                class="text-xs blue-bg text-white px-2 py-1 rounded">View</a>
+                            <!-- <a href="{{ route('admin.attendance.export', $session->id) }}"
+                                class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">Export CSV</a> -->
+                            @can('update-attendance')
+                            @if($session->locked_at)
+                            <form action="{{ route('admin.attendance.unlock', $session->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Unlock</button>
+                            </form>
+                            @else
+                            <form action="{{ route('admin.attendance.lock', $session->id) }}" method="POST" class="inline"
+                                onsubmit="return confirm('Lock this session? No further check-ins will be allowed.')">
+                                @csrf
+                                <button class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">Lock</button>
+                            </form>
+                            @endif
+                            @endcan
+                        </div>
                     </td>
                 </tr>
                 @empty
