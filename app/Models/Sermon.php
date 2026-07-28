@@ -188,18 +188,28 @@ class Sermon extends Model
         return $this->getFilePath($this->cover_image);
     }
 
-    public function getAudioCountAttribute()
-    {
-        return $this->sermonlinks->where('type', 'audio')->count();
-    }
+   
+   public function getAudioCountAttribute()
+   {
+    return $this->sermonlinks()
+        ->whereNotNull('audio_link')
+        ->where('audio_link', '!=', '')
+        ->count();
+     }
 
     public function getVideoCountAttribute()
     {
-        return $this->sermonlinks->where('type', 'video')->count();
+         return $this->sermonlinks()
+        ->whereNotNull('video_link')
+        ->where('video_link', '!=', '')
+        ->count();
     }
 
     public function getFileCountAttribute()
     {
-        return $this->sermonlinks->where('type', 'document')->count();
+        return $this->sermonlinks()
+        ->whereNotNull('pdf_link')
+        ->where('pdf_link', '!=', '')
+        ->count();
     }
 }
