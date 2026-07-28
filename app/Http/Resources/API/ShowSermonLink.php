@@ -44,7 +44,7 @@ class ShowSermonLink extends JsonResource
             'cover_image'   =>  $this->sermons->CoverImagePath,
             'video_link' => $this->video_link,
             'audio_link' => $this->audio_link,
-            'pdf_link' => $this->PdfUrlPath,
+            'pdf_link' => $this->PdfUrlPath??null,
         ];
     }
 }
