@@ -91,7 +91,7 @@ class SermonLink extends Model
         if ($this->pdf_link != null) {
             return $this->getFilePath($this->pdf_link);
         } else {
-            return '';
+            return null;
         }
     }
 }
