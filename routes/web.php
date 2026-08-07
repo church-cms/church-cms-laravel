@@ -20,7 +20,7 @@ Route::group([
     'middleware' => \App\Http\Middleware\WebCmsContext::class,
     'namespace'  => 'WebBuilder',
 ], function () {
-    Route::get('/',              'HomeController@index')->name('web.home');
+    Route::get('/', 'HomeController@index')->name('web.home');
     Route::get('/pages',                           'PageController@index')->name('web.pages');
     Route::get('/page/{category_slug}/{page_slug}', 'PageController@show')->name('web.page');
     Route::get('/posts',         'PostController@index')->name('web.posts');
@@ -64,6 +64,9 @@ Route::group([
     Route::post('/guest/login',    'GuestAuthController@login')->name('web.guest.login.store')->middleware('throttle:10,1');
     Route::post('/guest/logout',   'GuestAuthController@logout')->name('web.guest.logout');
 });
+
+
+Route::get('/terms', 'AboutController@terms')->name('donate.terms');
 
 Auth::routes(['verify' => true, 'register' => false]);
 
@@ -140,7 +143,10 @@ Route::get('/emailverification/{token}', 'Auth\EmailVerificationController@email
 
 
 //terms
-Route::get('/terms', 'AboutController@terms');
+//Route::get('/terms', 'AboutController@terms');
+Route::get('/privacy-policy', 'AboutController@terms');
+
+
 
 //contact — now handled by WebBuilder\ContactController (see WebBuilder route group above)
 
