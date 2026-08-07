@@ -28,7 +28,7 @@
                 <div>
                     <h2 class="text-2xl font-semibold text-gray-800 mb-4">1. Introduction</h2>
                     <p>
-                        Welcome to <strong>[Church Name] Church Management System (Church CMS)</strong>.
+                        Welcome to <strong> Church Management System (Church CMS) software</strong>.
                         We respect your privacy and are committed to protecting your personal information.
                         This Privacy Policy explains how we collect, use, store, and protect the information
                         you provide when using our website and Church Management System.
