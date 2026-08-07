@@ -14,7 +14,7 @@
                     {{ $_church->name ?? config('app.name') }}
                 </p>
                 @if(!empty($_churchdetail['short_summary']))
-                    <p class="mt-3 text-sm leading-relaxed">{{ $_churchdetail['short_summary'] }}</p>
+                <p class="mt-3 text-sm leading-relaxed">{{ $_churchdetail['short_summary'] }}</p>
                 @else
                     <p class="mt-3 text-sm leading-relaxed">A loving community of faith, rooted in the gospel of Jesus Christ.</p>
                 @endif
@@ -142,7 +142,9 @@
                 @else
                 <a href="{{ route('login') }}" class="hover:text-gray-400 transition">Staff Login</a>
                 @endauth
-                <a href="{{ route('web.contact') }}" class="hover:text-gray-400 transition">Privacy</a>
+                <a href="https://churchcms.app/privacy-policy-2/" class="hover:text-gray-400 transition" target="_blank">Privacy policy</a>
+                 <a href="https://churchcms.app/terms-of-service/" class="hover:text-gray-400 transition" target="_blank">Terms of Use</a>
+
                 <button onclick="window.scrollTo({top:0,behavior:'smooth'})"
                         class="hover:text-gray-400 transition flex items-center gap-1">
                   &nbsp;&#8593;&nbsp;Back to top
