@@ -35,7 +35,9 @@ class GroupLink extends JsonResource
         $group_members = [];
 
         foreach ($members as $member) {
-            $group_members[] = $member->user->FullName;
+            if($member->user->FullName!=null){
+                 $group_members[] = $member->user->FullName;
+            }
         }
 
         $permissions = $this->user->permissionUser;
