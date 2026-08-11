@@ -1,0 +1,345 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Resources\Notification\NotificationResource;
+use App\Http\Resources\API\SendMail as SendMailResource;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Helpers\SiteHelper;
+use App\Models\SendMail;
+use App\Traits\Common;
+use App\Models\User;
+use Carbon\Carbon;
+use Exception;
+use Log;
+use OpenApi\Attributes as OA;
+
+class SendMessageController extends Controller
+{
+    use Common;
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    #[OA\Get(
+        path: '/api/v1/messages',
+        tags: ['Messages'],
+        summary: 'List notification messages for the current user',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/MessageListResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function index()
+    {
+        //
+        $messages =  SendMail::where([['church_id', Auth::user()->church_id], ['mode', 'notification'], ['user_id', Auth::id()]])->orderBy('fired_at', 'desc')->get();
+
+        $messages = SendMailResource::collection($messages);
+
+        return response()->json([
+            'success'   =>  true,
+            'message'   =>  'Messages List',
+            'data'      =>  $messages
+        ], 200);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    #[OA\Post(
+        path: '/api/v1/message/read/{id}',
+        tags: ['Messages'],
+        summary: 'Mark a message as read',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Message ID',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/MessageReadResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function readMessage(Request $request, $id)
+    {
+        //
+        try {
+            $message =  SendMail::where([['id', $id], ['user_id', Auth::id()]])->first();
+
+            $message->read_status = 1;
+            $message->read_at = Carbon::now();
+
+            $message->save();
+
+            return response()->json([
+                'success'   =>  true,
+                //'message'   =>  'Messages List',
+                //'data'      =>  $messages
+            ], 200);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+        }
+    }
+
+    #[OA\Get(
+        path: '/api/v1/notifications',
+        tags: ['Notification'],
+        summary: 'List push notifications for the current user',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/NotificationListResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function notificationList()
+    {
+        //   
+        try {
+
+            $user = User::where([['church_id', Auth::user()->church_id], ['id', Auth::id()]])->first();
+
+            if ($user) {
+
+                $notifications = \DB::table('notifications')->where('notifiable_id', Auth::id())->latest()->get();
+
+                $notifications = NotificationResource::collection($notifications);
+
+                $unread_notifications = \DB::table('notifications')
+                    ->whereNull('read_at')
+                    ->where('notifiable_id', Auth::id())
+                    ->count();
+
+                return response()->json([
+                    'success'   =>  true,
+                    'message'   =>  'Notification List',
+                    'type'      =>  'notification',
+                    'unread_count' => $unread_notifications,
+                    'data'      =>  $notifications
+
+                ], 200);
+            } else {
+                return response()->json([
+                    'success'   =>  false,
+                    'message'   =>  'unauthorised',
+                    'type'      =>  'notification',
+                    'data'      =>  [],
+                ], 401);
+            }
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+        }
+    }
+
+    #[OA\Post(
+        path: '/api/v1/notification/allread',
+        tags: ['Notification'],
+        summary: 'Mark all notifications as read for the current user',
+        operationId: 'f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/AllReadNotificationResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function allreadNotification(Request $request)
+    {
+        try {
+            $updated = \DB::table('notifications')
+                ->whereNull('read_at')
+                ->where('notifiable_id', Auth::id())
+                ->update(['read_at' => now()]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'All notifications marked as read',
+                'updated' => $updated,
+            ], 200);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark notifications as read',
+            ], 500);
+        }
+    }
+
+    #[OA\Post(
+        path: '/api/v1/notification/bulkread',
+        tags: ['Notification'],
+        summary: 'Mark a selected list of notifications as read',
+        operationId: 'a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/BulkReadNotificationRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/BulkReadNotificationResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function bulkReadNotification(Request $request)
+    {
+        try {
+            $request->validate([
+                'ids'   => 'required|array|min:1',
+                'ids.*' => 'required|string',
+            ]);
+
+            $updated = \DB::table('notifications')
+                ->whereIn('id', $request->ids)
+                ->whereNull('read_at')
+                ->where('notifiable_id', Auth::id())
+                ->update(['read_at' => now()]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Selected notifications marked as read',
+                'updated' => $updated,
+            ], 200);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark notifications as read',
+            ], 500);
+        }
+    }
+
+    #[OA\Post(
+        path: '/api/v1/notification/bulkremove',
+        tags: ['Notification'],
+        summary: 'Mark a selected list of notifications as remove',
+        operationId: 'a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d1',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/BulkRemoveNotificationRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/BulkRemoveNotificationResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function bulkRemoveNotification(Request $request)
+    {
+        try {
+            $request->validate([
+                'ids'   => 'required|array|min:1',
+                'ids.*' => 'required|string',
+            ]);
+
+           $deleted = \DB::table('notifications')
+    ->whereIn('id', $request->ids)
+    ->where('notifiable_id', Auth::id())
+    ->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Selected notifications deleted',
+                'updated' => $deleted,
+            ], 200);
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete notifications',
+            ], 500);
+        }
+    }
+
+    #[OA\Post(
+        path: '/api/v1/notification/read/{id}',
+        tags: ['Notification'],
+        summary: 'Mark a single notification as read',
+        operationId: 'b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Notification UUID',
+                schema: new OA\Schema(type: 'string')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/ReadNotificationResponse'
+            ),
+            new OA\Response(
+                response: 401,
+                description: 'Unauthorised'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function readNotification(Request $request, $id)
+    {
+        //   
+        try {
+
+            $user = User::where([['church_id', Auth::user()->church_id], ['id', Auth::id()]])->first();
+
+            if ($user) {
+
+                // $notification = \DB::table('notifications')->where('id', $id)->first();
+
+                // $notification->read_at = date('Y-m-d H:i:s');
+                // $notification->save();
+
+                 $updated = \DB::table('notifications')
+                ->where('id', $request->id)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
+
+                return response()->json([
+                    'success'   =>  true,
+                    'message'   =>  'Notification has been read successfully'
+
+                ], 200);
+            } else {
+                return response()->json([
+                    'success'   =>  false,
+                    'message'   =>  'unauthorised',
+                    'type'      =>  'notification',
+                    'data'      =>  [],
+                ], 401);
+            }
+        } catch (Exception $e) {
+            Log::info($e->getMessage());
+        }
+    }
+}

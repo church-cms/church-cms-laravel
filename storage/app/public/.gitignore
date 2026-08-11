@@ -1,0 +1,6 @@
+*
+!.gitignore
+!uploads/
+uploads/*
+!uploads/female.png
+!uploads/male.png

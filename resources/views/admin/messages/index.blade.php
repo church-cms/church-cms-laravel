@@ -1,0 +1,66 @@
+@extends('layouts.admin.layout')
+
+@section('content')
+    <div class="relative">
+        <div class="flex flex-wrap lg:flex-row justify-between">
+            <div class="">
+                <h1 class="admin-h1">Sent Messages</h1>
+            </div>
+
+            @include('partials.message')
+            <form action="{{ url('/admin/messages') }}" enctype="multipart form-data" class="mb-0">
+                <div class=" flex flex-wrap items-center mb-3">
+                    <select class="tw-form-control text-xs" name="mode">
+                        <option value="">Filter By Mode</option>
+                        <option value="mail" {{ \request()->query('mode') == 'mail' ? 'selected' : '' }}>Mail</option>
+                        <option value="notification" {{ \request()->query('mode') == 'notification' ? 'selected' : '' }}>
+                            Notification</option>
+                        <option value="sms" {{ \request()->query('mode') == 'sms' ? 'selected' : '' }}>Sms</option>
+                    </select>
+                    <button value="Submit" type="submit"
+                        class="blue-bg text-sm text-white px-2 py-1 rounded mx-1">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div class="custom-table bg-white p-2">
+            <table class="w-full">
+                <thead class="bg-grey-light">
+                    <tr class="border-t-2 border-b-2">
+                        <th class="text-left text-sm px-2 py-2 text-grey-darker">Batch Id</th>
+                        <th class="text-left text-sm px-2 py-2 text-grey-darker">Mode</th>
+                        <th class="text-left text-sm px-2 py-2 text-grey-darker">Sent On</th>
+                        <th class="text-left text-sm px-2 py-2 text-grey-darker">Status</th>
+                        <th class="text-left text-sm px-2 py-2 text-grey-darker">Action</th>
+                    </tr>
+                </thead>
+                @if (count($messages) == '')
+                    <tr class="border-t-2 border-b-2">
+                        <td colspan="5">
+                            <p class="font-semibold text-s" style="text-align: center">No records found</p>
+                        </td>
+                    </tr>
+                @else
+                    <tbody class="bg-grey-light">
+                        @foreach ($messages as $message)
+                            <tr>
+                                <td class="py-3 px-2">
+                                    <a
+                                        href="{{ url('/admin/message/'.$message->batch_id) }}">#{{$message->batch_id}}</a>
+
+                                </td>
+                                <td class="py-3 px-2">{{ ucwords($message->mode) }}</td>
+                                <td class="py-3 px-2">{{ date('d-m-Y H:i:s', strtotime($message->executed_at)) }}</td>
+                                <td class="py-3 px-2">{{ ucwords($message->status) }}</td>
+                                <td class="py-3 px-2">
+                                    <a href="{{ url('/admin/message/'.$message->batch_id)  }}"
+                                        class="btn btn-primary submit-btn cursor-pointer" target="_blank">View</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                @endif
+            </table>
+            {{ $messages->links() }}
+        </div>
+    </div>
+@endsection

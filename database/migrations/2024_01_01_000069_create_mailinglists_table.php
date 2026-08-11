@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('mailinglists', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->integer('church_id')->unsigned();
+            $table->foreign('church_id')->references('id')->on('church');
+            $table->enum('scope', ['subscription', 'campaign', 'segment'])->default('subscription');
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+            $table->boolean('is_published')->default(1);
+            $table->text('slug');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('mailinglists');
+    }
+};

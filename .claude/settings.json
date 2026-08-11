@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"Request \\\\$\\\\|Userprofile::\\\\|new Userprofile\\\\|Carbon::\" c:/laragon/www/church-cms-new/app/Http/Controllers/Admin/GuestAddController.php)",
+      "Bash(Get-ChildItem -Path \"c:\\\\laragon\\\\www\\\\church-cms-new\\\\resources\\\\js\" -Recurse -Include \"*.vue\", \"*.jsx\", \"*.js\")",
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(Sort-Object)"
+    ]
+  }
+}

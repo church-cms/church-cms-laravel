@@ -1,0 +1,184 @@
+   .login-form {
+        /*background-color: #21211f;*/
+        background-color:#00000075;
+    }
+    .login-form .input-group-addon {
+        background-color: #58daef;
+    }
+    .login-btn {
+        background-color: #157e91;
+    }
+    /*.more-icon {
+        background-color: #188df4;
+    }
+    .custom-shadow {
+        box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.19);
+        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.18);
+    }*/
+    .footer-links li:after {
+    content: '-';
+    padding: 10px 20px;
+    }
+    .footer-links li:last-child:after{
+        content: '';
+    padding: 10px 0;
+    }
+    .pricing-bg {
+      /*  background-color: #2c2e2f;*/
+      background-color: #1292ee;
+    }
+    .pricing-buy  {
+     color: #1292ee;
+     background-color: #fff;
+    }
+    .pricing-buy:hover {
+     background-color: #1292ee;
+     color: #fff;
+     border-color: #1292ee;
+    }
+
+    .pricing-table tr td {
+        @apply .text-sm .text-white;
+    }
+   /* .pricing-bg {
+        background-color:#e3ebee;
+    }*/
+    .pricing-amount {
+       color: #084772;
+    }
+  /*  .gallery-img {
+      height: 11rem;
+    }*/
+.fund-form .multiselect {
+  width: 80% !important;
+}
+.multiselect__tags{
+     border: 1px solid #cbd5e0 !important;
+}
+/*about css*/
+.about-bg {
+  /*background: #3492e2;*/
+  background: url('/uploads/banner.jpg');
+  height: 300px;
+}
+/*about css*/
+.sermon-btn {
+  background-color: #4299e1;
+ }
+/*dashboard css start*/
+.bg-1 {
+      /*background: linear-gradient(to right, #6fcafa 0%, #65bdf4 100%);*/
+      background: linear-gradient(to right, #69a3e3 0%, #6972e7 100%);
+}
+.bg-2 {
+      background: linear-gradient(to right, #c592f9 0%, #ac68f3 100%);
+}
+.bg-3 {
+      background: linear-gradient(to right, #fdb583 0%, #f88b90 100%);
+}
+.bg-4 {
+      background: linear-gradient(to right, #19d9b4 0%, #1fbfad 100%);
+}
+.circular-1 {
+    position: relative;
+    opacity: 0.1;
+    left: 23px;
+    top: 24px;
+}
+.circular-2{
+    position: relative;
+    opacity: 0.1;
+    right: -3px;
+    top: -4px;
+}
+.bg-light {
+  background-color: #edf2f7;
+}
+.progress {
+  padding:0;
+  width:100%;
+  height:6px;
+  overflow:hidden;
+  background:#dde7ef;
+  border-radius:50px;
+}
+
+.bar {
+  position:relative;
+  float:left;
+  min-width:1%;
+  height:100%;
+  background:#27b9f6;
+  border-radius: 50px;
+}
+
+.percent {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  margin:0;
+  font-family:tahoma,arial,helvetica;
+  font-size:12px;
+  color:white;
+}
+.fund-method {
+  font-size: 10px;
+}
+.fund-method.Cash {
+  background-color: #68d391;
+}
+.fund-method.Cheque {
+  background-color: #f6ad55;
+}
+.fund-method.Card {
+  background-color: #9f7aea;
+}
+.fund-method.Demanddraft {
+  background-color: #4fd1c5;
+}
+.bg-blue-light {
+  background-color: rgba(109, 201, 250, 0.25);
+}
+.bg-blue-dark {
+  background-color:  #6dc9fa;
+}
+.bg-green-light {
+  background-color:rgb(219, 251, 251);
+}
+.bg-green-dark {
+  background-color: #0be4e5;
+}
+.bg-yellow-light {
+  background-color: rgba(238, 196, 19, 0.19);
+}
+.bg-yellow-dark {
+  background-color: #eec413;
+}
+/*dashboard css end*/
+
+/*scrollbar*/
+.quill-editor {
+    height: max-content;
+    width: 750px;
+}
+/*preacher sidebar css*/
+.preacher-sidebar {
+  background-color: #008B8B !important;
+}
+.preacher-sidebar .active, .preacher-sidebar li:hover {
+    background: #047777 !important;
+}
+/*preacher sidebar css*/
+/***/
+.website-feature-icon {
+width: 120px;
+height: 120px;
+margin: auto;
+margin-bottom: 10px;
+}
+/***/
+.login-page select.form-control {
+    border-color: inherit !important;
+    border-radius: unset !important;
+  }
