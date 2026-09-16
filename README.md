@@ -30,7 +30,7 @@ Church teams often end up stitching together spreadsheets, messaging tools, live
 
 ## Technology stack
 
-- PHP 8.2+
+- **PHP 8.2 – 8.4** (Firebase packages support up to 8.4; PHP 8.5+ support pending package updates)
 - Laravel 10
 - Vue 2
 - MySQL 5.7+ or MariaDB
