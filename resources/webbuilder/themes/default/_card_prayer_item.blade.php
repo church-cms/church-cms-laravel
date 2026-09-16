@@ -9,7 +9,7 @@
                 </div>
                 @if($item->category)
                 <span class="flex-shrink-0 px-3 py-1 rounded-full text-sm font-semibold"
-                      style="background-color: {{ $item->category->gradient_start }}; color: {{ $item->category->display_color }}">
+                    style="background-color: {{ $item->category->gradient_start }}; color: {{ $item->category->display_color }}">
                     {{ $item->category->emoji }} {{ $item->category->name }}
                 </span>
                 @endif
@@ -29,7 +29,7 @@
                 </div>
                 <div class="w-full bg-gray-300 rounded-full h-2 mt-2">
                     <div class="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full"
-                         style="width: {{ $item->expiry_percentage }}%"></div>
+                        style="width: {{ $item->expiry_percentage }}%"></div>
                 </div>
             </div>
             @endif
@@ -54,6 +54,18 @@
                 <strong>Total:</strong> <span data-prayer-total="{{ $item->id }}">{{ $item->total_participant_count }}</span> people praying
             </p>
 
+            @php
+
+            $userId = Auth::id();
+
+            $hasLifted = App\Models\PrayerParticipant::where('prayer_id', $item->id)
+            ->where('user_id', $userId)
+            ->exists();
+
+            @endphp
+            @if($hasLifted==0)
             @include('theme::_lift_prayer_btn', ['item' => $item])
+            @endif
+
         </div>
     </div>

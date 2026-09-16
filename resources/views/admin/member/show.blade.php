@@ -1,466 +1,937 @@
 @extends('layouts.admin.layout')
 
 @section('content')
-    <div class="">
-        @include('partials.message')
-        <div>
-            <h1 class="admin-h1 mb-3 flex items-center">
-                <a href="{{ $prev_url }}" class="rounded-full bg-gray-100 p-2" title="Back">
-                    <img src="{{ url('uploads/icons/back.svg') }}" class="w-3 h-3">
-                </a>
-                <span class="mx-3">Person Profile</span>
-            </h1>
-        </div>
-        <div class="flex flex-col lg:flex-row">
-            <div class="w-full lg:w-1/5 py-3">
-                <div class="bg-white rounded leading-relaxed px-3 py-3">
-                    <div class="relative">
-                        <div>
-                            <img src="{{ $user->userprofile->AvatarPath }}" class="lg:w-full md:w-56 w-56 h-56 mx-auto">
-                        </div>
-                        <div class=" mx-auto py-2">
-                            <ul class="flex justify-center">
-                                <li class="mx-2">
-                                    <a href="{{ url('/admin/member/edit/' . $user->name) }}" title="Edit Member"
-                                        class="text-white text-xs flex items-center blue-bg rounded p-1" id="edit">
-                                        <img src="{{ url('uploads/icons/profile-edit.svg') }}" class="w-3 h-3">
-                                        <span class="mx-1">Edit</span>
-                                    </a>
-                                </li>
+<div class="">
+    @include('partials.message')
 
-                                <li class="mx-2">
-                                    <!-- <a href="#" title="Delete Member" class=" text-white text-xs flex items-center blue-bg rounded p-1"><img src="{{ url('uploads/icons/p-delete.svg') }}" class="w-3 h-3"><span class="mx-1">Delete</span></a> -->
-                                    <form action="{{ url('/admin/member/delete', ['name' => $user->name]) }}" method="POST"
-                                        class="text-white text-xs flex items-center bg-red-600 rounded p-1" id="delete">
-                                        @csrf
-                                        @method('delete')
-                                        <img src="{{ url('uploads/icons/p-delete.svg') }}" class="w-3 h-3">
-                                        <button type="submit" class="mx-1">Delete</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="my-2">
-                        <p class="capitalize text-gray-600 text-sm">basic information :</p>
-                        <ul class="list-reset text-xs leading-relaxed my-2">
-                            <li class="flex py-1">
-                                <div class="flex items-center">
-                                    <img src="{{ url('uploads/icons/family.svg') }}" class="w-3 h-3">
-                                    <span class="mx-2 text-gray-700 font-medium">Family :</span>
-                                </div>
-                                <div class="mx-2">
-                                    <a href="#" class="text-blue-600 hover:text-blue-400 capitalize">
-                                        @if ($user->userprofile->family == null)
-                                            --
-                                        @else
-                                            {{ optional($user->userprofile)->family }}
-                                        @endif
-                                    </a>
-                                </div>
-                            </li>
-                            <li class="flex py-1">
-                                <div class="flex items-center">
-                                    <img src="{{ url('uploads/icons/date.svg') }}" class="w-3 h-3">
-                                    <span class="mx-2 text-gray-700 font-medium">Date Of Birth :</span>
-                                </div>
-                                <div class="">
-                                    <p>{{ date('d-m-Y', strtotime(optional($user->userprofile)->date_of_birth)) }}</p>
-                                </div>
-                            </li>
-                            <li class="flex py-1">
-                                <div class="flex items-center">
-                                    <img src="{{ url('uploads/icons/employee.svg') }}" class="w-3 h-3">
-                                    <span class="mx-2 text-gray-700 font-medium">Occupation :</span>
-                                </div>
-                                <div class="">
-                                    <p class="capitalize">
-                                        @if (optional($user->userprofile)->sub_occupation != '')
-                                            {{ optional($user->userprofile)->profession }} (
-                                            {{ optional($user->userprofile)->sub_occupation }} )
-                                        @else
-                                            {{ ucwords(str_replace('_', ' ', $user->userprofile->profession)) }}
-                                        @endif
-                                    </p>
-                                </div>
-                            </li>
-                            <li class="flex py-1">
-                                <div class="flex items-center">
-                                    <img src="{{ url('uploads/icons/gender.svg') }}" class="w-3 h-3">
-                                    <span class="mx-2 text-gray-700 font-medium">Gender :</span>
-                                </div>
-                                <div class="">
-                                    <p class="capitalize">{{ optional($user->userprofile)->gender }}</p>
-                                </div>
-                            </li>
-                            <li class="flex py-1">
-                                <div class="flex items-center">
-                                    <img src="{{ url('uploads/icons/age.svg') }}" class="w-3 h-3">
-                                    <span class="mx-2 text-gray-700 font-medium">Aadhaar Number :</span>
-                                </div>
-                                <div class="">
-                                    <p class="capitalize">
-                                        @if (optional($user->userprofile)->aadhar_number != '')
-                                            {{ optional($user->userprofile)->aadhar_number }}
-                                        @else
-                                            --
-                                        @endif
-                                    </p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="my-4">
-                        <p class="capitalize text-gray-600 text-sm">contact information :</p>
-                        <ul class="list-reset text-xs leading-loose my-2">
-                            <li class="flex items-baseline py-1">
-                                <img src="{{ url('uploads/icons/home-address.svg') }}" class="w-3 h-3">
-                                <div class="w-full mx-2">
-                                    <p class="text-gray-700 leading-normal">
-                                        @if ($user->userprofile->address == null)
-                                            --
-                                        @else
-                                            {{ optional($user->userprofile)->address }}
-                                        @endif
-                                    </p>
-                                </div>
-                            </li>
-                            <li class="flex py-1 items-center">
-                                <img src="{{ url('uploads/icons/telephone.svg') }}" class="w-3 h-3">
-                                <div class="w-full mx-2">
-                                    <a href="#" class="blue-text">{{ $user->mobile_no }}</a>
-                                </div>
-                            </li>
-                            <li class="flex py-1 items-center">
-                                <img src="{{ url('uploads/icons/email.svg') }}" class="w-3 h-3">
-                                <div class="w-full mx-2">
-                                    <a href="{{ url('/admin/member/sendMessage/' . $user->name) }}"
-                                        class="blue-text">{{ $user->email }}</a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+    {{-- Back + Page title --}}
+    <div class="mb-4">
+        <h1 class="admin-h1 flex items-center">
+            <a href="{{ $prev_url }}" class="rounded-full bg-gray-100 p-2 mr-3" title="Back">
+                <img src="{{ url('uploads/icons/back.svg') }}" class="w-3 h-3">
+            </a>
+            Person Profile
+        </h1>
+    </div>
+
+    {{-- ══════════════════════════════════════════════
+         FULL-WIDTH PROFILE HEADER CARD
+    ══════════════════════════════════════════════ --}}
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mb-6">
+        <div class="flex flex-col md:flex-row gap-0">
+
+            {{-- Avatar column --}}
+            <div class="md:w-48 flex-shrink-0 flex flex-col items-center justify-start bg-gray-50 border-b md:border-b-0 md:border-r border-gray-100 p-6 gap-4">
+                <img src="{{ $user->userprofile->AvatarPath }}"
+                    alt="{{ $user->FullName }}"
+                    class="w-32 h-32 rounded-full object-cover ring-4 ring-white shadow">
+
+                {{-- Edit / Delete --}}
+                <div class="flex gap-2">
+                    <a href="{{ url('/admin/member/edit/' . $user->name) }}"
+                        class="inline-flex items-center justify-center gap-1.5 w-20 h-8 text-xs font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition">
+                        <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                        Edit
+                    </a>
+                    <form action="{{ url('/admin/member/delete', ['name' => $user->name]) }}"
+                        method="POST" id="delete" class="flex m-0 p-0">
+                        @csrf
+                        @method('delete')
+                        <button type="submit"
+                            class="inline-flex items-center justify-center gap-1.5 w-24 h-8 text-xs font-semibold text-white bg-red-500 hover:bg-red-600 rounded-lg transition">
+                            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a1 1 0 00-1-1h-4a1 1 0 00-1 1H5" />
+                            </svg>
+                            Delete
+                        </button>
+                    </form>
                 </div>
             </div>
-            <div class="w-full lg:w-4/5 lg:mx-8">
-                <div class="flex lg:items-center lg:justify-between flex-col lg:flex-row relative">
-                    <h3 class="font-semibold text-3xl text-gray-700">{{ ucfirst($user->FullName) }}</h3>
 
-                    <div onclick="showsidebar('member-profile-menu')"
-                        class="bg-white rounded-full w-6 h-6 ml-auto flex items-center justify-center cursor-pointer">
-                        <svg id="Capa_1" enable-background="new 0 0 515.555 515.555" height="512"
-                            viewBox="0 0 515.555 515.555" width="512" xmlns="http://www.w3.org/2000/svg"
-                            class="w-3 h-3 fill-current text-gray-600">
-                            <path
-                                d="m303.347 18.875c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0">
-                            </path>
-                            <path
-                                d="m303.347 212.209c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0">
-                            </path>
-                            <path
-                                d="m303.347 405.541c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0">
-                            </path>
-                        </svg>
+            {{-- Details column --}}
+            <div class="flex-1 p-6">
+
+                {{-- Name + ID + kebab menu --}}
+                <div class="flex items-start justify-between gap-4 mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 leading-tight">{{ ucfirst($user->FullName) }}</h2>
+                        <p class="text-sm text-gray-400 mt-0.5">ID: {{ $user->id }}</p>
                     </div>
-                    <div id="member-profile-menu" class="hidden absolute top-0 right-0 bg-white shadow mt-10 rounded">
-                        <div class="flex flex-col text-xs w-40 my-1">
-                            @if (optional($user->userprofile)->status == 'inactive')
+
+                    {{-- ⋮ Kebab menu --}}
+                    <div class="relative flex-shrink-0">
+                        <button onclick="showsidebar('member-profile-menu')"
+                            class="bg-gray-100 hover:bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center transition">
+                            <svg viewBox="0 0 515.555 515.555" class="w-3 h-3 fill-current text-gray-600">
+                                <path d="m303.347 18.875c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0" />
+                                <path d="m303.347 212.209c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0" />
+                                <path d="m303.347 405.541c25.167 25.167 25.167 65.971 0 91.138s-65.971 25.167-91.138 0-25.167-65.971 0-91.138c25.166-25.167 65.97-25.167 91.138 0" />
+                            </svg>
+                        </button>
+                        <div id="member-profile-menu" class="hidden absolute top-10 right-0 bg-white shadow-lg rounded-xl border border-gray-100 z-20">
+                            <div class="flex flex-col text-xs w-48 py-1">
+                                @if (optional($user->userprofile)->status == 'inactive')
                                 <a href="#" rel="{{ url('/admin/member/updateStatus/' . $user->name) }}"
-                                    class="capitalize text-teal-500 rounded px-4 py-1 font-medium activate my-1 lg:my-0 md:my-0 mr-2"
+                                    class="capitalize text-teal-600 px-4 py-2 font-medium activate hover:bg-gray-50"
                                     value="active" id="status">Activate</a>
-                            @else
+                                @else
                                 <a href="#" rel="{{ url('/admin/member/updateStatus/' . $user->name) }}"
-                                    class="capitalize text-red-600 rounded px-4 py-1 font-medium activate my-1 lg:my-0 md:my-0 mr-2"
+                                    class="capitalize text-red-600 px-4 py-2 font-medium activate hover:bg-gray-50"
                                     value="inactive" id="status">Deactivate</a>
-                            @endif
+                                @endif
 
-                            @if ($user->email != null)
+                                @if ($user->email != null)
                                 @if ($user->email_verified == 1)
-                                    <a href="#" rel="{{ url('/admin/member/resetPassword/' . $user->id) }}"
-                                        class="capitalize text-gray-700 rounded px-4 py-1 mr-2 font-medium reset my-1 lg:my-0 md:my-0">reset
-                                        Password</a>
+                                <a href="#" rel="{{ url('/admin/member/resetPassword/' . $user->id) }}"
+                                    class="capitalize text-gray-700 px-4 py-2 font-medium reset hover:bg-gray-50">Reset Password</a>
                                 @endif
-
                                 @if ($user->email_verified != 1)
-                                    <a href="#" rel="{{ url('/admin/member/' . $user->id . '/verificationcode') }}"
-                                        class="capitalize text-gray-700 rounded px-4 py-1 mr-2 font-medium verify"
-                                        id="verify_mail">verify email</a>
+                                <a href="#" rel="{{ url('/admin/member/' . $user->id . '/verificationcode') }}"
+                                    class="capitalize text-gray-700 px-4 py-2 font-medium verify hover:bg-gray-50" id="verify_mail">Verify Email</a>
                                 @endif
-                            @endif
-
-                            @if ($status == 0)
+                                @endif
+                                @if ($status == 0)
                                 <a href="#" rel="{{ url('/admin/member/subscribe/' . $user->name) }}"
-                                    class="capitalize text-teal-500 rounded px-2 py-1 ml-2 font-medium subscribe my-1 lg:my-0 md:my-1"
+                                    class="capitalize text-teal-600 px-4 py-2 font-medium subscribe hover:bg-gray-50"
                                     value="1" id="subscribe">Subscribe NewsLetter</a>
-                            @else
+                                @else
                                 <a href="#" rel="{{ url('/admin/member/subscribe/' . $user->name) }}"
-                                    class="capitalize text-red-600 rounded px-2 py-1 ml-2 font-medium subscribe my-1 lg:my-0 md:my-1"
+                                    class="capitalize text-red-600 px-4 py-2 font-medium subscribe hover:bg-gray-50"
                                     value="0" id="subscribe">Unsubscribe NewsLetter</a>
-                            @endif
+                                @endif
 
-                            <!-- <a href="{{ url('/admin/member/sendMessage/' . $user->name) }}" class="capitalize text-white blue-bg rounded px-2 py-1 ml-2 font-medium">send message</a> -->
-
-                            <a href="#"
-                                class="capitalize text-gray-700 rounded px-2 py-1 ml-2 font-medium send_sms my-1 lg:my-0 md:my-1">messaging</a>
-
-                            <a href="{{url('/admin/member/view/'.$user->name)}}" class="capitalize text-gray-700 rounded px-2 py-1 ml-2 font-medium my-1 lg:my-0 md:my-1">Generate membership card</a>
-
-                            <a href="{{ url('/admin/member/add?ref_name=' . $user->name) }}"
-                                class="capitalize text-gray-700 rounded px-2 py-1 ml-2 font-medium my-1 lg:my-0 md:my-1">add
-                                family member</a>
-
-                            <a href="#" rel="{{ url('/admin/member/exit/' . $user->name) }}"
-                                class="capitalize text-gray-700 rounded px-2 py-1 ml-2 font-medium exit-member my-1 lg:my-0 md:my-1">exit
-                                member</a>
+                                <a href="#"
+                                    class="capitalize text-gray-700 px-4 py-2 font-medium send_sms hover:bg-gray-50">Messaging</a>
+                                <a href="{{ url('/admin/member/view/'.$user->name) }}"
+                                    class="capitalize text-gray-700 px-4 py-2 font-medium hover:bg-gray-50">Generate Membership Card</a>
+                                <a href="{{ url('/admin/member/add?ref_name=' . $user->name) }}"
+                                    class="capitalize text-gray-700 px-4 py-2 font-medium hover:bg-gray-50">Add Family Member</a>
+                                <a href="#"
+                                    rel="{{ url('/admin/member/exit/' . $user->name) }}"
+                                    data-name="{{ $user->name }}"
+                                    class="capitalize text-gray-700 px-4 py-2 font-medium exit-member hover:bg-gray-50">Exit Member</a>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="my-3 flex text-xs flex-wrap">
+                {{-- Info grid --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-0 border-t border-gray-100 pt-4">
+
+                    {{-- Basic Information --}}
+                    <div>
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Basic Information</p>
+                        <ul class="space-y-2 text-xs">
+                            <li class="flex items-center gap-2">
+                                <img src="{{ url('uploads/icons/family.svg') }}" class="w-3.5 h-3.5 flex-shrink-0">
+                                <span class="text-gray-500 font-medium w-24 flex-shrink-0">Family</span>
+                                <span class="text-blue-600 capitalize">
+                                    {{ optional($user->userprofile)->family ?: '--' }}
+                                </span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <img src="{{ url('uploads/icons/date.svg') }}" class="w-3.5 h-3.5 flex-shrink-0">
+                                <span class="text-gray-500 font-medium w-24 flex-shrink-0">Date of Birth</span>
+                                <span class="text-gray-800">
+                                    {{ optional($user->userprofile)->date_of_birth ? date('d M Y', strtotime($user->userprofile->date_of_birth)) : '--' }}
+                                </span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <img src="{{ url('uploads/icons/employee.svg') }}" class="w-3.5 h-3.5 flex-shrink-0">
+                                <span class="text-gray-500 font-medium w-24 flex-shrink-0">Occupation</span>
+                                <span class="text-gray-800 capitalize">
+                                    @if(optional($user->userprofile)->sub_occupation)
+                                    {{ optional($user->userprofile)->profession }} ({{ optional($user->userprofile)->sub_occupation }})
+                                    @else
+                                    {{ ucwords(str_replace('_',' ', optional($user->userprofile)->profession ?? '--')) }}
+                                    @endif
+                                </span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <img src="{{ url('uploads/icons/gender.svg') }}" class="w-3.5 h-3.5 flex-shrink-0">
+                                <span class="text-gray-500 font-medium w-24 flex-shrink-0">Gender</span>
+                                <span class="text-gray-800 capitalize">{{ optional($user->userprofile)->gender ?: '--' }}</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <img src="{{ url('uploads/icons/age.svg') }}" class="w-3.5 h-3.5 flex-shrink-0">
+                                <span class="text-gray-500 font-medium w-24 flex-shrink-0">Aadhaar No.</span>
+                                <span class="text-gray-800">{{ optional($user->userprofile)->aadhar_number ?: '--' }}</span>
+                            </li>
+                        </ul>
                     </div>
-                </div>
-                <div class="leading-relaxed">
-                    <p class="text-lg text-gray-700 font-semibold">ID: {{ $user->id }}</p>
-                </div>
-                <div class="bg-white shadow my-5">
-                    <profile-tab url="{{ url('/') }}" entity_id="{{ $user->id }}"
-                        church_id="{{ $user->church_id }}" name="{{ $user->name }}" mode="member"
-                        type="{{ $user->userprofile->membership_type }}"></profile-tab>
 
-                  
-           
+                    {{-- Contact Information --}}
+                    <div class="mt-4 sm:mt-0">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Contact Information</p>
+                        <ul class="space-y-2 text-xs">
+                            <li class="flex items-start gap-2">
+                                <img src="{{ url('uploads/icons/home-address.svg') }}" class="w-3.5 h-3.5 flex-shrink-0 mt-0.5">
+                                <span class="text-gray-800 leading-relaxed">
+                                    {{ optional($user->userprofile)->address ?: '--' }}
+                                </span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <img src="{{ url('uploads/icons/telephone.svg') }}" class="w-3.5 h-3.5 flex-shrink-0">
+                                <a href="tel:{{ $user->mobile_no }}" class="blue-text">{{ $user->mobile_no ?: '--' }}</a>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <img src="{{ url('uploads/icons/email.svg') }}" class="w-3.5 h-3.5 flex-shrink-0">
+                                <a href="{{ url('/admin/member/sendMessage/' . $user->name) }}"
+                                    class="blue-text truncate">{{ $user->email ?: '--' }}</a>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <portal-target name="profile"></portal-target>
                 </div>
-                <!-- <div class="bg-white shadow my-5">
-         <family-tree url="{{ url('/') }}" entity_id="{{ $user->id }}" church_id="{{ $user->church_id }}" name="{{ $user->name }}" mode="member" type="{{ $user->userprofile->membership_type }}"></family-tree>
-        </div> -->
-                <div class="bg-white shadow my-5 hidden" id="sms_div">
-                    <send-message url="{{ url('/') }}" name="{{ $user->name }}" tab="1" type="member">
-                    </send-message>
-                </div>
-
-                  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                     <div class="flex justify-between items-center mb-2">
-            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide ">Membership Id Card</h3>&nbsp; <a href="{{ url('/admin/member/print/'.$user->name) }}"
-   class="text-xs font-semibold text-white bg-blue-500 px-3 py-1 rounded cursor-pointer">
-   Print
-</a>
-        </div>
-                @include('member.idcard.idcard')
-               </div>
             </div>
         </div>
     </div>
+    {{-- ══════════════════════════════════════════════ --}}
+
+    <div class="w-full">
+
+        {{-- ══════════════════════════════════
+             PROFILE TABS  (pure Blade)
+        ══════════════════════════════════ --}}
+        <div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6 overflow-hidden">
+
+            {{-- Tab nav --}}
+            <div class="flex gap-0 border-b border-gray-200 overflow-x-auto">
+                @php
+                $tabs = [
+                ['id'=>'myprofile', 'label'=>'My Profile'],
+                ['id'=>'timeline', 'label'=>'Timeline'],
+                ['id'=>'family', 'label'=>'Family'],
+                ['id'=>'groups', 'label'=>'Assigned Groups'],
+                ['id'=>'messages', 'label'=>'Messages'],
+                ['id'=>'notes', 'label'=>'Notes'],
+                ['id'=>'idcard', 'label'=>'IDCard']
+                ];
+                @endphp
+                @foreach($tabs as $i => $tab)
+                <button
+                    data-tab="{{ $tab['id'] }}"
+                    onclick="switchTab(this.dataset.tab)"
+                    id="tab-btn-{{ $tab['id'] }}"
+                    class="tab-btn px-5 py-3 text-xs font-medium whitespace-nowrap border-b-2 transition {{ $i === 0 ? 'active-tab' : 'inactive-tab' }}">
+                    {{ $tab['label'] }}
+                </button>
+                @endforeach
+            </div>
+
+            {{-- ── Tab 1 : My Profile ─────────────────────── --}}
+            <div id="tab-myprofile" class="tab-panel p-6">
+                @php $profile = $user->userprofile; 
+                  $profile_age=date('Y')-date('Y',strtotime(optional($user->userprofile)->date_of_birth));
+                @endphp
+                <ul class="space-y-3 text-sm">
+
+                  
+
+
+                    @foreach([
+                    ['age.svg', 'Age', $profile_age ?? '--'],
+                    ['marriage.svg', 'Marriage Status', ucfirst($profile->marriage_status ?? '--')],
+                    ['date.svg', 'Marriage Date', $profile->marriage_date ? date('d M Y', strtotime($profile->marriage_date)) : '--'],
+                    ['member-ship.svg','Membership Type', ucfirst($profile->membership_type ?? '--')],
+                    ['date.svg', 'Membership Start Date', $profile->membership_type === 'member' && $profile->membership_start_date ? date('d M Y', strtotime($profile->membership_start_date)) : '--'],
+                    ] as [$icon, $label, $value])
+                    <li class="flex items-center gap-3">
+                        <img src="{{ url('uploads/icons/'.$icon) }}" class="w-4 h-4 flex-shrink-0">
+                        <span class="text-gray-500 font-medium w-44 flex-shrink-0">{{ $label }} :</span>
+                        <span class="text-gray-800">{{ $value }}</span>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+
+            {{-- ── Tab 2 : Timeline ───────────────────────── --}}
+         <div id="tab-timeline" class="tab-panel hidden p-4">
+
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <table class="w-full table-fixed text-sm">
+            <colgroup>
+                <col style="width:45%">
+                <col style="width:15%">
+                <col style="width:30%">
+                <col style="width:10%">
+            </colgroup>
+
+            <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        Date & Time
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        Action
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        Description
+                    </th>
+                    <th class="px-4 py-3 text-left font-semibold text-gray-600">
+                        IP Address
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-100 bg-white">
+                @forelse($activitylog as $log)
+
+                    @php
+                        $props = is_array($log->properties)
+                            ? $log->properties
+                            : json_decode($log->properties, true);
+                    @endphp
+
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 text-left whitespace-nowrap">
+                            {{ $log->created_at ? $log->created_at->format('d M Y h:i A') : '--' }}
+                        </td>
+
+                        <td class="px-4 py-3 text-left">
+                            {{ ucfirst($log->log_name ?? '--') }}
+                        </td>
+
+                        <td class="px-4 py-3 text-left">
+                            {{ $log->description ?? '--' }}
+                        </td>
+
+                        <td class="px-4 py-3 text-left whitespace-nowrap">
+                            {{ $props['ip'] ?? '--' }}
+                        </td>
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                            No activity records found.
+                        </td>
+                    </tr>
+
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    @if($activitylog->count())
+        <div class="flex justify-between items-center mt-4">
+            <div class="text-sm text-gray-500">
+                Showing
+                {{ $activitylog->firstItem() }}
+                to
+                {{ $activitylog->lastItem() }}
+                of
+                {{ $activitylog->total() }}
+                entries
+            </div>
+
+            <div>
+                {{ $activitylog->appends(request()->except('timeline_page'))->links() }}
+            </div>
+        </div>
+    @endif
+
+</div>
+
+            {{-- ── Tab 3 : Family ─────────────────────────── --}}
+            
+   
+
+<div id="tab-family" class="tab-panel hidden p-4">
+
+    <div class="overflow-x-auto rounded-lg border border-gray-200">
+
+        <table class="family-table">
+
+            <thead>
+                <tr>
+                    <th>Family Member</th>
+                    <th>Relation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($family_members as $member)
+
+                    <tr>
+
+                        <td>
+                            <div class="member-info">
+                                <img src="{{ $member->userprofile->AvatarPath }}"
+                                     alt="{{ $member->FullName }}"
+                                     class="member-avatar w-8 h-8">
+
+                                <a href="{{ url('/admin/member/show/'.$member->name) }}"
+                                   class="member-name">
+                                    {{ $member->FullName }}
+                                </a>
+                            </div>
+                        </td>
+
+                        <td class="capitalize">
+                            {{ $member->userprofile->relation ?? '--' }}
+                        </td>
+
+                        <td>
+                            <a href="{{ url('/admin/member/edit/'.$member->name) }}">
+                                <img src="{{ url('uploads/icons/pencil.svg') }}"
+                                     alt="Edit"
+                                     class="action-icon">
+                            </a>
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="3" style="text-align:center;padding:25px;color:#9ca3af;">
+                            No family members found
+                        </td>
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+            {{-- ── Tab 4 : Assigned Groups ─────────────────── --}}
+            <div id="tab-groups" class="tab-panel hidden p-4">
+
+                @if($grouplinks!=null)
+                <div class="space-y-3">
+                    @foreach($grouplinks as $gl)
+                    <div class="flex items-center gap-4 border border-gray-100 rounded-lg px-4 py-3 hover:bg-gray-50">
+                        <img src="{{ $gl->group->CoverImagePath ?? url('uploads/icons/group.svg') }}"
+                            class="w-10 h-10 rounded-lg object-cover flex-shrink-0">
+                        <div class="flex-1">
+                            <a href="{{ url('/admin/group/show/'.$gl->group_id) }}"
+                                class="text-sm font-semibold text-indigo-600 hover:underline">
+                                {{ $gl->group->name ?? '--' }}
+                            </a>
+                            <p class="text-xs text-gray-400 mt-0.5">
+                                Role: <span class="font-medium text-gray-600 capitalize">{{ str_replace('_',' ',$gl->role ?? 'member') }}</span>
+                            </p>
+                        </div>
+                        <span class="text-xs text-gray-400">
+                            Started {{ $gl->created_at ? $gl->created_at->diffForHumans() : '--' }}
+                        </span>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <p class="text-center text-sm text-gray-400 py-6">No groups assigned</p>
+                @endif
+            </div>
+
+            {{-- ── Tab 5 : Messages ───────────────────────── --}}
+            <div id="tab-messages" class="tab-panel hidden p-4">
+                <div class="overflow-x-auto">
+    <table class="w-full table-fixed text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+                <th class="w-[10%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Mode
+                </th>
+
+                <th class="w-[20%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Subject
+                </th>
+
+                <th class="w-[30%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Message
+                </th>
+
+                <th class="w-[10%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Attachments
+                </th>
+
+                <th class="w-[15%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Sent On
+                </th>
+
+                <th class="w-[8%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Status
+                </th>
+
+                <th class="w-[7%] px-3 py-3 text-left font-semibold text-gray-500">
+                    Action
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @forelse($messages as $msg)
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+
+                    <!-- Mode -->
+                    <td class="px-3 py-3 align-top">
+                        {{ ucfirst($msg->mode ?? '--') }}
+                    </td>
+
+                    <!-- Subject -->
+                    <td class="px-3 py-3 align-top">
+                        <div class="break-words">
+                            {{ $msg->subject ?? '--' }}
+                        </div>
+                    </td>
+
+                    <!-- Message -->
+                    <td class="px-3 py-3 align-top">
+                        <div class="break-words">
+                            {{ $msg->message ?? '--' }}
+                        </div>
+                    </td>
+
+                    <!-- Attachment -->
+                    <td class="px-3 py-3 align-top">
+                        @if($msg->attachments)
+                            <a href="{{ $msg->attachments }}"
+                               target="_blank"
+                               class="text-indigo-600 hover:underline">
+                                Download
+                            </a>
+                        @else
+                            --
+                        @endif
+                    </td>
+
+                    <!-- Sent On -->
+                    <td class="px-3 py-3 align-top whitespace-nowrap">
+                        {{ $msg->executed_at
+                            ? \Carbon\Carbon::parse($msg->executed_at)->format('d M Y H:i')
+                            : '--'
+                        }}
+                    </td>
+
+                    <!-- Status -->
+                    <td class="px-3 py-3 align-top">
+                        <span
+                            class="inline-flex px-2 py-1 rounded-full text-xs font-medium
+                            {{ $msg->status == 'sent'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-yellow-100 text-yellow-700' }}">
+                            {{ ucfirst($msg->status ?? '--') }}
+                        </span>
+                    </td>
+
+                    <!-- Action -->
+                    <td class="px-3 py-3 align-top">
+                        <a href="{{ url('/admin/message/show/'.$msg->id) }}"
+                           class="text-indigo-600 hover:underline">
+                            View
+                        </a>
+                    </td>
+
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="py-6 text-center text-gray-400">
+                        No messages found.
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+@if($messages->count())
+    <div class="px-4 py-3">
+        {{ $messages->appends(request()->except('msg_page'))->links() }}
+    </div>
+@endif
+            </div>
+
+            {{-- ── Tab 6 : Notes  (keep Vue — complex CRUD) ── --}}
+            <div id="tab-notes" class="tab-panel hidden p-4">
+                <notes url="{{ url('/') }}"
+                    entity_id="{{ $user->id }}"
+                    entity_name="user"
+                    church_id="{{ $user->church_id }}">
+                </notes>
+
+            </div>
+            {{-- ── Tab 6 : Notes  (ID Card) ── --}}
+            <div id="tab-idcard" class="tab-panel hidden p-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide ">Membership Id Card</h3>&nbsp; <a href="{{ url('/admin/member/print/'.$user->name) }}"
+                            class="text-xs font-semibold text-white bg-blue-500 px-3 py-1 rounded cursor-pointer">
+                            Print
+                        </a>
+                    </div>
+                    @include('member.idcard.idcard')
+                </div>
+            </div>
+
+        </div>
+        {{-- end profile tabs --}}
+        <div class="bg-white shadow my-5 hidden" id="sms_div">
+            <send-message url="{{ url('/') }}" name="{{ $user->name }}" tab="1" type="member">
+            </send-message>
+        </div>
+
+
+    </div>
+</div>
 @endsection
 
 @push('scripts')
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('.activate').on('click', function() {
-                var link = $(this).attr('rel');
-                var status = $(this).attr('value');
-                //alert(status);
-                swal({
-                    icon: "info",
-                    text: "Do you want to change the status ?",
-                    buttons: {
-                        cancel: true,
-                        confirm: true,
-                    },
-                    allowOutsideClick: false,
-                }).then((willChange) => {
-                    if (willChange) {
-                        $.ajax({
-                            url: link,
-                            data: {
-                                status: status
-                            },
-                            type: "POST",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(data) {
-                                //alert(ans);
-                                swal({
-                                    icon: "success",
-                                    text: "Member Status Updated Successfully",
-                                }).then(function() {
-                                    window.location.reload();
-                                });
-                            }
-                        })
-                    } else {
-                        swal("Cancelled");
-                    }
-                });
-            });
-        });
-
-        $(document).ready(function() {
-            $('.reset').on('click', function() {
-                var link = $(this).attr('rel');
-                //alert(link);
-                swal({
-                    icon: "info",
-                    text: "Do you want to reset password for this member ?",
-                    buttons: {
-                        cancel: true,
-                        confirm: true,
-                    },
-                    allowOutsideClick: false,
-                }).then((willChange) => {
-                    if (willChange) {
-                        $.ajax({
-                            url: link,
-                            type: "POST",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(data) {
-                                //alert(ans);
-                                swal({
-                                    icon: "success",
-                                    text: "Check your email to reset the password",
-                                    showConfirmButton: true,
-                                    confirmButtonColor: '#3085d6',
-                                    cancelButtonColor: '#d33',
-                                }).then(function() {
-                                    window.location.reload();
-                                });
-                            }
-                        })
-                    } else {
-                        swal("Cancelled");
-                    }
-                });
-            });
-        });
-
-        $(document).ready(function() {
-            $('.verify').on('click', function() {
-                var link = $(this).attr('rel');
-                //alert(link);
-                swal({
-                    icon: "info",
-                    text: "Do you want to verify email for this member ?",
-                    buttons: {
-                        cancel: true,
-                        confirm: true,
-                    },
-                    allowOutsideClick: false,
-                }).then((willChange) => {
-                    if (willChange) {
-                        $.ajax({
-                            url: link,
-                            type: "GET",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(data) {
-                                //alert(ans);
-                                swal({
-                                    icon: "success",
-                                    text: "Verification code sent Successfully",
-                                    showConfirmButton: true,
-                                    confirmButtonColor: '#3085d6',
-                                    cancelButtonColor: '#d33',
-                                }).then(function() {
-                                    window.location.reload();
-                                });
-                            }
-                        })
-                    } else {
-                        swal("Cancelled");
-                    }
-                });
-            });
-        });
-
-
-        $(document).ready(function() {
-            $('.subscribe').on('click', function() {
-                var link = $(this).attr('rel');
-                var status = $(this).attr('value');
-                //alert(link);
-                swal({
-                    icon: "info",
-                    text: "Do you want to change newsletter status for this member ?",
-                    buttons: {
-                        cancel: true,
-                        confirm: true,
-                    },
-                    allowOutsideClick: false,
-                }).then((willChange) => {
-                    if (willChange) {
-                        $.ajax({
-                            url: link,
-                            data: {
-                                status: status
-                            },
-                            type: "POST",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(data) {
-                                //alert(ans);
-                                swal({
-                                    icon: "success",
-                                    text: "NewsLetter Status Updated Successfully",
-                                    showConfirmButton: true,
-                                    confirmButtonColor: '#3085d6',
-                                    cancelButtonColor: '#d33',
-                                }).then(function() {
-                                    window.location.reload();
-                                });
-                            }
-                        })
-                    } else {
-                        swal("Cancelled");
-                    }
-                });
-            });
-        });
-
-        $(document).ready(function() {
-            $('.exit-member').on('click', function() {
-                var link = $(this).attr('rel');
-                var name = {!! json_encode($user->name) !!};
-                //alert(link);
-                swal({
-                    icon: "info",
-                    text: "Do you want to exit this member ?",
-                    buttons: {
-                        cancel: true,
-                        confirm: true,
-                    },
-                    allowOutsideClick: false,
-                }).then((willChange) => {
-                    if (willChange) {
-                        $.ajax({
-                            url: link,
-                            type: "GET",
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(data) {
-                                //alert(name);
-                                window.location.href = "/admin/member/exit/" + name;
-                            }
-                        })
-                    } else {
-                        swal("Cancelled");
-                    }
-                });
-            });
-        });
-
-        $(document).ready(function() {
-            $('.send_sms').on('click', function() {
-                if ($('#sms_div').hasClass('hidden')) {
-                    $('#sms_div').addClass('block').removeClass('hidden');
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.activate').on('click', function() {
+            var link = $(this).attr('rel');
+            var status = $(this).attr('value');
+            //alert(status);
+            swal({
+                icon: "info",
+                text: "Do you want to change the status ?",
+                buttons: {
+                    cancel: true,
+                    confirm: true,
+                },
+                allowOutsideClick: false,
+            }).then((willChange) => {
+                if (willChange) {
+                    $.ajax({
+                        url: link,
+                        data: {
+                            status: status
+                        },
+                        type: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            //alert(ans);
+                            swal({
+                                icon: "success",
+                                text: "Member Status Updated Successfully",
+                            }).then(function() {
+                                window.location.reload();
+                            });
+                        }
+                    })
+                } else {
+                    swal("Cancelled");
                 }
             });
         });
-    </script>
+    });
+
+    $(document).ready(function() {
+        $('.reset').on('click', function() {
+            var link = $(this).attr('rel');
+            //alert(link);
+            swal({
+                icon: "info",
+                text: "Do you want to reset password for this member ?",
+                buttons: {
+                    cancel: true,
+                    confirm: true,
+                },
+                allowOutsideClick: false,
+            }).then((willChange) => {
+                if (willChange) {
+                    $.ajax({
+                        url: link,
+                        type: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            //alert(ans);
+                            swal({
+                                icon: "success",
+                                text: "Check your email to reset the password",
+                                showConfirmButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                            }).then(function() {
+                                window.location.reload();
+                            });
+                        }
+                    })
+                } else {
+                    swal("Cancelled");
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('.verify').on('click', function() {
+            var link = $(this).attr('rel');
+            //alert(link);
+            swal({
+                icon: "info",
+                text: "Do you want to verify email for this member ?",
+                buttons: {
+                    cancel: true,
+                    confirm: true,
+                },
+                allowOutsideClick: false,
+            }).then((willChange) => {
+                if (willChange) {
+                    $.ajax({
+                        url: link,
+                        type: "GET",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            //alert(ans);
+                            swal({
+                                icon: "success",
+                                text: "Verification code sent Successfully",
+                                showConfirmButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                            }).then(function() {
+                                window.location.reload();
+                            });
+                        }
+                    })
+                } else {
+                    swal("Cancelled");
+                }
+            });
+        });
+    });
+
+
+    $(document).ready(function() {
+        $('.subscribe').on('click', function() {
+            var link = $(this).attr('rel');
+            var status = $(this).attr('value');
+            //alert(link);
+            swal({
+                icon: "info",
+                text: "Do you want to change newsletter status for this member ?",
+                buttons: {
+                    cancel: true,
+                    confirm: true,
+                },
+                allowOutsideClick: false,
+            }).then((willChange) => {
+                if (willChange) {
+                    $.ajax({
+                        url: link,
+                        data: {
+                            status: status
+                        },
+                        type: "POST",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            //alert(ans);
+                            swal({
+                                icon: "success",
+                                text: "NewsLetter Status Updated Successfully",
+                                showConfirmButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                            }).then(function() {
+                                window.location.reload();
+                            });
+                        }
+                    })
+                } else {
+                    swal("Cancelled");
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('.exit-member').on('click', function() {
+            var link = $(this).attr('rel');
+            var name = $(this).data('name');
+            //alert(link);
+            swal({
+                icon: "info",
+                text: "Do you want to exit this member ?",
+                buttons: {
+                    cancel: true,
+                    confirm: true,
+                },
+                allowOutsideClick: false,
+            }).then((willChange) => {
+                if (willChange) {
+                    $.ajax({
+                        url: link,
+                        type: "GET",
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(data) {
+                            //alert(name);
+                            window.location.href = "/admin/member/exit/" + name;
+                        }
+                    })
+                } else {
+                    swal("Cancelled");
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
+        $('.send_sms').on('click', function(e) {
+            e.preventDefault();
+
+            // Close the kebab dropdown
+            $('#member-profile-menu').addClass('hidden');
+
+            // Show the messaging panel
+            var $div = $('#sms_div');
+            $div.removeClass('hidden').addClass('block');
+
+            // Smooth scroll into view
+            $('html, body').animate({
+                scrollTop: $div.offset().top - 80
+            }, 400);
+        });
+    });
+</script>
+
+<style>
+    .active-tab {
+        border-color: #4f46e5;
+        color: #4f46e5;
+        font-weight: 600;
+    }
+
+    .inactive-tab {
+        border-color: transparent;
+        color: #6b7280;
+    }
+
+    .inactive-tab:hover {
+        color: #374151;
+    }
+</style>
+
+         <style>
+    #tab-family .family-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    #tab-family .family-table thead {
+        background: #f9fafb;
+    }
+
+    #tab-family .family-table th {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    #tab-family .family-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
+    }
+
+    #tab-family .family-table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    /* Column widths */
+    #tab-family .family-table th:nth-child(1),
+    #tab-family .family-table td:nth-child(1) {
+        width: 60%;
+    }
+
+    #tab-family .family-table th:nth-child(2),
+    #tab-family .family-table td:nth-child(2) {
+        width: 25%;
+    }
+
+    #tab-family .family-table th:nth-child(3),
+    #tab-family .family-table td:nth-child(3) {
+        width: 15%;
+        text-align: center;
+    }
+
+    #tab-family .member-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #tab-family .member-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    #tab-family .member-name {
+        color: #4f46e5;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    #tab-family .member-name:hover {
+        text-decoration: underline;
+    }
+
+    #tab-family .action-icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+    }
+
+    @media (max-width:768px) {
+        #tab-family .family-table {
+            min-width: 650px;
+        }
+    }
+</style>
+
+<script>
+    function switchTab(id) {
+        // hide all panels
+        document.querySelectorAll('.tab-panel').forEach(function(el) {
+            el.classList.add('hidden');
+        });
+        // reset all buttons
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.classList.remove('active-tab');
+            btn.classList.add('inactive-tab');
+        });
+        // show selected panel
+        var panel = document.getElementById('tab-' + id);
+        if (panel) panel.classList.remove('hidden');
+        // activate selected button
+        var btn = document.getElementById('tab-btn-' + id);
+        if (btn) {
+            btn.classList.remove('inactive-tab');
+            btn.classList.add('active-tab');
+        }
+    }
+</script>
+
+
 @endpush

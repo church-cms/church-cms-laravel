@@ -1,12 +1,12 @@
 <footer class="bg-gray-900 text-gray-400 mt-16 pt-4">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
 
             {{-- Col 1: Brand --}}
             <div class="lg:col-span-1">
                 @if(!empty($_churchdetail['church_logo']))
-                    <img src="{{ url($_churchdetail['church_logo']) }}"
+                    <img src="{{ \Storage::url($_churchdetail['church_logo']) }}"
                          alt="{{ $_church->name ?? config('app.name') }}"
                          class="h-10 w-auto mb-4 brightness-0 invert opacity-80">
                 @endif
@@ -73,6 +73,8 @@
                 </ul>
             </div>
 
+            
+
             {{-- Col 4: Contact Info --}}
             <div>
                 <h4 class="text-white text-sm font-semibold uppercase tracking-widest mb-5">Get in Touch</h4>
@@ -106,6 +108,18 @@
                         <a href="{{ route('web.contact') }}"
                            class="inline-block bg-indigo-700 hover:bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
                             Send a Message
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            {{-- Col 4: Contact Info --}}
+            <div>
+                <h4 class="text-white text-sm font-semibold uppercase tracking-widest mb-5">Site QR Code</h4>
+                <ul class="mr-20">
+                  
+                    <li class="pt-2">
+                         @include('member.site_domain_qrcode')
                         </a>
                     </li>
                 </ul>

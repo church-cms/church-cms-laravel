@@ -13,7 +13,12 @@ class VerifyCsrfToken extends Middleware
      */
 
 
-    protected $except = [ '/admin/payment/response','/testwebhook','allgallary'
-    			];
+    protected $except = [
+        '/admin/payment/response',
+        '/testwebhook',
+        'allgallary',
+        '/member/donate/mpesa-callback',
+        '/donate/mpesa-callback',
+    ];
 
 }

@@ -16,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 /**
  * FundController
@@ -32,36 +33,77 @@ class FundController extends Controller
     use LogActivity;
     use Common;
 
+    #[OA\Get(
+        path: '/api/v1/myFunds',
+        tags: ['Fund'],
+        summary: 'Get current user\'s fund requests',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FundResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function myFunds()
     {
-        $funds = Fund::where([['user_id',Auth::id()],['church_id',Auth::user()->church_id]])->get();
+        $funds = Fund::where([['user_id', Auth::id()], ['church_id', Auth::user()->church_id]])->get();
 
         $funds = FundResource::collection($funds);
 
         return $funds;
     }
 
+    #[OA\Get(
+        path: '/api/v1/fund/list',
+        tags: ['Fund'],
+        summary: 'List all deposited funds from other members',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FundResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function list()
     {
-        $funds = Fund::where([['user_id','!=',Auth::id()],['church_id',Auth::user()->church_id],['status','deposited']])->get();
+        $funds = Fund::where([['user_id', '!=', Auth::id()], ['church_id', Auth::user()->church_id], ['status', 'deposited']])->get();
 
         $funds = FundResource::collection($funds);
 
         return $funds;
     }
 
+    #[OA\Post(
+        path: '/api/v1/add/fund',
+        tags: ['Fund'],
+        summary: 'Submit a new fund request',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/AddFundRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/AddFundResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function store(FundRequest $request)
     {
-    	$user=User::where([['id',Auth::id()],['church_id',Auth::user()->church_id]])->first();
-        try
-        {
-            $funds= new Fund();
+        $user = User::where([['id', Auth::id()], ['church_id', Auth::user()->church_id]])->first();
+        try {
+            $funds = new Fund();
 
             $funds->church_id         = Auth::user()->church_id;
-           /* $funds->authorised_by     = Auth::id();
+            /* $funds->authorised_by     = Auth::id();
             $funds->authorised_at     = Carbon::now();*/
 
-            $funds->membership        ='member';
+            $funds->membership        = 'member';
 
             $funds->user_id           = $user->id;
 
@@ -71,18 +113,18 @@ class FundController extends Controller
 
             $funds->status            = 'request';
 
-            $funds->uuid=uniqid();
+            $funds->uuid = uniqid();
 
             $funds->save();
 
-            $message= 'Fund Requested Successfully';
+            $message = 'Fund Requested Successfully';
 
-             $array = [];
-             $admin = SiteHelper::getAdmin(Auth::user()->church_id);
-             $array['user']     =$admin ;
-             $array['details']  = 'New Fund Request Received';
+            $array = [];
+            $admin = SiteHelper::getAdmin(Auth::user()->church_id);
+            $array['user']     = $admin;
+            $array['details']  = 'New Fund Request Received';
 
-             event(new SingleNotificationEvent($array));
+            event(new SingleNotificationEvent($array));
 
             /*$ip= $this->getRequestIP();
             $this->doActivityLog(
@@ -93,20 +135,17 @@ class FundController extends Controller
                 $message
             ); */
 
-            $res['success']=$message;
-              return response()->json([
+            $res['success'] = $message;
+            return response()->json([
                 'status'    =>  true,
                 'message'   =>  $message,
             ], 200);
-        }
-        catch(Exception $e)
-        {
-              return response()->json([
+        } catch (Exception $e) {
+            return response()->json([
                 'status'    =>  false,
                 'message'   =>  'Something went wrong',
             ], 200);
             Log::info($e->getMessage());
-
         }
     }
 }

@@ -37,33 +37,53 @@
         </form>
 
         @if($helps->count() > 0)
-        <div class="overflow-auto">
-            <table class="w-full text-sm">
-                <thead class="border-t-2 border-b-2">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm table-fixed">
+                <colgroup>
+                    <col style="width:16%">
+                    <col style="width:18%">
+                    <col style="width:24%">
+                    <col style="width:18%">
+                    <col style="width:12%">
+                    <col style="width:12%">
+                </colgroup>
+                <thead class="border-t-2 border-b-2 bg-gray-50">
                     <tr>
-                        <th class="text-left py-2 px-2">Submitted By</th>
-                        <th class="text-left py-2 px-2">Title</th>
-                        <th class="text-left py-2 px-2">Description</th>
-                        <th class="text-left py-2 px-2">Contact</th>
-                        <th class="text-left py-2 px-2">Submitted</th>
-                        <th class="text-left py-2 px-2">Actions</th>
+                        <th class="text-left py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">Submitted By</th>
+                        <th class="text-left py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">Title</th>
+                        <th class="text-left py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">Description</th>
+                        <th class="text-left py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">Contact</th>
+                        <th class="text-left py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">Submitted</th>
+                        <th class="text-left py-2.5 px-3 font-semibold text-gray-600 text-xs uppercase tracking-wide">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
                     @foreach($helps as $help)
-                    <tr class="border-b">
-                        <td class="py-2 px-2">{{ $help->user->FullName ?? $help->user->name ?? '—' }}</td>
-                        <td class="py-2 px-2">{{ $help->title }}</td>
-                        <td class="py-2 px-2">{{ \Str::limit($help->description, 60) }}</td>
-                        <td class="py-2 px-2">{{ $help->contact_details }}</td>
-                        <td class="py-2 px-2 whitespace-nowrap">{{ $help->created_at->diffForHumans() }}</td>
-                        <td class="py-2 px-2 whitespace-nowrap">
-                            <a href="{{ url('/admin/help/show/' . $help->id) }}"
-                                class="text-white blue-bg rounded px-2 py-1 text-xs">View</a>
-                            @if($help->status === 'pending')
-                            <a href="{{ url('/admin/help/edit/' . $help->id) }}"
-                                class="text-white custom-green rounded px-2 py-1 text-xs ml-1">Review</a>
-                            @endif
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-3 px-3 align-top">
+                            <span class="block font-medium text-gray-800 truncate">{{ $help->user->FullName ?? $help->user->name ?? '—' }}</span>
+                        </td>
+                        <td class="py-3 px-3 align-top">
+                            <span class="block text-gray-700 truncate">{{ $help->title ?: '—' }}</span>
+                        </td>
+                        <td class="py-3 px-3 align-top">
+                            <span class="block text-gray-500 leading-snug" style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ $help->description ?: '—' }}</span>
+                        </td>
+                        <td class="py-3 px-3 align-top">
+                            <span class="block text-gray-600 truncate">{{ $help->contact_details ?: '—' }}</span>
+                        </td>
+                        <td class="py-3 px-3 align-top whitespace-nowrap text-gray-500 text-xs">
+                            {{ $help->created_at->diffForHumans() }}
+                        </td>
+                        <td class="py-3 px-3 align-top whitespace-nowrap">
+                            <div class="flex items-center gap-1.5">
+                                <a href="{{ url('/admin/help/show/' . $help->id) }}"
+                                    class="text-white blue-bg rounded px-2.5 py-1 text-xs">View</a>
+                                @if($help->status === 'pending')
+                                <a href="{{ url('/admin/help/edit/' . $help->id) }}"
+                                    class="text-white custom-green rounded px-2.5 py-1 text-xs">Review</a>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @endforeach

@@ -49,6 +49,11 @@ class EventCreateRequest extends FormRequest
             $rules['days_of_week.*'] = 'integer|between:0,6';
         }
 
+        if ($this->input('schedule') === '1' && $this->input('freq_term') === 'month') {
+
+            $rules['month_type'] = 'required';
+        }
+
         return $rules;
     }
 
@@ -75,6 +80,7 @@ class EventCreateRequest extends FormRequest
             'series_end_date.after'     => 'Series end date must be after the start date.',
             'days_of_week.required'     => 'Please select at least one day to repeat on.',
             'days_of_week.min'          => 'Please select at least one day to repeat on.',
+            'month_type'          => 'Please select month type.'
         ];
     }
 }

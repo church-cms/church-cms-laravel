@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\Church;
@@ -22,9 +23,9 @@ class DummyChurchSeeder extends Seeder
         $staffRole    = Role::where('name', 'staff')->first();
 
         // 1 Sub-admin
-       //User::factory()->count(10)->create();
-         User::factory()->count(1)->create([
-            'email'        => 'subadmin@demo.churchcms.app',
+        //User::factory()->count(10)->create();
+        User::factory()->count(1)->create([
+            'email'        => 'subadmin@mailinator.com',
             'church_id'    => $church->id,
             'usergroup_id' => 4,
         ])->each(function ($user) use ($subadminRole) {

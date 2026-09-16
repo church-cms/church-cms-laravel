@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('repeats')->nullable()->default(0);
             $table->integer('freq')->nullable()->default(0);
             $table->string('freq_term')->nullable();
+            $table->string('month_type')->nullable();
             $table->json('days_of_week')->nullable();
             $table->unsignedSmallInteger('duration_minutes')->nullable();
             $table->text('location')->nullable();

@@ -18,6 +18,27 @@
                 </div> 
             </div>
         </div>
+
+         <div class="flex flex-col lg:flex-row w-full lg:w-3/5">
+            <div class="tw-form-group w-full lg:w-3/4">
+                <div class="lg:mr-8 md:mr-8 px-2">
+                    <div class="mb-2">
+                        <label for="category" class="tw-form-label">Category<span class="text-red-500">*</span></label>
+                    </div>
+                    <div class="mb-2">
+                    <div>
+                        <select v-model="category" class="tw-form-control w-full mt-1">
+                        <option value="">Select Category</option>
+                        <option v-for="item in categorylist" :key="item.id" :value="item.id">{{ item.name }}</option>
+                    </select>
+                        </div>
+                                      
+                    </div>
+                    <span v-if="errors.category" class="text-red-500 text-xs font-semibold">{{ errors.category[0] }}</span>
+                </div> 
+            </div>
+        </div>
+         
         <div class="flex flex-col lg:flex-row w-full lg:w-3/5">
             <div class="tw-form-group w-full lg:w-3/4">
                 <div class="lg:mr-8 md:mr-8 px-2">
@@ -147,6 +168,7 @@
             return {
                 standardLinkList:[],
                 attachments:[],
+                 category: '',
                 title:'',
                 description:'',
                 visibility:'',
@@ -181,6 +203,7 @@
                 },
                 visiblelist:[{id:'select_page', name:'Select Page'}],
                 errors:[],
+                categorylist:[],
                 success:null,
             }
         },
@@ -193,6 +216,15 @@
                     this.post = response.data;
                     this.setData();
                 });
+                 
+            },
+
+             getDatas()
+            {
+               
+                 axios.get(this.url + '/' + this.mode + '/postCategory/list').then(response => {
+                    this.categorylist = response.data.data;
+                });
             },
 
             setData()
@@ -202,6 +234,7 @@
                     //this.standardLinkList = this.post.standardLinkList;
                     this.attachments      = this.post.attachment;
                     this.title            = this.post.title;
+                    this.category            = this.post.category;
                     this.description      = this.post.description;
                     //this.visibility       = this.post.visibility;
                     //this.visible_for      = this.post.visible_for;
@@ -284,6 +317,7 @@
                 formData.append('entity_id',this.entity_id);          
                 formData.append('entity_name',this.entity_name);        
                 formData.append('title',this.title);
+                formData.append('category',         this.category);
                 formData.append('description',this.description);
                 //formData.append('visibility',this.visibility);          
                 //formData.append('visible_for',this.visible_for);          
@@ -315,6 +349,7 @@
         created()
         {
             this.getData();
+            this.getDatas();
         }
     }
 </script>

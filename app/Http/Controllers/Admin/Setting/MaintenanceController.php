@@ -76,8 +76,8 @@ class MaintenanceController extends Controller
             $guest_registration= isset($request->guest_registration)&& $request->guest_registration== 1 ? 1 : 0;
 
             $this->updatesettings('maintenance',$maintenance);
-            $this->updatesettings('register_status',$register);
-            $this->updatesettings('login_status',$login_status);
+            $this->updatesettings('register_status',1);
+            $this->updatesettings('login_status',1);
             $this->updatesettings('member_web_login', (string) $member_web_login);
             $this->updatesettings('guest_login',      (string) $guest_login);
             $this->updatesettings('guest_registration',(string) $guest_registration);

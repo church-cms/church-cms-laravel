@@ -27,6 +27,6 @@ class SingleNotificationEventListener
     public function handle(SingleNotificationEvent $event)
     {
         //
-        Notification::send($event->data['user'], new NewMessageNotification($event->data['details']));
+        Notification::send($event->data['user'], new NewMessageNotification($event->data['details'], $event->data['message_type'], $event->data['message_id']));
     }
 }

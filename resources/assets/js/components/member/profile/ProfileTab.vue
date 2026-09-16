@@ -8,11 +8,11 @@
             <li class="px-2 mx-3 py-2" v-bind:class="[{'active' : profile_tab === '2'}]" >
                 <a href="#" class="text-gray-700 font-medium" @click="setProfileTab('2')">Timeline</a>
             </li>
-             <li class="px-2 mx-3 py-2" v-bind:class="[{'active' : profile_tab === '7'}]" >
+             <li class="px-2 mx-3 py-2" v-bind:class="[{'active' : profile_tab === '7'}]" v-if="type == 'member'">
                 <a href="#" class="text-gray-700 font-medium" @click="setProfileTab('7')">Family tree</a>
             </li>
 
-            <li class="px-2 mx-3 py-2" v-bind:class="[{'active' : profile_tab === '3'}]">
+            <li class="px-2 mx-3 py-2" v-bind:class="[{'active' : profile_tab === '3'}]" v-if="type == 'member'">
                 <a href="#" class="text-gray-700 font-medium" @click="setProfileTab('3')">Family</a>
             </li>
 
@@ -20,7 +20,7 @@
                 <a href="#" class="text-gray-700 font-medium" @click="setProfileTab('4')">Assigned Groups</a>
             </li>
 
-            <li class="px-2 mx-3 py-2" v-bind:class="[{'active' : profile_tab === '8'}]">
+            <li class="px-2 mx-3 py-2" v-bind:class="[{'active' : profile_tab === '8'}]" v-if="type == 'member'">
                 <a href="#" class="text-gray-700 font-medium" @click="setProfileTab('8')">Messages</a>
             </li>
 

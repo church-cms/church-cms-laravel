@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Traits;
+
 use FCM;
 use LaravelFCM\Message\OptionsBuilder;
 use LaravelFCM\Message\PayloadDataBuilder;
@@ -21,53 +23,59 @@ use Log;
 trait SendPushNotification
 
 {
-   /**
-    * Send a Firebase Cloud Messaging (FCM) push notification.
-    *
-    * Sends a push notification to a user's device(s) using FCM with
-    * customizable title, message, and data payload.
-    *
-    * @param array $array The notification array containing 'type' and 'message'
-    * @param string $usertoken The device token to send the notification to
-    *
-    * @return object The FCM downstreamResponse object with delivery status
-    */
-   public function sendNotification(array $array, string $usertoken): object {
+  /**
+   * Send a Firebase Cloud Messaging (FCM) push notification.
+   *
+   * Sends a push notification to a user's device(s) using FCM with
+   * customizable title, message, and data payload.
+   *
+   * @param array $array The notification array containing 'type' and 'message'
+   * @param string $usertoken The device token to send the notification to
+   *
+   * @return object The FCM downstreamResponse object with delivery status
+   */
+  public function sendNotification(array $array, string $usertoken): object
+  {
     try {
 
-        config(['fcm.http.server_key' => env('FCM_SERVER_KEY')]);
-        config(['fcm.http.sender_id' => env('FCM_SENDER_ID')]);
+      config(['fcm.http.server_key' => env('FCM_SERVER_KEY')]);
+      config(['fcm.http.sender_id' => env('FCM_SENDER_ID')]);
 
-        $optionBuilder       = new OptionsBuilder();
-        $optionBuilder       ->setTimeToLive(60 * 20);
-        $notificationBuilder = new PayloadNotificationBuilder($array['type']);
-        $notificationBuilder ->setBody($array['message'])
-             ->setTitle($array['type'])
-             ->setSound('default');
-        $dataBuilder          = new PayloadDataBuilder();
-         $dataBuilder->addData(['message' => $array['message'],'type'=>$array['type']]);
-        $option               = $optionBuilder->build();
-        $notification         = $notificationBuilder->build();
-        $data                 = $dataBuilder->build();
-        $token                = $usertoken;
-        $downstreamResponse   = FCM::sendTo($token, $option, $notification, $data);
-        $downstreamResponse   -> numberSuccess();
-        $downstreamResponse   ->numberFailure();
-        if($downstreamResponse->numberSuccess())
-        {
-          return $downstreamResponse;
-        }
-        else
-        {
-          return $downstreamResponse;
-        }
+      $optionBuilder       = new OptionsBuilder();
+      $optionBuilder->setTimeToLive(60 * 20);
+      $notificationBuilder = new PayloadNotificationBuilder($array['type']);
+      $notificationBuilder->setBody($array['message'])
+        ->setTitle($array['type'])
+        ->setSound('default');
 
-      }
-      catch (Exception $e) {
 
-         Log::info($e->getMessage());
+      // $dataBuilder          = new PayloadDataBuilder();
+      // $dataBuilder->addData(['message' => $array['message'], 'type' => $array['type']]);
+      // $option               = $optionBuilder->build();
+      // $notification         = $notificationBuilder->build();
+      // $data                 = $dataBuilder->build();
+      // $token                = $usertoken;
+      // $downstreamResponse   = FCM::sendTo($token, $option, $notification, $data);
 
-     }
+      //dd($downstreamResponse);
 
+      // $downstreamResponse->numberSuccess();
+      // $downstreamResponse->numberFailure();
+      // if ($downstreamResponse->numberSuccess()) {
+      //   return $downstreamResponse;
+      // } else {
+      //   return $downstreamResponse;
+      // }
+
+      return (object)[
+        'status' => false,
+        'message' => 'Notification failed'
+      ];
+    } catch (Exception $e) {
+      dd($e->getMessage());
+
+
+      Log::info($e->getMessage());
+    }
   }
 }

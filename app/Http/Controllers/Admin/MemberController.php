@@ -396,30 +396,52 @@ class MemberController extends Controller
 
     public function show($name)
     {
-        //
         $user = User::with('userprofile')->where('name', $name)->first();
 
-        if(Gate::allows('member',$user))
+        if(Gate::allows('member', $user))
         {
-            $newsletter = NewsLetter::where('email',$user->email)->first();
-            if($newsletter != null)
-            {
-                $status = $newsletter->status;
-            }
-            else
-            {
-                $status = 0;
+            // Newsletter status
+            $newsletter = NewsLetter::where('email', $user->email)->first();
+            $status     = $newsletter ? $newsletter->status : 0;
+
+            $prev_url = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : url('/admin/members');
+
+            // ── Tab data ────────────────────────────────────────────
+            // Timeline (activity log)
+            $activitylog = ActivityLog::where('subject_id', $user->userprofile->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(10, ['*'], 'timeline_page');
+
+            // Family members
+            if ($user->ref_id) {
+                // user belongs to a family — show all siblings + parent
+                $family_members = User::with('userprofile')
+                    ->where(function($q) use ($user) {
+                        $q->where('ref_id', $user->ref_id)
+                          ->orWhere('id', $user->ref_id);
+                    })
+                    ->where('id', '!=', $user->id)
+                    ->get();
+            } else {
+                // user is family head — show direct members
+                $family_members = $user->members()->with('userprofile')->get();
             }
 
-            if($_SERVER['HTTP_REFERER'] != null)
-            {
-                $prev_url = $_SERVER['HTTP_REFERER'];
-            }
-            else
-            {
-                $prev_url = url('/admin/members');
-            }
-            return view('/admin/member/show',['user'=>$user , 'status' => $status , 'prev_url' => $prev_url , 'request' => request()]);
+            // Assigned groups
+            $grouplinks = GroupLink::with('group')
+                ->where('user_id', $user->id)
+                ->get();
+
+            // Messages
+            $messages = SendMail::where('user_id', $user->id)
+                ->orderBy('executed_at', 'DESC')
+                ->paginate(10, ['*'], 'msg_page');
+            // ────────────────────────────────────────────────────────
+
+            return view('/admin/member/show', compact(
+                'user', 'status', 'prev_url',
+                'activitylog', 'family_members', 'grouplinks', 'messages'
+            ));
         }
         else
         {

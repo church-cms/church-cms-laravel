@@ -1,6 +1,27 @@
 <template>
     <div class="bg-white shadow px-4 py-3 my-3">
         <div v-if="this.success!=null" class="alert alert-success" id="success-alert">{{this.success}}</div>
+
+            <!-- Add Category Modal -->
+        <div v-if="show === 'add'" class="modal modal-mask">
+            <div class="modal-wrapper px-4">
+                <div class="modal-container w-full max-w-md px-8 mx-auto">
+                    <div class="modal-header flex justify-between items-center">
+                        <h2>Add Category</h2>
+                        <button class="modal-default-button text-2xl py-1" @click="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="tw-form-label">Category Name <span class="text-red-500">*</span></label>
+                        <input type="text" class="tw-form-control w-full mt-1" v-model="newCategoryName" placeholder="Name">
+                        <span v-if="errors.name" class="text-red-500 text-xs">{{ errors.name[0] }}</span>
+                    </div>
+                    <div class="my-6">
+                        <a href="#" class="btn btn-submit blue-bg text-white rounded px-3 py-1 mr-3 text-sm font-medium" @click.prevent="addCategory()">Submit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="flex flex-col lg:flex-row w-full lg:w-3/5">
             <div class="tw-form-group w-full lg:w-3/4">
                 <div class="lg:mr-8 md:mr-8 px-2">
@@ -14,6 +35,28 @@
                         <div class="text-gray-700 text-xs my-1" v-text="(30 - title.length)+'/'+30" style="text-align: right"></div>               
                     </div>
                     <span v-if="errors.title" class="text-red-500 text-xs font-semibold">{{errors.title[0]}}</span>
+                </div> 
+            </div>
+        </div>
+        
+         <div class="flex flex-col lg:flex-row w-full lg:w-3/5">
+            <div class="tw-form-group w-full lg:w-3/4">
+                <div class="lg:mr-8 md:mr-8 px-2">
+                    <div class="mb-2">
+                        <label for="category" class="tw-form-label">Category<span class="text-red-500">*</span></label>
+                    </div>
+                    <div class="mb-2">
+                    <div>
+                       
+                        <select v-model="category" class="tw-form-control w-full mt-1 mb-2">
+                        <option value="" disabled>Select Category</option>
+                        <option v-for="item in categorylist" :key="item.id" :value="item.id">{{ item.name }}</option>
+                    </select>
+                     <a href="#" class="text-xs bg-indigo-600 text-white px-2 py-1 rounded whitespace-no-wrap hover:bg-indigo-700" @click.prevent="showCategory()">+ Add</a>
+                        </div>
+                                      
+                    </div>
+                    <span v-if="errors.category" class="text-red-500 text-xs font-semibold">{{ errors.category[0] }}</span>
                 </div> 
             </div>
         </div>
@@ -153,6 +196,8 @@
                 posted_at:'',
                 tag:'',
                 post_later:'',
+                category: '',
+                show: '',
                 option:{
                     theme: 'snow',
                     modules: {
@@ -181,6 +226,7 @@
                 },  
                 visiblelist:[{id:'select_page', name:'Select Page'}],
                 errors:[],
+                categorylist: [],
                 success:null,
             }
         },
@@ -190,6 +236,17 @@
             {
                 axios.get(this.url+'/'+this.mode+'/post/add/list').then(response => {
                     this.standardLinkList = response.data.data;
+                });
+
+               
+            },
+
+            getDatas()
+            {
+                
+
+                axios.get(this.url + '/' + this.mode + '/postCategory/list').then(response => {
+                    this.categorylist = response.data.data;
                 });
             },
 
@@ -219,6 +276,20 @@
                     this.attach_tag=0;
                 }
             },
+            showCategory() { 
+           
+            this.show = 'add'; },
+            closeModal()   { this.show = ''; this.newCategoryName = ''; },
+              addCategory() {
+                this.errors = [];
+                axios.post(this.url + '/' + this.mode + '/postCategory/add', { name: this.newCategoryName })
+                    .then(() => {
+                        this.closeModal();
+                        this.getDatas();
+                    }).catch(error => {
+                        this.errors = error.response.data.errors;
+                    });
+            },
 
             submitForm()
             {
@@ -228,7 +299,8 @@
                 let formData=new FormData(); 
                 
                 formData.append('entity_id',this.entity_id);          
-                formData.append('entity_name',this.entity_name);        
+                formData.append('entity_name',this.entity_name); 
+                formData.append('category',this.category);       
                 formData.append('title',this.title);
                 formData.append('description',this.description);
                 //formData.append('visibility',this.visibility);          
@@ -262,7 +334,7 @@
     
         created()
         {
-            //this.getData();
+            this.getDatas();
         }
     }
 </script>

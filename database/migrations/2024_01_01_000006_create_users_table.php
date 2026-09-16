@@ -19,13 +19,14 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('mobile_no');
-             $table->string('mobile_country_code')->nullable();
+            $table->string('mobile_country_code')->nullable();
             $table->string('password');
             $table->string('email_verification_code')->nullable();
             $table->boolean('email_verified')->default('0');
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_reset')->default('0');
             $table->string('platform_token')->nullable();
+            $table->string('device_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->timestamp('last_login_at')->nullable();

@@ -13,14 +13,18 @@ class EventController extends Controller
         $today = Carbon::today();
 
         $upcoming = Events::where('start_date', '>=', $today)
-                          ->where('publish_to_web', true)
-                          ->orderBy('start_date', 'asc')
-                          ->paginate(9, ['*'], 'upcoming_page');
+            ->where('publish_to_web', true)
+            ->orderBy('start_date', 'asc')
+            ->paginate(9, ['*'], 'upcoming_page');
+
+
 
         $completedRaw = Events::where('start_date', '<', $today)
-                              ->where('publish_to_web', true)
-                              ->orderBy('start_date', 'desc')
-                              ->get();
+            ->where('publish_to_web', true)
+            ->orderBy('start_date', 'desc')
+            ->get();
+
+
 
         // Group: [ year => [ 'M Y' => [ events ] ] ]
         $completed = [];
@@ -30,6 +34,8 @@ class EventController extends Controller
             $month = $dt->format('F');          // e.g. "March"
             $completed[$year][$month][] = $event;
         }
+
+        //dd($$completed);
 
         return view('theme::events', compact('upcoming', 'completed'));
     }

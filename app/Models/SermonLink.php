@@ -85,4 +85,13 @@ class SermonLink extends Model
     {
         return $this->getFilePath($this->url);
     }
+    public function getPdfUrlPathAttribute()
+    {
+
+        if ($this->pdf_link != null) {
+            return $this->getFilePath($this->pdf_link);
+        } else {
+            return null;
+        }
+    }
 }

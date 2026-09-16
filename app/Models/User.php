@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Nckg\Impersonate\Traits\CanImpersonate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 /**
  * User Model
  *
@@ -103,7 +104,8 @@ class User extends Authenticatable
         'platform_token',
         'remember_token',
         'last_login_at',
-        'mobile_country_code'
+        'mobile_country_code',
+        'device_id'
     ];
 
     /**
@@ -429,5 +431,10 @@ class User extends Authenticatable
     public function getChurchLogoPathAttribute()
     {
         return $this->church->churchDetailLogo->LogoPath;
+    }
+    public function routeNotificationForFcm($notification)
+    {
+
+        return $notification->token;
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use App\Models\Userprofile;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+
 class UserProfileAddRequest extends FormRequest
 {
     /**
@@ -29,13 +30,10 @@ class UserProfileAddRequest extends FormRequest
      */
     public function rules()
     {
-        Validator::extend('check_marriage_start_date',function($attribute,$value,$parameters,$validator)
-        {
-            if(request('gender')=="female")
-            {
-                $user = User::where('name',request('ref_name'))->first();
-                if(date('Y-m-d',strtotime($user->userprofile->marriage_start_date))==date('Y-m-d',strtotime(request('marriage_start_date'))))
-                {
+        Validator::extend('check_marriage_start_date', function ($attribute, $value, $parameters, $validator) {
+            if (request('gender') == "female") {
+                $user = User::where('name', request('ref_name'))->first();
+                if (date('Y-m-d', strtotime($user->userprofile->marriage_start_date)) == date('Y-m-d', strtotime(request('marriage_start_date')))) {
                     return true;
                 }
                 return false;
@@ -43,13 +41,10 @@ class UserProfileAddRequest extends FormRequest
             return true;
         });
 
-        Validator::extend('check_marriage_end_date',function($attribute,$value,$parameters,$validator)
-        {
-            if(request('gender')=="female")
-            {
-                $user = User::where('name',request('ref_name'))->first();
-                if(date('Y-m-d',strtotime($user->userprofile->marriage_end_date))==date('Y-m-d',strtotime(request('marriage_end_date'))))
-                {
+        Validator::extend('check_marriage_end_date', function ($attribute, $value, $parameters, $validator) {
+            if (request('gender') == "female") {
+                $user = User::where('name', request('ref_name'))->first();
+                if (date('Y-m-d', strtotime($user->userprofile->marriage_end_date)) == date('Y-m-d', strtotime(request('marriage_end_date')))) {
                     return true;
                 }
                 return false;
@@ -57,125 +52,106 @@ class UserProfileAddRequest extends FormRequest
             return true;
         });
 
-        Validator::extend('checkunique_name',function($attribute,$value,$parameters,$validator)
-        {
-             $user=User::where('name','LIKE','%'.request('name').'%')->exists();
-             if($user)
-             {
+        Validator::extend('checkunique_name', function ($attribute, $value, $parameters, $validator) {
+            $user = User::where('name', 'LIKE', '%' . request('name') . '%')->exists();
+            if ($user) {
                 return false;
-             }
-             return true;
+            }
+            return true;
         });
 
-       Validator::extend('checkunique_email',function($attribute,$value,$parameters,$validator)
-        {
-             $user=User::where('church_id',Auth::user()->church_id)->where('email',request('email'))->exists();
-             if($user)
-             {
+        Validator::extend('checkunique_email', function ($attribute, $value, $parameters, $validator) {
+            $user = User::where('church_id', Auth::user()->church_id)->where('email', request('email'))->exists();
+            if ($user) {
                 return false;
-             }
-             return true;
+            }
+            return true;
         });
 
-        Validator::extend('checkunique_mobile',function($attribute,$value,$parameters,$validator)
-        {
-             
-             $user=User::where('church_id',Auth::user()->church_id)->where('mobile_no','=',request('mobile_no'))->exists();
-             if($user)
-             {
+        Validator::extend('checkunique_mobile', function ($attribute, $value, $parameters, $validator) {
+
+            $user = User::where('church_id', Auth::user()->church_id)->where('mobile_no', '=', request('mobile_no'))->exists();
+            if ($user) {
                 return false;
-             }
-             return true;
+            }
+            return true;
         });
 
-        Validator::extend('check_date_of_birth',function($attribute,$value,$parameters,$validator)
-        { 
-            if((request('date_of_birth')<=date('Y-m-d')) && (request('date_of_birth')>="1920-01-01"))
-            {
+        Validator::extend('check_date_of_birth', function ($attribute, $value, $parameters, $validator) {
+            if ((request('date_of_birth') <= date('Y-m-d')) && (request('date_of_birth') >= "1920-01-01")) {
                 return true;
             }
-                
+
             return false;
         });
 
-        Validator::extend('checkname',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^([A-Za-z])+([0-9])|([A-Za-z])+$/', request('name')) ;
+        Validator::extend('checkname', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^([A-Za-z])+([0-9])|([A-Za-z])+$/', request('name'));
         });
 
-        Validator::extend('check_firstname',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z\s]+$/', request('firstname')) ;
+        Validator::extend('check_firstname', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^[A-Za-z\s]+$/', request('firstname'));
         });
 
-        Validator::extend('check_lastname',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z\s]+$/', request('lastname')) ;
+        Validator::extend('check_lastname', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^[A-Za-z\s]+$/', request('lastname'));
         });
 
-        Validator::extend('check_birth_firstname',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z\s]+$/', request('birth_firstname')) ;
+        Validator::extend('check_birth_firstname', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^[A-Za-z\s]+$/', request('birth_firstname'));
         });
 
-        Validator::extend('check_birth_lastname',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z\s]+$/', request('birth_lastname')) ;
+        Validator::extend('check_birth_lastname', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^[A-Za-z\s]+$/', request('birth_lastname'));
         });
 
-        Validator::extend('checknotes',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', request('notes')) ;
+        Validator::extend('checknotes', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', request('notes'));
         });
 
-        Validator::extend('checkfamily',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', request('family')) ;
+        Validator::extend('checkfamily', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', request('family'));
         });
 
-        Validator::extend('checkoccupation',function($attribute,$value,$parameters,$validator)
-        {
-            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', request('sub_occupation')) ;
+        Validator::extend('checkoccupation', function ($attribute, $value, $parameters, $validator) {
+            return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', request('sub_occupation'));
         });
 
-        Validator::extend('check_unique_aadhar_number',function($attribute,$value,$parameters,$validator)
-        {
-            $userprofile = Userprofile::where('aadhar_number',request('aadhar_number'))->exists();
-            if($userprofile)
-            {
+        Validator::extend('check_unique_aadhar_number', function ($attribute, $value, $parameters, $validator) {
+            $userprofile = Userprofile::where('aadhar_number', request('aadhar_number'))->exists();
+            if ($userprofile) {
                 return false;
             }
             return true;
         });
 
-        $rules=[
+        $rules = [
             //
-                //'name'              =>'required|checkname|max:10|checkunique_name',
-                'firstname'         =>'required|check_firstname|max:15',
-                'lastname'          =>'nullable|check_lastname|max:15',
-                'birth_firstname'   =>'nullable|check_birth_firstname|max:15',
-                'birth_lastname'    =>'nullable|check_birth_lastname|max:15',
-                'gender'            =>'required',
-                'date_of_birth'     =>'required|date|check_date_of_birth',
-                //'was_baptized'      =>'required',
-                'profession'        =>'required',
-                'city_id'           =>'required',
-                'state_id'          =>'required',
-                'country_id'        =>'required',
-                'pincode'           =>'required|numeric|digits:6',
-                'mobile_no'         =>'required|numeric|digits:10|checkunique_mobile',
-                'email'             =>'nullable|email|checkunique_email',
-                //'membership_type'   =>'required',
-                'family'            =>'nullable|checkfamily|max:15',
-                'marriage_status'   =>'required',
-                'aadhar_number'     =>'nullable|numeric|digits:12|check_unique_aadhar_number',
-                'notes'             =>'nullable|string|checknotes',
-                'avatar'            => (session('temp_avatar') ? 'nullable' : 'required').'|mimes:jpg,jpeg,png,webp',
+            //'name'              =>'required|checkname|max:10|checkunique_name',
+            'firstname'         => 'required|check_firstname|min:3|max:15',
+            'lastname'          => 'nullable|check_lastname|max:15',
+            'birth_firstname'   => 'nullable|check_birth_firstname|max:15',
+            'birth_lastname'    => 'nullable|check_birth_lastname|max:15',
+            'gender'            => 'required',
+            'date_of_birth'     => 'required|date|check_date_of_birth',
+            //'was_baptized'      =>'required',
+            'profession'        => 'required',
+            'city_id'           => 'required',
+            'state_id'          => 'required',
+            'country_id'        => 'required',
+            'pincode'           => 'required|numeric|digits:6',
+            'mobile_no'         => 'required|numeric|digits:10|checkunique_mobile',
+            'email'             => 'nullable|email|checkunique_email',
+            //'membership_type'   =>'required',
+            'family'            => 'nullable|checkfamily|max:15',
+            'marriage_status'   => 'required',
+            'aadhar_number'     => 'nullable|numeric|digits:12|check_unique_aadhar_number',
+            'notes'             => 'nullable|string|checknotes',
+            'avatar'            => (session('temp_avatar') ? 'nullable' : 'required') . '|mimes:jpg,jpeg,png,webp',
         ];
 
-        if(request('ref_name')!="")
-        {
-            $rules['relation']='required';
+        if (request('ref_name') != "") {
+            $rules['relation'] = 'required';
         }
 
         /*if(request('was_baptized')=="yes")
@@ -183,14 +159,12 @@ class UserProfileAddRequest extends FormRequest
             $rules['baptism_date']='required';
         }*/
 
-        if(request('membership_type')=="member")
-        {
-            $rules['membership_start_date']='required';
+        if (request('membership_type') == "member") {
+            $rules['membership_start_date'] = 'required';
         }
 
-        if(request('marriage_status')!= "single")
-        {
-            $rules['marriage_start_date']='nullable|check_marriage_start_date';
+        if (request('marriage_status') != "single") {
+            $rules['marriage_start_date'] = 'nullable|check_marriage_start_date';
 
             /*if((request('marriage_status')== "ended_by_death") || (request('marriage_status')== "ended_by_divorce") || (request('marriage_status')== "separated"))
             {
@@ -198,9 +172,8 @@ class UserProfileAddRequest extends FormRequest
             }*/
         }
 
-        if( (request('profession')!= '') && (request('profession')!= 'home_maker') && (request('profession')!= 'self_employed') && (request('profession')!= 'student') )
-        { 
-            $rules['sub_occupation']='required|checkoccupation|max:15';
+        if ((request('profession') != '') && (request('profession') != 'home_maker') && (request('profession') != 'self_employed') && (request('profession') != 'student')) {
+            $rules['sub_occupation'] = 'required|checkoccupation|max:15';
         }
 
         return $rules;
@@ -220,7 +193,7 @@ class UserProfileAddRequest extends FormRequest
 
     public function messages()
     {
-        return[
+        return [
             'name.required'                                 =>  'User Name is required',
             'name.checkname'                                =>  'Enter a Valid User Name',
             'name.checkunique_name'                         =>  'User Name already in use. Try different User Name',
@@ -287,7 +260,7 @@ class UserProfileAddRequest extends FormRequest
             'marriage_end_date.required'                    =>  'Marriage End Date is required',
             'marriage_end_date.check_marriage_end_date'     =>  'Enter Valid Marriage End Date',
 
-            'relation.required'                             =>  'Choose a relation', 
+            'relation.required'                             =>  'Choose a relation',
 
             'aadhar_number.required'                        =>  'Aadhaar Number is required',
             'aadhar_number.numeric'                         =>  'Aadhaar Number should be Numeric',
@@ -297,8 +270,8 @@ class UserProfileAddRequest extends FormRequest
             'notes.string'                                  =>  'Enter Valid Notes',
             'notes.checknotes'                              =>  'Enter Valid Notes',
 
-            'avatar.required'=>'Avatar is required',
-            'avatar.mimes'=>'Choose jpg,jpeg,png,webp file',
+            'avatar.required' => 'Avatar is required',
+            'avatar.mimes' => 'Choose jpg,jpeg,png,webp file',
         ];
     }
 }

@@ -196,9 +196,11 @@ class SubAdminController extends Controller
     {
         //
         $user = User::where('name',$name)->first();
-        if(Gate::allows('member',$user))
+        if($user!=null)
         {
-            $userprofile = Userprofile::where('id',$user->id)->first();
+            $userprofile = Userprofile::where('user_id',$user->id)->first();
+
+            //dd($userprofile);
         	$array = [];
 
         	$array['firstname'] 		= $userprofile->firstname;

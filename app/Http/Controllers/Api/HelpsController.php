@@ -15,6 +15,8 @@ use App\Models\Help;
 use Carbon\Carbon;
 use Exception;
 use Log;
+use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 /**
  * HelpsController
@@ -31,10 +33,22 @@ class HelpsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/helps',
+        tags: ['Helps'],
+        summary: 'List approved help requests from other members',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         //
-        $help = Help::where([['church_id',Auth::user()->church_id],['status','approve']])->where('user_id','!=',Auth::id())->latest()->get();
+        $help = Help::where([['church_id', Auth::user()->church_id], ['status', 'approve']])->where('user_id', '!=', Auth::id())->latest()->get();
         $help = HelpResource::collection($help);
 
         return $help;
@@ -46,11 +60,28 @@ class HelpsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(HelpAddRequest $request)//HelpAdd
+    #[OA\Post(
+        path: '/api/v1/helps/create',
+        tags: ['Helps'],
+        summary: 'Submit a new help request',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/HelpAddRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpCreateResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
+    public function store(HelpAddRequest $request) //HelpAdd
     {
         //
-        try
-        {
+        try {
             $help = new Help;
 
             $help->church_id        = Auth::user()->church_id;
@@ -62,21 +93,17 @@ class HelpsController extends Controller
 
             $help->save();
 
-             $array = [];
-             $admin = SiteHelper::getAdmin(Auth::user()->church_id);
-             $array['user']     =$admin ;
-             $array['details']  = 'New Help Request Received';
+            $array = [];
+            $admin = SiteHelper::getAdmin(Auth::user()->church_id);
+            $array['user']     = $admin;
+            $array['details']  = 'New Help Request Received';
 
-             event(new SingleNotificationEvent($array));
+            event(new SingleNotificationEvent($array));
 
-            $res['message']='Help Request Added Successfully';
+            $res['message'] = 'Help Request Added Successfully';
             return $res;
-        }
-
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 
@@ -86,10 +113,22 @@ class HelpsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/helps/user',
+        tags: ['Helps'],
+        summary: "List the current user's own help requests",
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpUserResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function show()
     {
         //
-        $help = Help::where([['church_id',Auth::user()->church_id],['user_id',Auth::id()]])->get();
+        $help = Help::where([['church_id', Auth::user()->church_id], ['user_id', Auth::id()]])->get();
         $help = HelpUserResource::collection($help);
 
         return $help;
@@ -102,33 +141,47 @@ class HelpsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/v1/helps/close/{id}',
+        tags: ['Helps'],
+        summary: 'Close a help request (mark as resolved)',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                description: 'Help request ID',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/HelpCloseResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function update(Request $request, $id)
     {
         //
-        try
-        {
-            $help = Help::where('id',$id)->first();
+        try {
+            $help = Help::where('id', $id)->first();
 
-            if(Auth::id() === $help->user_id)
-            {
+            if (Auth::id() === $help->user_id) {
                 $help->status           = "close";
                 $help->expired_at       = Carbon::now();
                 $help->closed_by        = Auth::id();
 
                 $help->save();
 
-                $res['message']='Help Request Closed Successfully';
+                $res['message'] = 'Help Request Closed Successfully';
                 return $res;
-            }
-            else
-            {
+            } else {
                 return 'Invalid Request';
             }
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

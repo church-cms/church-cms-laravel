@@ -24,20 +24,16 @@ class PostRequest extends FormRequest
      */
     public function rules()
     {
-        Validator::extend('check_title',function ($attribute,$value,$parameters,$validatior)
-        {
+        Validator::extend('check_title', function ($attribute, $value, $parameters, $validatior) {
             return preg_match('/^[A-Za-z\s]+$/', $attribute);
         });
 
-        Validator::extend('check_description',function ($attribute,$value,$parameters,$validatior)
-        {
+        Validator::extend('check_description', function ($attribute, $value, $parameters, $validatior) {
             return preg_match('/^[A-Za-z0-9_~\-!@#\$%\^&*.,:(\)\s]+$/', $attribute);
         });
 
-        Validator::extend('check_posted_at',function($attribute,$value,$parameters,$validator)
-        { 
-            if ( request('posted_at') > date('d-m-Y H:i:s') )
-            {
+        Validator::extend('check_posted_at', function ($attribute, $value, $parameters, $validator) {
+            if (request('posted_at') > date('d-m-Y H:i:s')) {
                 return true;
             }
             return false;
@@ -47,16 +43,15 @@ class PostRequest extends FormRequest
             //
             'title'         =>  'required|max:150|check_title',
             'description'   =>  'required|max:5000|check_description',
+            'category'         => 'required',
             //'visibility'    =>  'required',
         ];
 
-        if(request('visibility') == 'select_class')
-        {
+        if (request('visibility') == 'select_class') {
             $rules['visible_for']   =   'required';
         }
 
-        if(request('post_later') == 'true')
-        {
+        if (request('post_later') == 'true') {
             $rules['posted_at'] = 'check_posted_at';
         }
 
@@ -80,6 +75,8 @@ class PostRequest extends FormRequest
             'visible_for.required'          =>  'Select Class is required',
 
             'posted_at.check_posted_at'     =>  'Enter Future Date Time',
+
+            'category.required'    => 'Category is required',
         ];
 
         return $messages;

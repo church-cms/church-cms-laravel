@@ -39,7 +39,7 @@ use App\Models\Church;
 use Schema;
 use Config;
 use App\Models\ChurchDetail;
-
+use Illuminate\Support\Facades\Validator;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -67,6 +67,23 @@ class AppServiceProvider extends ServiceProvider
         MailQueue::observe(MailQueueObserver::class);
 
         Church::observe(ChurchObserver::class);
+
+        Validator::extend('teacher_logoutdevice_id', function ($attribute, $value, $parameters, $validator) 
+        {
+            $inputs = $validator->getData();
+            $email = $inputs['email'];
+            $user = User::where('mobile_no', $email)->where('usergroup_id',5)->first();
+            
+            if ($user!=null) 
+            {
+                if ($user->device_id == null) 
+                {
+
+                    return true;
+                }
+                return false;
+            }
+        });
 
         //hide to receive mail
         if (version_compare(PHP_VERSION, '7.2.0', '>=')) {

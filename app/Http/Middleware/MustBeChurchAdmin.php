@@ -15,13 +15,14 @@ class MustBeChurchAdmin
      */
     public function handle($request, Closure $next)
     {
-        if(\Auth::user()->usergroup_id == 3 || \Auth::user()->usergroup_id == 4)
-        {
+
+        // 
+        if (\Auth::user()->usergroup_id == 3 || \Auth::user()->usergroup_id == 4) {
+
             return $next($request);
         }
 
-        if(\Auth::user()->usergroup_id == 1)
-        {
+        if (\Auth::user()->usergroup_id == 1) {
             return redirect('/portal');
         }
 

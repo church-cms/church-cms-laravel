@@ -1,7 +1,7 @@
 <template>
     <div class="relative">
         <div v-if="success" class="alert alert-success" id="success-alert">{{ success }}</div>
-        <div v-if="errors.length > 0" class="alert alert-danger">
+        <div v-if="errors.length > 0" class="alert alert-danger bg-red-100 text-red-600 text-sm p-2 rounded mb-4">
             <ul class="mb-0">
                 <li v-for="e in errors" :key="e">{{ e }}</li>
             </ul>

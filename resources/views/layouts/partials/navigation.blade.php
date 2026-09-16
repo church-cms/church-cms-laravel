@@ -1,7 +1,7 @@
 <nav class="navbar bg-white w-full flex  lg:flex-row px-4 lg:px-8 pt-2 justify-between items-center">
     <div class="nav-brand flex items-baseline">
         <a href="{{ url('/admin/dashboard') }}">
-            <img src="{{ asset('uploads/Images/logo.png') }}" alt="ChurchCMS Admin Logo" class="w-auto h-10 mr-2">
+            <img src="{{ asset('uploads/Images/church_cms_logo.jpg') }}" alt="ChurchCMS Admin Logo" class="w-auto h-7 mr-2">
         </a>
 
 

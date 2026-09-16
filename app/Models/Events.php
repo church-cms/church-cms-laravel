@@ -82,7 +82,7 @@ class Events extends Model
         'enable_gallery',
         'enable_attendance',
         'attendance_scope',
-        'attendance_group_id',
+        'attendance_group_id','month_type'
     ];
 
     protected $casts = [

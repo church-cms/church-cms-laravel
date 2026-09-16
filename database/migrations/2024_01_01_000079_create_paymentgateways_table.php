@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('gatewayname')->unique();
             $table->string('displayname');
             $table->boolean('status');
+            $table->string('currency')->nullable();
             $table->text('instructions')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -16,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Log;
+use OpenApi\Attributes as OA;
 
 /**
  * FeedbackController
@@ -34,17 +35,43 @@ class FeedbackController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    #[OA\Get(
+        path: '/api/v1/feedbacks',
+        tags: ['Feedback'],
+        summary: 'Get all feedbacks submitted by the authenticated user',
+        operationId: 'a15a31f8309a98a18a63a0cab53a13ae',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FeedbackResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function index()
     {
         //
-        $user = User::where('id',Auth::id())->first();
-        $feedback = Feedback::where('user_id',$user->id)->get();
+        $user = User::where('id', Auth::id())->first();
+        $feedback = Feedback::where('user_id', $user->id)->get();
 
         $feedback = FeedbackResource::collection($feedback);
 
         return $feedback;
     }
 
+    #[OA\Get(
+        path: '/api/v1/feedback/category/list',
+        tags: ['Feedback'],
+        summary: 'Get feedback category list',
+        operationId: 'ac6f79957960ab699e0247577733376c',
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/FeedbackCategoryResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function list()
     {
         $categoryList = SiteHelper::getFeedbackCategoryList();
@@ -58,13 +85,31 @@ class FeedbackController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[OA\Post(
+        path: '/api/v1/feedback/add',
+        tags: ['Feedback'],
+        summary: 'Submit a new feedback message',
+        operationId: '6973684c2bac7753c462ffb7ac5169fa',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                ref: '#/components/schemas/AddFeedbackRequest'
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                ref: '#/components/responses/AddFeedbackResponse'
+            )
+        ],
+        security: [['sanctum' => []]]
+    )]
     public function store(FeedbackRequest $request)
     {
         //
-        try
-        {
-            $user = User::where('id',Auth::id())->first();
-            $admin = User::where('church_id',$user->church_id)->ByRole(3)->first();
+        try {
+            $user = User::where('id', Auth::id())->first();
+            $admin = User::where('church_id', $user->church_id)->ByRole(3)->first();
 
             $feedback = new Feedback;
 
@@ -72,8 +117,7 @@ class FeedbackController extends Controller
             $feedback->user_id = $user->id;
             $feedback->admin_id = $admin->id;
 
-            if($feedback->save())
-            {
+            if ($feedback->save()) {
                 $feedbackMessage = new FeedbackMessage;
 
                 $feedbackMessage->message       = $request->message;
@@ -82,45 +126,37 @@ class FeedbackController extends Controller
                 $feedbackMessage->feedback_id   = $feedback->id;
                 $feedbackMessage->category      = $request->category;
 
-                $i =0;
-                $files = $request->file('files');
-                if(count($files) > 0)
-                {
-                    $path = [];
-                    foreach($files as $file)
-                    {
-                        $path[$i] = $this->uploadFile(Auth::user()->church_id.'/feedbacks/'.$feedback->id,$file);
-                        $i++;
-                    }
-                    $feedbackMessage->file = $path;
-                }
+                // $i =0;
+                // $files = $request->file('files');
+                // if(count($files) > 0)
+                // {
+                //     $path = [];
+                //     foreach($files as $file)
+                //     {
+                //         $path[$i] = $this->uploadFile(Auth::user()->church_id.'/feedbacks/'.$feedback->id,$file);
+                //         $i++;
+                //     }
+                //     $feedbackMessage->file = $path;
+                // }
 
-                if($feedbackMessage->save())
-                {
+                if ($feedbackMessage->save()) {
                     $res['message'] = 'Message Sent Successfully';
 
                     $array = [];
                     $admin = SiteHelper::getAdmin(Auth::user()->church_id);
-                    $array['user']     =$admin ;
+                    $array['user']     = $admin;
                     $array['details']  = 'New Feedback Received';
 
                     event(new SingleNotificationEvent($array));
-                }
-                else
-                {
+                } else {
                     $res['message'] = 'Failed To Send Message';
                 }
-            }
-            else
-            {
+            } else {
                 $res['message'] = 'Failed To Send Message';
             }
             return $res;
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-
         }
     }
 }

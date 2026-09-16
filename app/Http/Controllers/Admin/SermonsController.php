@@ -15,6 +15,8 @@ use App\Models\Sermon;
 use App\Traits\Common;
 use Exception;
 use Log;
+use App\Events\PushEvent;
+use App\Events\Notification\PushNotificationEvent;
 
 /**
  * SermonsController
@@ -107,11 +109,25 @@ class SermonsController extends Controller
             $sermon->cover_image = $path;
             $sermon->save();
 
-
-
             if (env('MAIL_STATUS') === 'on') {
                 event(new SermonEvent($sermon));
             }
+            $data = [];
+
+            $data['church_id'] =  $church_id;
+            $data['message'] = 'New Sermon Created';
+            $data['type'] = 'sermon';
+
+            event(new PushEvent($data));
+
+            $array = [
+                'church_id' => $church_id,
+                'details'   => 'New Sermon Created',
+                'message_type' => 'sermon',
+                'message_id' => $sermon->id
+            ];
+
+            event(new PushNotificationEvent($array));
 
             return redirect('/admin/sermons')->with('successmessage', 'Sermon Created!');
         } catch (Exception $e) {

@@ -52,15 +52,27 @@ class VideoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    
     public function storeVideo(Request $request)
     {
-        try {
-            $filename   = date('d_m_Y_H_i_s') . '_video.mp4';
+        try
+        {
+            \Session::forget('path');
+            if(env('FILESYSTEM_DRIVER')=='s3'){
+                 $filename   = date('d_m_Y_H_i_s') . '_video.mp4';
             $folder     = '/uploads/video/' . Auth::user()->church_id;
-
             $path = \Storage::disk('s3')->putFileAs($folder, $request->file, $filename);
-            \Session::put('path', $path);
-        } catch (Exception $e) {
+            }else{
+            $folder=Auth::user()->church_id.'/uploads/files/video';
+            $path = $this->uploadFile($folder,$request->file);
+            }
+            
+            \Session::put('path',$path);
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+
         }
     }
 
@@ -96,7 +108,7 @@ class VideoController extends Controller
             $data['message']    =   'New Video Added';
             $data['type']       =   'video';
 
-            event(new PushEvent($data));
+            //event(new PushEvent($data));
 
             $message = 'Videos Added Successfully';
 

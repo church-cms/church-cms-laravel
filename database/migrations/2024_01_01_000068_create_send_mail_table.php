@@ -26,7 +26,7 @@ return new class extends Migration
             $table->enum('status', ['queue', 'delivered', 'failed'])->nullable();
             $table->enum('type', ['mail', 'inbox', 'sent'])->nullable();
             $table->text('message_id')->nullable();
-            $table->string('batch_id')->nullable()->unique();
+            $table->string('batch_id')->nullable();
             $table->timestamp('executed_at')->nullable();
             $table->boolean('is_executed')->default(0);
             $table->timestamp('fired_at')->nullable();

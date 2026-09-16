@@ -173,16 +173,7 @@ $isAdmin = auth()->user()->usergroup_id == 3;
             @endif
         </button>
         @endif
-        @if($expired)
-        <button class="ev-tab-btn px-5 py-3 text-sm font-medium whitespace-nowrap transition border-b-2"
-            data-tab="attendees">
-            <i class="fas fa-users mr-1.5 text-xs"></i>
-            Attendees
-            @if($attended->count())
-            <span class="ml-1 text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded-full">{{ $attended->count() }}</span>
-            @endif
-        </button>
-        @endif
+
         @if($event->enable_attendance)
         <button class="ev-tab-btn px-5 py-3 text-sm font-medium whitespace-nowrap transition border-b-2"
             data-tab="attendance">
@@ -261,79 +252,6 @@ $isAdmin = auth()->user()->usergroup_id == 3;
     </div>
     @endif
 
-    {{-- ── Attendees tab ─────────────────────────────────────────────── --}}
-    @if($expired)
-    <div class="ev-tab-panel px-6 py-5" data-tab="attendees">
-
-        {{-- Sub-tabs --}}
-        <div class="flex gap-3 mb-4">
-            <button class="att-sub-btn text-sm px-3 py-1.5 rounded border transition" data-att="attended">
-                <i class="fas fa-check-circle mr-1 text-green-500"></i>
-                Attended <span class="text-xs text-gray-400">({{ $attended->count() }})</span>
-            </button>
-            <button class="att-sub-btn text-sm px-3 py-1.5 rounded border transition" data-att="not_attended">
-                <i class="fas fa-times-circle mr-1 text-red-400"></i>
-                Not Attended <span class="text-xs text-gray-400">({{ $notAttended->count() }})</span>
-            </button>
-        </div>
-
-        <div class="att-sub-panel" data-att="attended">
-            @if($attended->isEmpty())
-            <p class="text-sm text-gray-400 italic">No attendance records.</p>
-            @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                @foreach($attended as $record)
-                @php
-                $profile = $record->user?->userprofile;
-                $fullname = $profile ? trim($profile->firstname . ' ' . $profile->lastname) : $record->user?->name;
-                $avatar = $profile?->AvatarPath;
-                @endphp
-                <a href="{{ url('/admin/member/show/' . $record->user?->name) }}"
-                    class="flex items-center gap-3 p-3 rounded border border-gray-100 hover:bg-gray-50 transition">
-                    @if($avatar)
-                    <img src="{{ $avatar }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
-                    @else
-                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <span class="text-green-600 text-xs font-semibold">{{ strtoupper(substr($fullname ?? '?', 0, 1)) }}</span>
-                    </div>
-                    @endif
-                    <span class="text-sm text-gray-700">{{ $fullname }}</span>
-                </a>
-                @endforeach
-            </div>
-            @endif
-        </div>
-
-        <div class="att-sub-panel" data-att="not_attended">
-            @if($notAttended->isEmpty())
-            <p class="text-sm text-gray-400 italic">No records.</p>
-            @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                @foreach($notAttended as $record)
-                @php
-                $profile = $record->user?->userprofile;
-                $fullname = $profile ? trim($profile->firstname . ' ' . $profile->lastname) : $record->user?->name;
-                $avatar = $profile?->AvatarPath;
-                @endphp
-                <a href="{{ url('/admin/member/show/' . $record->user?->name) }}"
-                    class="flex items-center gap-3 p-3 rounded border border-gray-100 hover:bg-gray-50 transition">
-                    @if($avatar)
-                    <img src="{{ $avatar }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
-                    @else
-                    <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                        <span class="text-red-500 text-xs font-semibold">{{ strtoupper(substr($fullname ?? '?', 0, 1)) }}</span>
-                    </div>
-                    @endif
-                    <span class="text-sm text-gray-700">{{ $fullname }}</span>
-                </a>
-                @endforeach
-            </div>
-            @endif
-        </div>
-
-    </div>
-    @endif
-
     {{-- ── Attendance tab ─────────────────────────────────────────────── --}}
     @if($event->enable_attendance)
     <div class="ev-tab-panel px-6 py-5" data-tab="attendance">
@@ -380,6 +298,13 @@ $isAdmin = auth()->user()->usergroup_id == 3;
         @endif
         @else
         {{-- Non-recurring: simple "open for today" --}}
+        <a href="{{ url('admin/event/'.$event->id.'/managers') }}">
+            <button type="button"
+                class="text-sm px-4 py-2 rounded btn btn-primary submit-btn flex items-center gap-2">
+                <i class="fas fa-plus text-xs"></i> Set Attendance Manager
+            </button>
+        </a>
+
         @php $todaySession = $sessions->firstWhere(fn($s) => \Carbon\Carbon::parse($s->attendance_date)->toDateString() === now()->toDateString()); @endphp
         @if(!$todaySession)
         <form action="{{ route('admin.attendance.open', $event->id) }}" method="POST" class="mb-5">

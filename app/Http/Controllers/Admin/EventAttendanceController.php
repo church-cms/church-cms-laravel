@@ -50,7 +50,8 @@ class EventAttendanceController extends Controller
 
             $ip = $this->getRequestIP();
             $this->doActivityLog(
-                Auth::user(), Auth::user(),
+                Auth::user(),
+                Auth::user(),
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'], 'event' => $event->title, 'date' => $date],
                 LOGNAME_OPEN_ATTENDANCE_SESSION,
                 'Opened attendance session for ' . $event->title . ' on ' . $date
@@ -66,16 +67,52 @@ class EventAttendanceController extends Controller
 
     public function showSession($session_id)
     {
+
         $session = EventAttendanceSession::with(['event', 'openedBy', 'lockedBy'])->findOrFail($session_id);
 
         abort_unless($session->church_id === Auth::user()->church_id, 403);
+
+
 
         $attendees = EventAttendee::where('session_id', $session_id)
             ->with(['member.userprofile', 'scannedBy'])
             ->orderBy('scanned_at')
             ->get();
 
-        return view('admin.attendance.session', compact('session', 'attendees'));
+        $notAttendees = EventAttendee::where('session_id', $session_id)
+            ->with(['member.userprofile', 'scannedBy'])
+            ->orderBy('scanned_at')
+            ->pluck('user_id')->toArray();
+
+        $not_attendees = User::with('userprofile')
+            ->select('id', 'name', 'mobile_no')
+            ->where('church_id', $session->church_id)
+            ->ByRole('5')
+            ->whereHas('userprofile', function ($q) {
+                $q->where('membership_type', 'member')
+                    ->orWhereNull('membership_type');
+            })
+            ->whereNotIn('id', $notAttendees)
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'member_id'   => $user->id,
+                    'member_name' => $user->name,
+                    'avatar_url'  => $user->userprofile?->avatar
+                        ? \Storage::disk('public')->url($user->userprofile->avatar)
+                        : null,
+                    'mobile_no'   => $user->mobile_no,
+                ];
+            });
+
+
+        $total_count = ($not_attendees->count() + $attendees->count());
+        $absent_count = $not_attendees->count();
+        $present_count = $attendees->count();
+
+        //dd($attendees);
+
+        return view('admin.attendance.session', compact('session', 'attendees', 'not_attendees', 'total_count'));
     }
 
     public function lock($session_id)
@@ -87,7 +124,8 @@ class EventAttendanceController extends Controller
 
         $ip = $this->getRequestIP();
         $this->doActivityLog(
-            Auth::user(), Auth::user(),
+            Auth::user(),
+            Auth::user(),
             ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'], 'session_id' => $session_id],
             LOGNAME_LOCK_ATTENDANCE_SESSION,
             'Locked attendance session #' . $session_id
@@ -105,7 +143,8 @@ class EventAttendanceController extends Controller
 
         $ip = $this->getRequestIP();
         $this->doActivityLog(
-            Auth::user(), Auth::user(),
+            Auth::user(),
+            Auth::user(),
             ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'], 'session_id' => $session_id],
             LOGNAME_UNLOCK_ATTENDANCE_SESSION,
             'Unlocked attendance session #' . $session_id
@@ -139,7 +178,8 @@ class EventAttendanceController extends Controller
 
         $ip = $this->getRequestIP();
         $this->doActivityLog(
-            Auth::user(), Auth::user(),
+            Auth::user(),
+            Auth::user(),
             ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'], 'session_id' => $session_id],
             LOGNAME_EXPORT_ATTENDANCE,
             'Exported attendance for session #' . $session_id
@@ -156,7 +196,7 @@ class EventAttendanceController extends Controller
         $assigned = EventManager::where('event_id', $event_id)->with('staff')->get();
 
         $subadmins = User::where('church_id', Auth::user()->church_id)
-            ->where('usergroup_id', 4)
+            ->where('usergroup_id', 5)
             ->whereNotIn('id', $assigned->pluck('user_id'))
             ->get();
 
@@ -175,7 +215,8 @@ class EventAttendanceController extends Controller
             $staff = User::find($request->user_id);
             $ip = $this->getRequestIP();
             $this->doActivityLog(
-                Auth::user(), Auth::user(),
+                Auth::user(),
+                Auth::user(),
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'], 'staff' => $staff->name, 'event' => $event->title],
                 LOGNAME_ASSIGN_EVENT_MANAGER,
                 'Assigned ' . $staff->name . ' as manager for ' . $event->title
@@ -197,7 +238,8 @@ class EventAttendanceController extends Controller
         $staff = User::find($user_id);
         $ip = $this->getRequestIP();
         $this->doActivityLog(
-            Auth::user(), Auth::user(),
+            Auth::user(),
+            Auth::user(),
             ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'], 'staff_id' => $user_id, 'event' => $event->title],
             LOGNAME_REMOVE_EVENT_MANAGER,
             'Removed staff #' . $user_id . ' as manager for ' . $event->title
@@ -239,7 +281,7 @@ class EventAttendanceController extends Controller
                 $query->where('name', 'LIKE', "%{$q}%")
                     ->orWhereHas('userprofile', function ($q2) use ($q) {
                         $q2->where('firstname', 'LIKE', "%{$q}%")
-                           ->orWhere('lastname',  'LIKE', "%{$q}%");
+                            ->orWhere('lastname',  'LIKE', "%{$q}%");
                     });
             });
 

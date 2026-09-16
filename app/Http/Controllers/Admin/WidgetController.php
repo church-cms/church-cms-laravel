@@ -43,7 +43,7 @@ class WidgetController extends Controller
      */
     public function create()
     {
-        $church = Church::where('status',1)->get();
+        $church = Church::where('status', 1)->get();
         return view('admin.widgets.form', compact('church'));
     }
 
@@ -60,12 +60,16 @@ class WidgetController extends Controller
         $insertWidget->slug = $uuid;
         $insertWidget->church_id = Auth::user()->church_id;
         $insertWidget->page = $request->input('page', 'home');
+        if ($request->input('page', 'home') != 'home') {
+            $insertWidget->position = $request->position;
+        }
+
         $insertWidget->display_order = $request->input('display_order', 0);
         $insertWidget->content = $request->content;
         $insertWidget->created_by = Auth::user()->id;
         $insertWidget->save();
 
-        return redirect('admin/widgets')->with('message', 'Widget has been added successfully.');
+        return redirect('admin/widgets')->with('successmessage', 'Widget has been added successfully.');
     }
 
     /**
@@ -91,8 +95,8 @@ class WidgetController extends Controller
         if (!empty($editInfo) === 0) {
             return redirect('admin/widgets')->with('error', __('common.no_records_found'));
         }
-        $church = Church::where('status',1)->get();
-        return view('admin.widgets.form_edit', compact('editInfo','church'));
+        $church = Church::where('status', 1)->get();
+        return view('admin.widgets.form_edit', compact('editInfo', 'church'));
     }
 
     /**
@@ -108,11 +112,14 @@ class WidgetController extends Controller
         $updateWidget->church_id = Auth::user()->church_id;
         $updateWidget->page = $request->input('page', 'home');
         $updateWidget->display_order = $request->input('display_order', 0);
+        if ($request->input('page', 'home') != 'home') {
+            $updateWidget->position = $request->position;
+        }
         $updateWidget->content = $request->content;
         $updateWidget->updated_by = Auth::user()->id;
         $updateWidget->save();
 
-        return redirect('admin/widgets')->with('message', 'Widget has been updated successfully.');
+        return redirect('admin/widgets')->with('successmessage', 'Widget has been updated successfully.');
     }
 
     /**

@@ -16,6 +16,14 @@
         ['label' => 'FAQ'],
     ],
 ])
+@if($topwidget->isNotEmpty())
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    @foreach($topwidget as $widget)
+        {!! $widget->content !!}
+    @endforeach
+</div>
+@endif
+
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
     @if($categories->isEmpty())
@@ -87,4 +95,13 @@
     @endif
 
 </div>
+
+@if($bottomwidget->isNotEmpty())
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+    @foreach($bottomwidget as $widget)
+        {!! $widget->content !!}
+    @endforeach
+</div>
+@endif
+
 @endsection

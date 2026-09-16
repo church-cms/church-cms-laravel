@@ -167,6 +167,8 @@ class BulletinsController extends Controller
 
             $array['church_id'] = Auth::user()->church_id;
             $array['details'] = 'New Bulletin Received';
+            $array['message_type'] = 'bulletin';
+            $array['message_id'] = $bulletin->id;
 
             event(new PushNotificationEvent($array));
 
@@ -250,7 +252,7 @@ class BulletinsController extends Controller
             //     $bulletin->cover_image = $cover_image;
             // }
 
-              if ($request->cover_image_id && str_starts_with($request->cover_image_id, 'media_')) {
+            if ($request->cover_image_id && str_starts_with($request->cover_image_id, 'media_')) {
                 $mediaId    = str_replace('media_', '', $request->cover_image_id);
                 $mediaImage = \App\Models\MediaFile::where([
                     ['id', $mediaId],
@@ -280,6 +282,8 @@ class BulletinsController extends Controller
 
             $array['church_id'] = Auth::user()->church_id;
             $array['details'] = 'Bulletin Updated';
+            $array['message_type'] = 'bulletin';
+            $array['message_id'] = $id;
 
             event(new PushNotificationEvent($array));
 
@@ -311,8 +315,6 @@ class BulletinsController extends Controller
             return redirect()->back()->with('errormessage', 'Could not update bulletin.')->withInput();
         }
     }
-
-
 
     /**
      * Remove the specified resource from storage.

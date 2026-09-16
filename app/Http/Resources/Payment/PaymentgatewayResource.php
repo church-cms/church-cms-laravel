@@ -14,13 +14,13 @@ class PaymentgatewayResource extends JsonResource
      */
     public function toArray($request)
     {
-        return[
-            'id'=>$this->id,
-            'name'=>$this->gatewayname,
-            'display_name'=>$this->displayname,
-            'instructions'=>$this->instructions,
-            'status'=>$this->status,
-
+        return [
+            'id'           => $this->id,
+            'name'         => $this->gatewayname,
+            'display_name' => $this->displayname,
+            'instructions' => $this->instructions,
+            'currency'     => $this->currency,
+            'status'       => $this->status,
         ];
     }
 }

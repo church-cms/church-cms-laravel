@@ -25,9 +25,12 @@ use App\Models\Attendance;
 use App\Events\PushEvent;
 use App\Traits\Common;
 use App\Models\Events;
+use App\Models\GroupLink;
+use App\Models\EventManager;
 use App\Models\User;
 use Exception;
 use Log;
+use Carbon\Carbon;
 
 /**
  * EventsController
@@ -61,11 +64,11 @@ class EventsController extends Controller
         $query = Events::where('church_id', Auth::user()->church_id);
 
         if ($filter === 'upcoming') {
-            $query->where('start_date', '>=', $now)->orderBy('start_date', 'asc');
+            $query->where('start_date', '>=', $now)->orderBy('start_date', 'desc');
         } elseif ($filter === 'completed') {
             $query->where('end_date', '<', $now)->orderBy('start_date', 'desc');
         } else {
-            $query->orderBy('start_date', 'asc');
+            $query->orderBy('start_date', 'desc');
         }
 
         if ($category !== '') {
@@ -207,6 +210,10 @@ class EventsController extends Controller
 
     public function newForm()
     {
+
+        //dd("kK");
+        //$this->setEventAttendance('45', '7');
+
         $categories = [
             'Culturals'  => 'Culturals',
             'Education'  => 'Education',
@@ -221,7 +228,7 @@ class EventsController extends Controller
         return view('admin.events.new', compact('categories', 'groups'));
     }
 
-    public function storeNew(EventCreateRequest $request)
+    public function storeNewcc(EventCreateRequest $request)
     {
 
         try {
@@ -301,8 +308,426 @@ class EventsController extends Controller
         } catch (Exception $e) {
             Log::error('EventsController@storeNew: ' . $e->getMessage());
 
-           
+
             return back()->withInput()->with('failmessage', 'Could not save event. Please try again.');
+        }
+    }
+
+
+
+
+    public function storeNew(EventCreateRequest $request)
+    {
+        try {
+
+            // =====================================================
+            // ONE TIME EVENT
+            // =====================================================
+
+            if ($request->schedule === '0') {
+
+                $startDateTime = $request->event_date . ' ' . $request->start_time . ':00';
+
+                $endDateTime = date(
+                    'Y-m-d H:i:s',
+                    strtotime($startDateTime) + ((int) $request->duration * 60)
+                );
+
+                $event = new Events;
+
+                $event->church_id         = Auth::user()->church_id;
+                $event->select_type       = $request->select_type;
+                $event->title             = $request->title;
+                $event->description       = $request->description;
+
+                $event->repeats           = 0;
+                $event->freq              = null;
+                $event->freq_term         = null;
+                $event->month_type        = null;
+                $event->days_of_week      = null;
+
+                $event->duration_minutes  = (int) $request->duration;
+                $event->location          = $request->location;
+                $event->category          = $request->category;
+                $event->organised_by      = $request->organised_by;
+
+                $event->start_date        = $startDateTime;
+                $event->end_date          = $endDateTime;
+
+                $event->publish_to_web    = $request->boolean('publish_to_web', true);
+                $event->enable_gallery    = $request->boolean('enable_gallery', true);
+
+                $event->enable_attendance = $request->boolean('enable_attendance', false);
+
+                $event->attendance_scope = $event->enable_attendance
+                    ? $request->input('attendance_scope', 'all')
+                    : 'all';
+
+                $event->attendance_group_id =
+                    ($event->enable_attendance && $event->attendance_scope === 'group')
+                    ? $request->input('attendance_group_id')
+                    : null;
+
+                $event->created_by = Auth::id();
+
+                // IMAGE
+                if (
+                    $request->cover_image_id
+                    &&
+                    str_starts_with($request->cover_image_id, 'media_')
+                ) {
+
+                    $mediaId = str_replace(
+                        'media_',
+                        '',
+                        $request->cover_image_id
+                    );
+
+                    $mediaImage = \App\Models\MediaFile::where([
+                        ['id', $mediaId],
+                        ['church_id', Auth::user()->church_id],
+                        ['media_type', 'image'],
+                    ])->first();
+
+                    if ($mediaImage) {
+                        $event->image = $mediaImage->url;
+                    }
+                } elseif ($request->cover_image_path) {
+
+                    $event->image = $request->cover_image_path;
+                }
+
+                $event->save();
+
+                // REMINDER
+                $reminderDate = date(
+                    'Y-m-d',
+                    strtotime('-2 days', strtotime($event->start_date))
+                );
+
+                $this->sendToReminderEvent(
+                    $event,
+                    $reminderDate,
+                    'first'
+                );
+
+                // MAIL
+                if (env('MAIL_STATUS') === 'on') {
+                    event(new CalendarEvent($event));
+                }
+
+                // PUSH
+                $data = [
+                    'church_id' => Auth::user()->church_id,
+                    'message'   => 'New Event created',
+                    'type'      => 'event'
+                ];
+
+                event(new PushEvent($data));
+
+                $array = [
+                    'church_id' => Auth::user()->church_id,
+                    'details'   => 'New Event created',
+                    'message_type' => 'event',
+                    'message_id' => $event->id
+                ];
+
+                event(new PushNotificationEvent($array));
+
+                // LOG
+                $ip = $this->getRequestIP();
+
+                $this->doActivityLog(
+                    $event,
+                    Auth::user(),
+                    [
+                        'ip'      => $ip,
+                        'details' => $_SERVER['HTTP_USER_AGENT']
+                    ],
+                    LOGNAME_ADD_EVENT,
+                    'Event Added: ' . $event->title
+                );
+
+                if ($event->enable_attendance == '1' && $event->attendance_scope == 'group' && $event->attendance_group_id != '') {
+                    $this->setEventAttendance($event->id, $event->attendance_group_id);
+                }
+            }
+
+            // =====================================================
+            // RECURRING EVENTS
+            // =====================================================
+
+            else {
+
+                $start = Carbon::parse($request->event_date);
+
+                $seriesEnd = Carbon::parse(
+                    $request->series_end_date
+                );
+
+                $current = $start->copy();
+
+                while ($current->lte($seriesEnd)) {
+
+                    $eventDate = null;
+
+                    // ============================================
+                    // DAILY
+                    // ============================================
+
+                    if ($request->freq_term == 'day') {
+
+                        $eventDate = $current->copy();
+
+                        $current->addDays($request->freq);
+                    }
+
+                    // ============================================
+                    // WEEKLY
+                    // ============================================
+
+                    elseif ($request->freq_term == 'week') {
+
+                        $weekStart = $current->copy()->startOfWeek();
+
+                        foreach ($request->days_of_week as $dayNum) {
+
+                            $date = $weekStart
+                                ->copy()
+                                ->addDays($dayNum);
+
+                            if (
+                                $date->gte($start)
+                                &&
+                                $date->lte($seriesEnd)
+                            ) {
+
+                                $this->saveRecurringEvent(
+                                    $request,
+                                    $date
+                                );
+                            }
+                        }
+
+                        $current->addWeeks($request->freq);
+
+                        continue;
+                    }
+
+                    // ============================================
+                    // MONTHLY
+                    // ============================================
+
+                    elseif ($request->freq_term == 'month') {
+
+                        // day_21
+
+                        if (
+                            str_starts_with(
+                                $request->month_type,
+                                'day_'
+                            )
+                        ) {
+
+                            $day = (int) str_replace(
+                                'day_',
+                                '',
+                                $request->month_type
+                            );
+
+                            $eventDate = $current
+                                ->copy()
+                                ->day($day);
+                        }
+
+                        // week_3_4
+
+                        elseif (
+                            str_starts_with(
+                                $request->month_type,
+                                'week_'
+                            )
+                        ) {
+
+                            $parts = explode(
+                                '_',
+                                $request->month_type
+                            );
+
+                            $weekNumber = (int) $parts[1];
+
+                            $weekDay = (int) $parts[2];
+
+                            $eventDate = $current
+                                ->copy()
+                                ->nthOfMonth(
+                                    $weekNumber,
+                                    $weekDay
+                                );
+                        }
+
+                        $current->addMonths($request->freq);
+                    }
+
+                    // ============================================
+                    // YEARLY
+                    // ============================================
+
+                    elseif ($request->freq_term == 'year') {
+
+                        $eventDate = $current->copy();
+
+                        $current->addYears($request->freq);
+                    }
+
+                    // ============================================
+                    // SAVE EVENT
+                    // ============================================
+
+                    if (
+                        $eventDate
+                        &&
+                        $eventDate->lte($seriesEnd)
+                    ) {
+
+                        $this->saveRecurringEvent(
+                            $request,
+                            $eventDate
+                        );
+                    }
+                }
+            }
+
+            return redirect()
+                ->route('admin.events.index')
+                ->with(
+                    'successmessage',
+                    'Event created successfully.'
+                );
+        } catch (Exception $e) {
+
+            Log::error(
+                'EventsController@storeNew: '
+                    . $e->getMessage()
+            );
+
+            return back()
+                ->withInput()
+                ->with(
+                    'failmessage',
+                    'Could not save event. Please try again.'
+                );
+        }
+    }
+
+    public function setEventAttendance($event_id, $group_id)
+    {
+        $group_admin = GroupLink::where([['group_id', $group_id], ['role', 'group_admin']])->get();
+
+        if (count($group_admin) > 0) {
+            foreach ($group_admin as $admin) {
+                $data = [
+                    'user_id' => $admin->user_id,
+                    'event_id' => $event_id
+                ];
+                EventManager::create($data);
+            }
+        }
+
+        return true;
+    }
+
+    private function saveRecurringEvent($request, $eventDate)
+    {
+        $startDateTime = $eventDate->format('Y-m-d')
+            . ' '
+            . $request->start_time
+            . ':00';
+
+        $endDateTime = Carbon::parse($startDateTime)
+            ->addMinutes($request->duration);
+
+        $event = new Events;
+
+        $event->church_id         = Auth::user()->church_id;
+        $event->select_type       = $request->select_type;
+        $event->title             = $request->title;
+        $event->description       = $request->description;
+
+        $event->repeats           = 0;
+
+        $event->freq              = null;
+        $event->freq_term         = null;
+        $event->month_type        = null;
+        $event->days_of_week      = null;
+
+        $event->duration_minutes  = (int) $request->duration;
+
+        $event->location          = $request->location;
+        $event->category          = $request->category;
+        $event->organised_by      = $request->organised_by;
+
+        $event->start_date        = $startDateTime;
+        $event->end_date          = $endDateTime;
+
+        $event->publish_to_web    = $request->boolean(
+            'publish_to_web',
+            true
+        );
+
+        $event->enable_gallery    = $request->boolean(
+            'enable_gallery',
+            true
+        );
+
+        $event->enable_attendance = $request->boolean(
+            'enable_attendance',
+            false
+        );
+
+        $event->attendance_scope = $event->enable_attendance
+            ? $request->input('attendance_scope', 'all')
+            : 'all';
+
+        $event->attendance_group_id =
+            ($event->enable_attendance
+                && $event->attendance_scope === 'group')
+            ? $request->input('attendance_group_id')
+            : null;
+
+        $event->created_by = Auth::id();
+
+        // IMAGE
+        if (
+            $request->cover_image_id
+            &&
+            str_starts_with($request->cover_image_id, 'media_')
+        ) {
+
+            $mediaId = str_replace(
+                'media_',
+                '',
+                $request->cover_image_id
+            );
+
+            $mediaImage = \App\Models\MediaFile::where([
+                ['id', $mediaId],
+                ['church_id', Auth::user()->church_id],
+                ['media_type', 'image'],
+            ])->first();
+
+            if ($mediaImage) {
+                $event->image = $mediaImage->url;
+            }
+        } elseif ($request->cover_image_path) {
+
+            $event->image = $request->cover_image_path;
+        }
+
+        $event->save();
+
+        if ($event->enable_attendance == '1' && $event->attendance_scope == 'group' && $event->attendance_group_id != '') {
+            $this->setEventAttendance($event->id, $event->attendance_group_id);
         }
     }
 

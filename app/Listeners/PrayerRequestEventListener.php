@@ -6,7 +6,7 @@ use App\Events\PrayerRequestEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Traits\SendPushNotification;
 use App\Models\User;
-
+use App\Notifications\SendDeviceNotification;
 class PrayerRequestEventListener implements ShouldQueue
 {
     use SendPushNotification;
@@ -33,7 +33,8 @@ class PrayerRequestEventListener implements ShouldQueue
         
         foreach($users as $user)
         {
-            $this->sendNotification($event->data,$user->platform_token);
+            //$this->sendNotification($event->data,$user->platform_token);
+            $user->notify(new SendDeviceNotification($event->data, $user->platform_token));
         }
     }
 }

@@ -28,11 +28,12 @@ class PrayerNotificationEventListener implements ShouldQueue
      */
     public function handle(PrayerNotificationEvent $event)
     {
-        //
+        //dd("GG");
         $users=User::where('church_id',$event->data['church_id'])->where('id','!=',$event->data['user_id'])->get();
+        
         foreach($users as $user)
         {
-          Notification::send($user, new NewMessageNotification($event->data['details']));
+          Notification::send($user, new NewMessageNotification($event->data['details'], $event->data['message_type'], $event->data['message_id']));
         }
     }
 }
