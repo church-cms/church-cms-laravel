@@ -22,7 +22,7 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->enum('was_baptized', ['yes', 'no'])->nullable();
             $table->date('baptism_date')->nullable();
-            $table->enum('profession', ['admin', 'business', 'doctor', 'engineer', 'government_employee', 'home_maker', 'lawyer', 'pastor', 'police', 'professionals', 'self_employed', 'student', 'teacher', 'others', 'guest', 'preacher'])->nullable();
+            $table->enum('profession', ['admin', 'business', 'doctor', 'engineer', 'government_employee', 'home_maker', 'lawyer', 'pastor', 'police', 'professionals', 'self_employed', 'student', 'teacher', 'others', 'guest', 'preacher','admin'])->nullable();
             $table->string('sub_occupation')->nullable();
             $table->text('address')->nullable();
             $table->integer('city_id')->unsigned()->nullable();
