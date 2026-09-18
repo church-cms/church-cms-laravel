@@ -22,6 +22,7 @@ class InstallChurchData extends Command
      *
      * @var string
      */
+    
     protected $description = 'Create initial church and admin user from installation data';
 
     /**
