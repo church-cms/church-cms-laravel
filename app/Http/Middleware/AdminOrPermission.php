@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
-use Laratrust\Middleware\LaratrustPermission;
+use Laratrust\Middleware\Permission as LaratrustPermission;
 
 class AdminOrPermission extends LaratrustPermission
 {

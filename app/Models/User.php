@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laracasts\Presenter\PresentableTrait;
-use Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Traits\HasRolesAndPermissions;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Nckg\Impersonate\Traits\CanImpersonate;
@@ -58,15 +59,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property-read \Illuminate\Database\Eloquent\Collection $fund Financial contributions/funds by this user
  *
  * Traits:
- * - LaratrustUserTrait: Role-based access control permissions and roles
+ * - HasRolesAndPermissions: Role-based access control permissions and roles
  * - PresentableTrait: Presenter pattern for view representation
  * - HasApiTokens: Sanctum API token management
  * - SoftDeletes: Soft delete capability with deleted_at tracking
  * - Notifiable: Email/notification sending capabilities
  */
-class User extends Authenticatable
+class User extends Authenticatable implements LaratrustUser
 {
-    use LaratrustUserTrait;
+    use HasRolesAndPermissions;
     use PresentableTrait;
     use HasApiTokens;
     use SoftDeletes;

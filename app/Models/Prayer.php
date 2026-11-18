@@ -227,11 +227,12 @@ class Prayer extends Model
         if (!$this->expires_at || !$this->created_at) {
             return 100;
         }
-        $total = $this->created_at->diffInDays($this->expires_at);
+        // Carbon 3 returns signed floats; cast to keep the old integer/absolute behaviour.
+        $total = (int) $this->created_at->diffInDays($this->expires_at, true);
         if ($total === 0) {
             return 100;
         }
-        $elapsed  = $this->created_at->diffInDays(now());
+        $elapsed  = (int) $this->created_at->diffInDays(now(), true);
         $percent  = ($elapsed / $total) * 100;
         return min(100, max(0, (int) $percent));
     }

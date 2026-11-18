@@ -41,7 +41,7 @@
                     <p class="text-xs text-gray-600 font-semibold">Days Active</p>
                     <p class="text-lg font-bold text-blue-700">
                         @if($prayer->approved_at && $prayer->answered_at)
-                            {{ $prayer->approved_at->diffInDays($prayer->answered_at) }}
+                            {{ (int) $prayer->approved_at->diffInDays($prayer->answered_at, true) }}
                         @else
                             —
                         @endif
