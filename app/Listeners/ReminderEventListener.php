@@ -47,10 +47,13 @@ class ReminderEventListener implements ShouldQueue
             $users=User::where('church_id',$event->church_id)->ByRole('5')->pluck('email')->toArray();
         }
         //dd($users);
-         foreach ($users as $user) 
+         foreach ($users as $user)
          {
-           
-            
+            // Skip members without an email / mobile number
+            if (empty($user)) {
+                continue;
+            }
+
             $this->createReminder($event->church_id,$event->from,$user,$event->subject,$event->message,$event->entity_id,$event->entity_name,$event->via,$event->data,$event->executed_at);
          }
 

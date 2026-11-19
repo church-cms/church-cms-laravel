@@ -34,9 +34,13 @@ class CalendarEventListener implements ShouldQueue
         //dd($users);
          foreach ($users as $user) 
          {
+            // Skip members without an email address
+            if (empty($user->email)) {
+                continue;
+            }
 
             Mail::to($user->email)->queue(new CalendarMail($events->events));
-            
+
 
         }
     }
