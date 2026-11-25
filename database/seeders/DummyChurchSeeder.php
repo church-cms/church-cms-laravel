@@ -37,7 +37,7 @@ class DummyChurchSeeder extends Seeder
                 'status'          => 'active',
             ]);
             if ($subadminRole) {
-                $user->attachRole($subadminRole);
+                $user->addRole($subadminRole);
             }
         });
 
@@ -53,7 +53,7 @@ class DummyChurchSeeder extends Seeder
                 'status'          => 'active',
             ]);
             if ($staffRole) {
-                $staff->attachRole($staffRole);
+                $staff->addRole($staffRole);
             }
         });
 
