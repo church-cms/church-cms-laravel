@@ -17,13 +17,13 @@
 
 
 
-        {{--<img src="data:image/png;base64,{!! base64_encode(
+        <img src="data:image/png;base64,{!! base64_encode(
     QrCode::format('png')
         ->color(244, 197, 66)      // Gold
         ->backgroundColor(31, 36, 48) // Dark Navy
         ->margin(1)
         ->generate($url)
-) !!}" width="120">--}}
+) !!}" width="120">
 
 
         <!--  <div class="qr">
